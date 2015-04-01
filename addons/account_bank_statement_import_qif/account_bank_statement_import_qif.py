@@ -26,7 +26,7 @@ class account_bank_statement_import(models.TransientModel):
         'Hide the journal field in the view', default=_get_hide_journal_field)
 
     @api.model
-    def _get_journal(self, currency_id, bank_account_id, account_number):
+    def _get_journal(self, currency_id, bank_account_id):
         """ As .QIF format does not allow us to detect the journal, we need to
         let the user choose it.
         We set it in context before to call super so it's the same as
@@ -38,7 +38,7 @@ class account_bank_statement_import(models.TransientModel):
             if record.journal_id:
                 record = record.with_context(journal_id=record.journal_id.id)
         return super(account_bank_statement_import, record)._get_journal(
-            currency_id, bank_account_id, account_number)
+            currency_id, bank_account_id)
 
     @api.model
     def _check_qif(self, data_file):
@@ -103,7 +103,9 @@ class account_bank_statement_import(models.TransientModel):
                             'not correctly formed.'))
 
         vals_bank_statement.update({
+            'currency_code': None,
+            'account_number': None,
             'balance_end_real': total,
             'transactions': transactions
         })
-        return None, None, [vals_bank_statement]
+        return [vals_bank_statement]
