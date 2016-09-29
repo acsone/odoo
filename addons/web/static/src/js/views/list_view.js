@@ -635,6 +635,7 @@ var ListView = View.extend({
             return field.name === name;
         });
         if (!action) { return; }
+        action = $.extend(true, {}, action);
         if ('confirm' in action && !window.confirm(action.confirm)) {
             return;
         }
