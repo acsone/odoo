@@ -400,6 +400,16 @@ class MailTemplate(models.Model):
             results[res_id]['partner_ids'] = partner_ids
         return results
 
+    @api.model
+    def get_allowed_report_type(self):
+        return ['qweb-html', 'qweb-pdf']
+
+    @api.model
+    def render_allowed_report(self, res_id, action_report=None):
+        if action_report:
+            return action_report.render_qweb_pdf([res_id])
+        return self.env['ir.actions.report'].render_qweb_pdf([res_id])
+
     @api.multi
     def generate_email(self, res_ids, fields=None):
         """Generates an email from the template for given the given model based on
@@ -469,9 +479,9 @@ class MailTemplate(models.Model):
                     report = template.report_template
                     report_service = report.report_name
 
-                    if report.report_type not in ['qweb-html', 'qweb-pdf']:
+                    if report.report_type not in self.get_allowed_report_type():
                         raise UserError(_('Unsupported report type %s found.') % report.report_type)
-                    result, format = report.render_qweb_pdf([res_id])
+                    result, format = self.render_allowed_report(res_id=res_id, action_report=report)
 
                     # TODO in trunk, change return format to binary to match message_post expected format
                     result = base64.b64encode(result)
