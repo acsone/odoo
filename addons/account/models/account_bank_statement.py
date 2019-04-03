@@ -646,6 +646,18 @@ class AccountBankStatementLine(models.Model):
             if results:
                 return self.env['account.move.line'].browse(results[0])
 
+        # Look for payment order ref match "- LXXXXX":
+        # bank line number is the EndToEndId which comes back as ref field
+        # in bank statements via CAMT 053
+        if self.ref:
+            params['likeref'] = "% - " + self.ref
+            sql_query = self._get_common_sql_query(overlook_partner=True, excluded_ids=excluded_ids)
+            sql_query += " AND aml.ref like %(likeref)s"
+            self.env.cr.execute(sql_query, params)
+            results = self.env.cr.fetchone()
+            if results:
+                return self.env['account.move.line'].browse(results[0])
+
         # Look for a single move line with the same amount
         field = currency and 'amount_residual_currency' or 'amount_residual'
         liquidity_field = currency and 'amount_currency' or amount > 0 and 'debit' or 'credit'
