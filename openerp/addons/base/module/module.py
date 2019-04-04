@@ -246,7 +246,7 @@ class module(osv.osv):
         return res
 
     _columns = {
-        'name': fields.char("Technical Name", readonly=True, required=True, select=True),
+        'name': fields.char("Technical Name", readonly=True, required=True),
         'category_id': fields.many2one('ir.module.category', 'Category', readonly=True, select=True),
         'shortdesc': fields.char('Module Name', readonly=True, translate=True),
         'summary': fields.char('Summary', readonly=True, translate=True),
