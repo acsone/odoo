@@ -1612,7 +1612,7 @@ class BaseModel(object):
         access_rights_uid = name_get_uid or self._uid
         ids = self._search(args, limit=limit, access_rights_uid=access_rights_uid)
         recs = self.browse(ids)
-        return recs.sudo(access_rights_uid).name_get()
+        return lazy_name_get(recs.sudo(access_rights_uid))
 
     @api.model
     def _add_missing_default_values(self, values):
@@ -1705,7 +1705,7 @@ class BaseModel(object):
                 result[left_id][count_field] = left_side[count_field]
 
         # fill in missing results from all groups
-        for right_side in groups.name_get():
+        for right_side in lazy_name_get(groups):
             right_id = right_side[0]
             if not result[right_id]:
                 line = dict(result_template)
@@ -5746,6 +5746,12 @@ def _normalize_ids(arg, atoms=set(IdType)):
         return arg,
 
     return tuple(arg)
+
+
+def lazy_name_get(self):
+    """ Evaluate self.name_get() lazily. """
+    names = tools.lazy(lambda: dict(self.name_get()))
+    return [(rid, tools.lazy(operator.getitem, names, rid)) for rid in self.ids]
 
 # keep those imports here to avoid dependency cycle errors
 from .osv import expression

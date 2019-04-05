@@ -21,6 +21,7 @@ from odoo.tools import float_precision, float_repr, float_round, frozendict, \
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DATE_FORMAT
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DATETIME_FORMAT
 from odoo.tools.translate import html_translate, _
+from odoo.models import lazy_name_get
 
 DATE_LENGTH = len(date.today().strftime(DATE_FORMAT))
 DATETIME_LENGTH = len(datetime.now().strftime(DATETIME_FORMAT))
@@ -1983,7 +1984,7 @@ class Many2one(_Relational):
             # access rights, and not the value's access rights.
             try:
                 # performance: value.sudo() prefetches the same records as value
-                return value.sudo().name_get()[0]
+                return lazy_name_get(value.sudo())[0]
             except MissingError:
                 # Should not happen, unless the foreign key is missing.
                 return False
