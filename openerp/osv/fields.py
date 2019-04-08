@@ -1049,12 +1049,25 @@ class many2many(_column):
         obj = model.pool[self._obj]
 
         def link(ids):
-            # beware of duplicates when inserting
-            query = """ INSERT INTO {rel} ({id1}, {id2})
-                        (SELECT %s, unnest(%s)) EXCEPT (SELECT {id1}, {id2} FROM {rel} WHERE {id1}=%s)
+            if ids:
+                links = [(id, r) for r in ids]
+                if cr._cnx.server_version < 95000:
+                    query = """
+                        SELECT {id1}, {id2} FROM {rel}
                     """.format(rel=rel, id1=id1, id2=id2)
-            for sub_ids in cr.split_for_in_conditions(ids):
-                cr.execute(query, (id, list(sub_ids), id))
+                    cr.execute(query)
+                    links = set(links) - set(cr.fetchall() or [])
+                if links:
+                    query = """
+                        INSERT INTO {rel} ({id1}, {id2})
+                        VALUES {values}
+                    """.format(
+                        rel=rel, id1=id1, id2=id2,
+                        values=", ".join(["%s"] * len(links)),
+                    )
+                    if cr._cnx.server_version >= 95000:
+                        query += " ON CONFLICT DO NOTHING"
+                    cr.execute(query, tuple(links))
 
         def unlink_all():
             # remove all records for which user has access rights
