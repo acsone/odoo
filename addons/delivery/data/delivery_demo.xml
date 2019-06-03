@@ -19,6 +19,7 @@
             <field name="delivery_type">base_on_rule</field>
             <field name="product_type">service</field>
             <field name="product_sale_ok" eval="False"/>
+            <field name="categ_id" ref="product.product_category_5"/>
         </record>
 
         <record id="normal_delivery_carrier" model="delivery.carrier">
@@ -29,6 +30,7 @@
             <field name="delivery_type">fixed</field>
             <field name="product_type">service</field>
             <field name="product_sale_ok" eval="False"/>
+            <field name="categ_id" ref="product.product_category_5"/>
         </record>
 
         <record id="delivery_price_rule1" model="delivery.price.rule">
