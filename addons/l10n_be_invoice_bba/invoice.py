@@ -156,8 +156,10 @@ class account_invoice(osv.osv):
                     [('type', '=', 'out_invoice'), ('reference_type', '=', 'bba'),
                      ('reference', '=', vals['reference'])])
                 if same_ids:
-                    raise UserError(_('The BBA Structured Communication has already been used!' \
+                    _logger.info(_('The BBA Structured Communication has already been used!' \
                                         '\nPlease create manually a unique BBA Structured Communication.'))
+                    # raise UserError(_('The BBA Structured Communication has already been used!' \
+                    #                     '\nPlease create manually a unique BBA Structured Communication.'))
         return super(account_invoice, self).create(cr, uid, vals, context=context)
 
     def write(self, cr, uid, ids, vals, context=None):
@@ -177,8 +179,10 @@ class account_invoice(osv.osv):
                         [('id', '!=', inv.id), ('type', '=', 'out_invoice'),
                          ('reference_type', '=', 'bba'), ('reference', '=', vals['reference'])])
                     if same_ids:
-                        raise UserError(_('The BBA Structured Communication has already been used!' \
+                        _logger.info(_('The BBA Structured Communication has already been used!' \
                                             '\nPlease create manually a unique BBA Structured Communication.'))
+                        # raise UserError(_('The BBA Structured Communication has already been used!' \
+                        #                     '\nPlease create manually a unique BBA Structured Communication.'))
         return super(account_invoice, self).write(cr, uid, ids, vals, context)
 
     def copy(self, cr, uid, id, default=None, context=None):
