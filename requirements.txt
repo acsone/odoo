@@ -57,7 +57,7 @@ requests==2.21.0; python_version <= '3.9'
 requests==2.25.1; python_version > '3.9'  # (Jammy) versions < 2.25 aren't compatible w/ urllib3 1.26. Bullseye = 2.25.1. min version = 2.22.0 (Focal)
 urllib3==1.26.5; python_version > '3.9'  # (Jammy) indirect / min version = 1.25.8 (Focal with security backports)
 zeep==3.2.0
-vatnumber==1.2
+python-stdnum==1.8
 vobject==0.9.6.1
 Werkzeug==0.16.1 ; python_version <= '3.9'
 Werkzeug==2.0.2 ; python_version > '3.9'  # (Jammy)
