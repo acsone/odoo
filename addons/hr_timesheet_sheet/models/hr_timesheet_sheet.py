@@ -84,7 +84,7 @@ class HrTimesheetSheet(models.Model):
                         AND id <> %s''',
                     (sheet.date_to, sheet.date_from, new_user_id, sheet.id))
                 if any(self.env.cr.fetchall()):
-                    raise ValidationError(_('You cannot have 2 timesheets that overlap!\nPlease use the menu \'My Current Timesheet\' to avoid this problem.'))
+                    raise ValidationError(_('You cannot have 2 worksheets that overlap!\nPlease use the menu \'My Current worksheet\' to avoid this problem.'))
 
     @api.onchange('employee_id')
     def onchange_employee_id(self):
@@ -93,7 +93,7 @@ class HrTimesheetSheet(models.Model):
             self.user_id = self.employee_id.user_id
 
     def copy(self, *args, **argv):
-        raise UserError(_('You cannot duplicate a timesheet.'))
+        raise UserError(_('You cannot duplicate a worksheet.'))
 
     @api.model
     def create(self, vals):
@@ -147,7 +147,7 @@ class HrTimesheetSheet(models.Model):
         sheets = self.read(['state'])
         for sheet in sheets:
             if sheet['state'] in ('confirm', 'done'):
-                raise UserError(_('You cannot delete a timesheet which is already confirmed.'))
+                raise UserError(_('You cannot delete a worksheet which is already confirmed.'))
 
         analytic_timesheet_toremove = self.env['account.analytic.line']
         for sheet in self:
