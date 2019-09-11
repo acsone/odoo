@@ -19,7 +19,7 @@ class TranslationToolsTestCase(BaseCase):
             #print "2:", repr(quoted)
             unquoted = unquote("".join(quoted.split('"\n"')))
             #print "3:", repr(unquoted)
-            self.assertEquals(str, unquoted)
+            self.assertEqual(str, unquoted)
 
         test_string("""test \nall kinds\n \n o\r
          \\\\ nope\n\n"
@@ -42,7 +42,7 @@ class TranslationToolsTestCase(BaseCase):
                         <field name="foo"/>
                     </form>"""
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms,
             ['Form stuff', 'Blah blah blah', 'Put some more text here'])
 
@@ -51,7 +51,7 @@ class TranslationToolsTestCase(BaseCase):
         terms = []
         source = "Blah blah blah"
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms, [source])
 
     def test_translate_xml_unicode(self):
@@ -59,7 +59,7 @@ class TranslationToolsTestCase(BaseCase):
         terms = []
         source = u"Un heureux évènement"
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms, [source])
 
     def test_translate_xml_text_entity(self):
@@ -67,7 +67,7 @@ class TranslationToolsTestCase(BaseCase):
         terms = []
         source = "Blah&amp;nbsp;blah&amp;nbsp;blah"
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms, [source])
 
     def test_translate_xml_inline1(self):
@@ -79,7 +79,7 @@ class TranslationToolsTestCase(BaseCase):
                         <field name="foo"/>
                     </form>"""
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms,
             ['Form stuff', 'Blah <i>blah</i> blah', 'Put some <b>more text</b> here'])
 
@@ -92,7 +92,7 @@ class TranslationToolsTestCase(BaseCase):
                         <field name="foo"/>
                     </form>"""
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms,
             ['Form stuff', 'Blah <i>blah</i> blah', 'Put <em>some <b>more text</b></em> here'])
 
@@ -109,7 +109,7 @@ class TranslationToolsTestCase(BaseCase):
                         </div>
                     </form>"""
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms,
             ['Form stuff', 'Blah blah blah'])
 
@@ -123,7 +123,7 @@ class TranslationToolsTestCase(BaseCase):
                         </div>
                     </form>"""
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms,
             ['Form stuff', '<span class="fa fa-globe" title="Title stuff"/>'])
 
@@ -137,7 +137,7 @@ class TranslationToolsTestCase(BaseCase):
                         </div>
                     </form>"""
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms, ['Form stuff'])
 
     def test_translate_xml_t(self):
@@ -149,7 +149,7 @@ class TranslationToolsTestCase(BaseCase):
                         stuff after
                     </t>"""
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms,
             ['stuff before', 'stuff after'])
 
@@ -162,7 +162,7 @@ class TranslationToolsTestCase(BaseCase):
                         stuff after
                     </div>"""
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms,
             ['stuff before', 'stuff after'])
 
@@ -174,7 +174,7 @@ class TranslationToolsTestCase(BaseCase):
                         <attribute name="option">Do not translate this</attribute>
                     </field>"""
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms,
             ['Translate this'])
 
@@ -191,7 +191,7 @@ class TranslationToolsTestCase(BaseCase):
                         </ul>
                     </t>"""
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms,
             ['<span class="oe_menu_text">Blah</span>'])
 
@@ -206,10 +206,10 @@ class TranslationToolsTestCase(BaseCase):
                         </t>
                     </Invoice>"""
         result = xml_translate(terms.append, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
         self.assertItemsEqual(terms, ['Oasis'])
         result = xml_translate(lambda term: term, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
 
     def test_translate_xml_invalid_translations(self):
         """ Test xml_translate() with invalid translations. """
@@ -227,21 +227,21 @@ class TranslationToolsTestCase(BaseCase):
                         <field name="foo"/>
                     </form>"""
         result = xml_translate(translations.get, source)
-        self.assertEquals(result, expect)
+        self.assertEqual(result, expect)
 
     def test_translate_html(self):
         """ Test html_translate(). """
         source = """<blockquote>A <h2>B</h2> C</blockquote>"""
         result = html_translate(lambda term: term, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
 
     def test_translate_html_i(self):
         """ Test xml_translate() and html_translate() with <i> elements. """
         source = """<p>A <i class="fa-check"></i> B</p>"""
         result = xml_translate(lambda term: term, source)
-        self.assertEquals(result, """<p>A <i class="fa-check"/> B</p>""")
+        self.assertEqual(result, """<p>A <i class="fa-check"/> B</p>""")
         result = html_translate(lambda term: term, source)
-        self.assertEquals(result, source)
+        self.assertEqual(result, source)
 
 
 class TestTranslation(TransactionCase):

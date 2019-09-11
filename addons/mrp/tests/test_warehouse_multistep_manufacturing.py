@@ -257,7 +257,7 @@ class TestMultistepManufacturingWarehouse(TestMrpCommon):
         self.assertEqual(move_stock_postprod.state, 'waiting')
 
         move_stock_preprod._action_cancel()
-        self.assertEquals(production_order.state, 'confirmed')
+        self.assertEqual(production_order.state, 'confirmed')
         production_order.action_cancel()
         self.assertTrue(move_stock_postprod.state, 'cancel')
 

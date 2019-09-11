@@ -313,11 +313,99 @@ class Http(models.AbstractModel):
         values['editable'] = request.uid and request.website.is_publisher()
         return values
 
-    @classmethod
-    def _get_error_html(cls, env, code, values):
-        if values.get('force_template'):
-            return env['ir.ui.view'].render_template(values['force_template'], values)
-        return super(Http, cls)._get_error_html(env, code, values)
+                if isinstance(response, Exception):
+                    exception = response
+                else:
+                    # if parent excplicitely returns a plain response, then we don't touch it
+                    return response
+            except Exception as e:
+                if 'werkzeug' in config['dev_mode']:
+                    raise e
+                exception = e
+
+            values = dict(
+                exception=exception,
+                traceback=traceback.format_exc(),
+            )
+
+            # only except_orm exceptions contain a message
+            if isinstance(exception, odoo.exceptions.except_orm):
+                values['error_message'] = exception.name
+                code = 400
+
+            if isinstance(exception, werkzeug.exceptions.HTTPException):
+                if exception.code is None:
+                    # Hand-crafted HTTPException likely coming from abort(),
+                    # usually for a redirect response -> return it directly
+                    return exception
+                else:
+                    code = exception.code
+
+            if isinstance(exception, odoo.exceptions.AccessError):
+                code = 403
+
+            if isinstance(exception, QWebException):
+                values.update(qweb_exception=exception)
+
+                # retro compatibility to remove in 12.2
+                exception.qweb = dict(message=exception.message, expression=exception.html)
+
+                if type(exception.error) == odoo.exceptions.AccessError:
+                    code = 403
+
+            values.update(
+                status_message=werkzeug.http.HTTP_STATUS_CODES[code],
+                status_code=code,
+            )
+
+            view_id = code
+            if request.website.is_publisher() and isinstance(exception, werkzeug.exceptions.NotFound):
+                view_id = 'page_404'
+                values['path'] = request.httprequest.path[1:]
+
+            if not request.uid:
+                cls._auth_method_public()
+
+            with registry(request.env.cr.dbname).cursor() as cr:
+                env = api.Environment(cr, request.uid, request.env.context)
+                if code == 500:
+                    logger.error("500 Internal Server Error:\n\n%s", values['traceback'])
+                    View = env["ir.ui.view"]
+                    values['view'] = View
+                    if 'qweb_exception' in values:
+                        try:
+                            # exception.name might be int, string
+                            exception_template = int(exception.name)
+                        except:
+                            exception_template = exception.name
+                        view = View._view_obj(exception_template)
+                        if exception.html and exception.html in view.arch:
+                            values['view'] = view
+                        else:
+                            # There might be 2 cases where the exception code can't be found
+                            # in the view, either the error is in a child view or the code
+                            # contains branding (<div t-att-data="request.browse('ok')"/>).
+                            et = etree.fromstring(view.with_context(inherit_branding=False).read_combined(['arch'])['arch'])
+                            node = et.xpath(exception.path)
+                            line = node is not None and etree.tostring(node[0], encoding='unicode')
+                            if line:
+                                values['view'] = View._views_get(exception_template).filtered(
+                                    lambda v: line in v.arch
+                                )
+                                values['view'] = values['view'] and values['view'][0]
+
+                        # Needed to show reset template on translated pages (`_prepare_qcontext` will set it for main lang)
+                        values['editable'] = request.uid and request.website.is_publisher()
+                elif code == 403:
+                    logger.warning("403 Forbidden:\n\n%s", values['traceback'])
+                elif code == 400:
+                    logger.warning("400 Bad Request:\n\n%s", values['traceback'])
+                try:
+                    html = env['ir.ui.view'].render_template('website.%s' % view_id, values)
+                except Exception:
+                    html = env['ir.ui.view'].render_template('website.http_error', values)
+
+            return werkzeug.wrappers.Response(html, status=code, content_type='text/html;charset=utf-8')
 
     def binary_content(self, xmlid=None, model='ir.attachment', id=None, field='datas',
                        unique=False, filename=None, filename_field='name', download=False,
