@@ -1542,7 +1542,7 @@ class TestStockFlow(TestStockCommon):
             'location_dest_id': self.customer_location})
         # validate this delivery order, it should be in the waiting state
         picking_out.action_assign()
-        self.assertEquals(picking_out.state, "confirmed")
+        self.assertEqual(picking_out.state, "confirmed")
 
         # receive one product in stock
         inventory = self.env['stock.inventory'].create({
@@ -1558,9 +1558,9 @@ class TestStockFlow(TestStockCommon):
         inventory.action_validate()
         # recheck availability of the delivery order, it should be assigned
         picking_out.action_assign()
-        self.assertEquals(len(picking_out.move_lines), 1.0)
-        self.assertEquals(picking_out.move_lines.product_qty, 2.0)
-        self.assertEquals(picking_out.state, "assigned")
+        self.assertEqual(len(picking_out.move_lines), 1.0)
+        self.assertEqual(picking_out.move_lines.product_qty, 2.0)
+        self.assertEqual(picking_out.state, "assigned")
 
     def test_71_picking_state_all_at_once_force_assign(self):
         """ This test will check that the state of the picking is correctly computed according
@@ -1590,7 +1590,7 @@ class TestStockFlow(TestStockCommon):
 
         # validate this delivery order, it should be in the waiting state
         picking_out.action_assign()
-        self.assertEquals(picking_out.state, "confirmed")
+        self.assertEqual(picking_out.state, "confirmed")
 
     def test_72_picking_state_partial_reserve(self):
         """ This test will check that the state of the picking is correctly computed according
@@ -1633,7 +1633,7 @@ class TestStockFlow(TestStockCommon):
 
         # validate this delivery order, it should be in partially available
         picking_out.action_assign()
-        self.assertEquals(picking_out.state, "assigned")
+        self.assertEqual(picking_out.state, "assigned")
 
         # receive one product in stock
         inventory = self.env['stock.inventory'].create({
@@ -1650,7 +1650,7 @@ class TestStockFlow(TestStockCommon):
 
         # recheck availability of the delivery order, it should be assigned
         picking_out.action_assign()
-        self.assertEquals(picking_out.state, "assigned")
+        self.assertEqual(picking_out.state, "assigned")
 
     def test_73_picking_state_partial_force_assign(self):
         """ This test will check that the state of the picking is correctly computed according
@@ -1679,7 +1679,7 @@ class TestStockFlow(TestStockCommon):
 
         # validate this delivery order, it should be in the waiting state
         picking_out.action_assign()
-        self.assertEquals(picking_out.state, "confirmed")
+        self.assertEqual(picking_out.state, "confirmed")
 
     def test_74_move_state_waiting_mto(self):
         """ This test will check that when a move is unreserved, its state changes to 'waiting' if
@@ -1734,9 +1734,9 @@ class TestStockFlow(TestStockCommon):
         move_with_ancestors._do_unreserve()
         other_move._do_unreserve()
 
-        self.assertEquals(move_mto_alone.state, "draft")
-        self.assertEquals(move_with_ancestors.state, "waiting")
-        self.assertEquals(other_move.state, "confirmed")
+        self.assertEqual(move_mto_alone.state, "draft")
+        self.assertEqual(move_with_ancestors.state, "waiting")
+        self.assertEqual(other_move.state, "confirmed")
 
     def test_80_partial_picking_without_backorder(self):
         """ This test will create a picking with an initial demand for a product
@@ -1769,19 +1769,19 @@ class TestStockFlow(TestStockCommon):
         self.assertFalse(picking.backorder_id)
 
         # Checking that the original move is still in the same picking
-        self.assertEquals(move_a.picking_id.id, picking.id)
+        self.assertEqual(move_a.picking_id.id, picking.id)
 
         move_lines = picking.move_lines
         move_done = move_lines.browse(move_a.id)
         move_canceled = move_lines - move_done
 
         # Checking that the original move was set to done
-        self.assertEquals(move_done.product_uom_qty, 4)
-        self.assertEquals(move_done.state, 'done')
+        self.assertEqual(move_done.product_uom_qty, 4)
+        self.assertEqual(move_done.state, 'done')
 
         # Checking that the new move created was canceled
-        self.assertEquals(move_canceled.product_uom_qty, 6)
-        self.assertEquals(move_canceled.state, 'cancel')
+        self.assertEqual(move_canceled.product_uom_qty, 6)
+        self.assertEqual(move_canceled.state, 'cancel')
 
         # Checking that the canceled move is in the original picking
         self.assertIn(move_canceled.id, picking.move_lines.mapped('id'))
@@ -1968,129 +1968,10 @@ class TestStockFlow(TestStockCommon):
         f.scheduled_date = fields.Datetime.now()
         picking = f.save()
 
-        self.assertEquals(f.state, 'draft')
+        self.assertEqual(f.state, 'draft')
         picking.action_confirm()
 
         f = Form(picking, view='stock.view_picking_form')
         f.scheduled_date = fields.Datetime.now()
         picking = f.save()
-
-        self.assertEquals(f.state, 'confirmed')
-
-    def test_stock_move_with_partner_id(self):
-        """ Ensure that the partner_id of the picking entry is
-        transmitted to the SM upon object creation.
-        """
-        partner_1 = self.env['res.partner'].create({'name': 'Hubert Bonisseur de la Bath'})
-        partner_2 = self.env['res.partner'].create({'name': 'Donald Clairvoyant du Bled'})
-        product = self.env['product.product'].create({'name': 'Un petit coup de polish', 'type': 'product'})
-        wh = self.env['stock.warehouse'].search([('company_id', '=', self.env.company.id)], limit=1)
-
-        f = Form(self.env['stock.picking'])
-        f.partner_id = partner_1
-        f.picking_type_id = wh.out_type_id
-        with f.move_ids_without_package.new() as move:
-            move.product_id = product
-            move.product_uom_qty = 5
-        picking = f.save()
-
-        self.assertEqual(picking.move_lines.partner_id, partner_1)
-
-        picking.write({'partner_id': partner_2.id})
-        self.assertEqual(picking.move_lines.partner_id, partner_2)
-
-    def test_cancel_picking_with_scrapped_products(self):
-        """
-        The user scraps some products of a picking, then cancel this picking
-        The test ensures that the scrapped SM is not cancelled
-        """
-        stock_location = self.env['stock.location'].browse(self.stock_location)
-        self.env['stock.quant']._update_available_quantity(self.productA, stock_location, 10)
-
-        picking = self.env['stock.picking'].create({
-            'picking_type_id': self.picking_type_out,
-            'location_id': self.supplier_location,
-            'location_dest_id': self.stock_location,
-        })
-        move = self.env['stock.move'].create({
-            'name': self.productA.name,
-            'product_id': self.productA.id,
-            'product_uom_qty': 1,
-            'product_uom': self.productA.uom_id.id,
-            'picking_id': picking.id,
-            'location_id': self.supplier_location,
-            'location_dest_id': self.stock_location,
-        })
-
-        picking.action_confirm()
-        picking.action_assign()
-
-        scrap = self.env['stock.scrap'].create({
-            'picking_id': picking.id,
-            'product_id': self.productA.id,
-            'product_uom_id': self.productA.uom_id.id,
-            'scrap_qty': 1.0,
-        })
-        scrap.do_scrap()
-
-        picking.action_cancel()
-
-        self.assertEqual(picking.state, 'cancel')
-        self.assertEqual(move.state, 'cancel')
-        self.assertEqual(scrap.move_id.state, 'done')
-
-    def test_assign_sm_to_existing_picking(self):
-        """
-        Suppose:
-            - Two warehouses WH01, WH02
-            - Three products with the route 'WH02 supplied by WH01'
-        We trigger an orderpoint for each product
-        There should be two pickings (out from WH01 + in to WH02)
-        """
-        wh01_address, wh02_address = self.env['res.partner'].create([{
-            'name': 'Address %s' % i,
-            'parent_id': self.env.company.id,
-            'type': 'delivery',
-        } for i in [1, 2]])
-
-        warehouse01 = self.env['stock.warehouse'].search([('company_id', '=', self.env.company.id)], limit=1)
-        warehouse01.partner_id = wh01_address
-        warehouse02 = self.env['stock.warehouse'].create({
-            'name': 'Second Warehouse',
-            'code': 'WH02',
-            'partner_id': wh02_address.id,
-            'resupply_wh_ids': [(6, 0, warehouse01.ids)],
-        })
-
-        wh01_stock_location = warehouse01.lot_stock_id
-        wh02_stock_location = warehouse02.lot_stock_id
-        products = self.productA + self.productB + self.productC
-
-        for product in products:
-            product.route_ids = [(6, 0, warehouse02.resupply_route_ids.ids)]
-            self.env['stock.quant']._update_available_quantity(product, wh01_stock_location, 10)
-            self.env['stock.warehouse.orderpoint'].create({
-                'name': 'RR for %s' % product.name,
-                'warehouse_id': warehouse02.id,
-                'location_id': wh02_stock_location.id,
-                'product_id': product.id,
-                'product_min_qty': 1,
-                'product_max_qty': 5,
-            })
-
-        self.env['procurement.group'].run_scheduler()
-
-        out_moves = self.env['stock.move'].search([('product_id', 'in', products.ids), ('picking_id', '!=', False), ('location_id', '=', wh01_stock_location.id)])
-        in_moves = self.env['stock.move'].search([('product_id', 'in', products.ids), ('picking_id', '!=', False), ('location_dest_id', '=', wh02_stock_location.id)])
-
-        out_picking = out_moves[0].picking_id
-        self.assertEqual(len(out_moves), 3)
-        self.assertEqual(out_moves.product_id, products)
-        self.assertEqual(out_moves.picking_id, out_picking, 'All SM should be part of the same picking')
-        self.assertEqual(out_picking.partner_id, wh02_address, 'It should be an outgoing picking to %s' % wh02_address.display_name)
-
-        in_picking = in_moves[0].picking_id
-        self.assertEqual(len(in_moves), 3)
-        self.assertEqual(in_moves.product_id, products)
-        self.assertEqual(in_moves.picking_id, in_picking, 'All SM should be part of the same picking')
-        self.assertEqual(in_picking.partner_id, wh01_address, 'It should be an incoming picking from %s' % wh01_address.display_name)
+        self.assertEqual(f.state, 'confirmed')

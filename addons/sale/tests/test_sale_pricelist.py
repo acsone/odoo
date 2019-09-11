@@ -126,7 +126,7 @@ class TestSaleOrder(TestCommonSaleNoChart):
             line._onchange_discount()
         # Check that pricelist of the SO has been applied on the sale order lines or not
         for line in self.sale_order.order_line:
-            self.assertEquals(line.price_unit, line.product_id.list_price, 'Pricelist of the SO should not be applied on an order line %s' % (line.name,))
+            self.assertEqual(line.price_unit, line.product_id.list_price, 'Pricelist of the SO should not be applied on an order line %s' % (line.name,))
 
     def test_sale_with_pricelist_discount_included(self):
         """ Test SO with the pricelist and check unit price appeared on its lines """
@@ -139,11 +139,11 @@ class TestSaleOrder(TestCommonSaleNoChart):
         # Check that pricelist of the SO has been applied on the sale order lines or not
         for line in self.sale_order.order_line:
             if line.product_id == self.product_order:
-                self.assertEquals(line.price_unit, self.pricelist_discount_incl_item3.fixed_price, 'Price of product_order should be %s applied on the order line' % (self.pricelist_discount_incl_item3.fixed_price,))
+                self.assertEqual(line.price_unit, self.pricelist_discount_incl_item3.fixed_price, 'Price of product_order should be %s applied on the order line' % (self.pricelist_discount_incl_item3.fixed_price,))
             else:  # only services (service_order and service_deliver)
                 for item in self.sale_order.pricelist_id.item_ids.filtered(lambda l: l.product_tmpl_id == line.product_id.product_tmpl_id):
                     price = item.percent_price
-                    self.assertEquals(price, (line.product_id.list_price - line.price_unit) / line.product_id.list_price * 100, 'Pricelist of the SO should be applied on an order line %s' % (line.product_id.name,))
+                    self.assertEqual(price, (line.product_id.list_price - line.price_unit) / line.product_id.list_price * 100, 'Pricelist of the SO should be applied on an order line %s' % (line.product_id.name,))
 
     def test_sale_with_pricelist_discount_excluded(self):
         """ Test SO with the pricelist 'discount displayed' and check discount and unit price appeared on its lines """
@@ -165,55 +165,12 @@ class TestSaleOrder(TestCommonSaleNoChart):
         for line in self.sale_order.order_line:
             if line.product_id.categ_id in self.sale_order.pricelist_id.item_ids.mapped('categ_id'):  # reduction per category (consummable only)
                 for item in self.sale_order.pricelist_id.item_ids.filtered(lambda l: l.categ_id == line.product_id.categ_id):
-                    self.assertEquals(line.discount, item.price_discount, "Discount should be displayed on order line %s since its category get some discount" % (line.name,))
-                self.assertEquals(line.price_unit, line.product_id.standard_price, "Price unit should be the cost price for product %s" % (line.name,))
+                    self.assertEqual(line.discount, item.price_discount, "Discount should be displayed on order line %s since its category get some discount" % (line.name,))
+                self.assertEqual(line.price_unit, line.product_id.standard_price, "Price unit should be the cost price for product %s" % (line.name,))
             else:
                 if line.product_id == self.service_order:  # reduction for this product
-                    self.assertEquals(line.discount, 20.0, "Discount for product %s should be 20 percent with pricelist %s" % (line.name, self.pricelist_discount_excl.name))
-                    self.assertEquals(line.price_unit, line.product_id.list_price, 'Unit price of order line should be a sale price as the pricelist not applied on the other category\'s product')
+                    self.assertEqual(line.discount, 20.0, "Discount for product %s should be 20 percent with pricelist %s" % (line.name, self.pricelist_discount_excl.name))
+                    self.assertEqual(line.price_unit, line.product_id.list_price, 'Unit price of order line should be a sale price as the pricelist not applied on the other category\'s product')
                 else:  # no discount for the rest
-                    self.assertEquals(line.discount, 0.0, 'Pricelist of SO should not be applied on an order line')
-                    self.assertEquals(line.price_unit, line.product_id.list_price, 'Unit price of order line should be a sale price as the pricelist not applied on the other category\'s product')
-
-
-@tagged('post_install', '-at_install')
-class TestSalePostInstall(TestSaleOrder):
-    """ This test class regroup the test(s) that ensure that no other module break the discount displayed pricelist.
-    """
-    def test_sale_with_pricelist_discount_excluded_2(self):
-        """ Test SO with the pricelist 'discount displayed' and check discount and unit price appeared on its lines
-        When product are added after pricelist and the onchange should be trigger automatically.
-        """
-        # Add group 'Discount on Lines' to the user
-        self.env.user.write({'groups_id': [(4, self.env.ref('product.group_discount_per_so_line').id)]})
-
-        # Set product category on consumable products (for the pricelist item applying on this category)
-        self.product_order.write({'categ_id': self.product_category_1.id})
-
-        # Remove current SO lines
-        self.sale_order.write({'order_line': [(5,)]})
-
-        # Change the pricelist
-        self.sale_order.write({'pricelist_id': self.pricelist_discount_excl.id})
-        self.env['sale.order.line'].create({
-            'order_id': self.sale_order.id,
-            'name': 'Dummy1',
-            'product_id': 1,
-        })
-
-        with Form(self.sale_order) as so_form:
-            sol_form = so_form.order_line.edit(0)
-            sol_form.product_id = self.service_order
-
-            self.assertEqual(sol_form.product_id, self.service_order)
-            self.assertEqual(sol_form.price_unit, self.service_order.list_price,
-                             "Unit price of order line should be a sale price as the pricelist not applied on the other category\'s product")
-            self.assertEqual(sol_form.discount, 20,
-                             "Discount should be displayed on order line since the product get some discount")
-
-            sol_form.product_id = self.product_order
-            self.assertEqual(sol_form.product_id, self.product_order)
-            self.assertEqual(sol_form.price_unit, self.product_order.standard_price,
-                             "Price unit should be the cost price for product")
-            self.assertEqual(sol_form.discount, 10,
-                             "Discount should be displayed on order line since its category get some discount")
+                    self.assertEqual(line.discount, 0.0, 'Pricelist of SO should not be applied on an order line')
+                    self.assertEqual(line.price_unit, line.product_id.list_price, 'Unit price of order line should be a sale price as the pricelist not applied on the other category\'s product')

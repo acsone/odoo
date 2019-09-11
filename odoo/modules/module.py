@@ -490,7 +490,7 @@ def _get_tests_modules(path, module):
         _logger.exception('Can not `import %s`.', module)
         return []
     if hasattr(mod, 'fast_suite') or hasattr(mod, 'checks'):
-        _logger.warn(
+        _logger.warning(
             "Found deprecated fast_suite or checks attribute in test module "
             "%s. These have no effect in or after version 8.0.",
             mod.__name__)
