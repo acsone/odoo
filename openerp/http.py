@@ -1634,12 +1634,14 @@ class Root(object):
             threading.current_thread().query_count = 0
             threading.current_thread().query_time = 0
             threading.current_thread().perf_t0 = time.time()
+            threading.current_thread().remote_user = httprequest.headers.environ.get('HTTP_REMOTE_USER', None)
 
             explicit_session = self.setup_session(httprequest)
             self.setup_db(httprequest)
             self.setup_lang(httprequest)
 
             request = self.get_request(httprequest)
+            threading.current_thread().session_user = request.httpsession.login
 
             def _dispatch_nodb():
                 try:
@@ -1672,6 +1674,7 @@ class Root(object):
                             result = _dispatch_nodb()
                     else:
                         result = ir_http._dispatch()
+                        threading.current_thread().odoo_user = request.env.user.login
                         openerp.modules.registry.RegistryManager.signal_caches_change(db)
                 else:
                     result = _dispatch_nodb()

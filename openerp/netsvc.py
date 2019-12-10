@@ -109,6 +109,9 @@ class PerfFilter(logging.Filter):
             remaining_time = time.time() - perf_t0 - query_time
             record.perf_info = '%s %s %s' % self.format_perf(query_count, query_time, remaining_time)
             delattr(threading.current_thread(), "query_count")
+            record.remote_user = threading.current_thread().remote_user
+            record.odoo_user = threading.current_thread().odoo_user
+            record.session_user = threading.current_thread().session_user
         else:
             record.perf_info = "- - -"
         return True
@@ -153,6 +156,9 @@ def init_logger():
     def makeRecord(*args, **kwargs):
         record = old_make_record(*args, **kwargs)
         record.perf_info = ""
+        record.remote_user = None
+        record.odoo_user = None
+        record.session_user = None
         return record
 
     logging.Logger.makeRecord = makeRecord
@@ -163,7 +169,7 @@ def init_logger():
     resetlocale()
 
     # create a format for log messages and dates
-    format = '%(asctime)s %(pid)s %(levelname)s %(dbname)s %(name)s: %(message)s %(perf_info)s'
+    format = '%(asctime)s %(pid)s %(levelname)s %(dbname)s %(name)s: %(message)s %(perf_info)s - USER Remote=%(remote_user)s Odoo=%(odoo_user)s Session=%(session_user)s'
     # Normal Handler on stderr
     handler = logging.StreamHandler()
 
