@@ -1674,7 +1674,7 @@ class Root(object):
                             result = _dispatch_nodb()
                     else:
                         result = ir_http._dispatch()
-                        threading.current_thread().odoo_user = request.env.user.login
+                        threading.current_thread().odoo_user = request.env.uid
                         openerp.modules.registry.RegistryManager.signal_caches_change(db)
                 else:
                     result = _dispatch_nodb()
