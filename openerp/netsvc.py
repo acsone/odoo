@@ -98,8 +98,8 @@ LEVEL_COLOR_MAPPING = {
 
 
 class PerfFilter(logging.Filter):
-    def format_perf(self, query_count, query_time, remaining_time):
-        return ("%d" % query_count, "%.3f" % query_time, "%.3f" % remaining_time)
+    def format_perf(self, query_count, query_time, remaining_time, remote, uid, session):
+        return "%d" % query_count, "%.3f" % query_time, "%.3f" % remaining_time, remote, uid, session
 
     def filter(self, record):
         if hasattr(threading.current_thread(), "query_count"):
@@ -107,18 +107,19 @@ class PerfFilter(logging.Filter):
             query_time = threading.current_thread().query_time
             perf_t0 = threading.current_thread().perf_t0
             remaining_time = time.time() - perf_t0 - query_time
-            record.perf_info = '%s %s %s' % self.format_perf(query_count, query_time, remaining_time)
+            session = threading.current_thread().session_user
+            remote = threading.current_thread().remote_user
+            uid = threading.current_thread().odoo_user
+            record.perf_info = '%s %s %s Remote=%s Odoo=%s Session=%s' % self.format_perf(
+                query_count, query_time, remaining_time, remote, uid, session)
             delattr(threading.current_thread(), "query_count")
-            record.remote_user = threading.current_thread().remote_user
-            record.odoo_user = threading.current_thread().odoo_user
-            record.session_user = threading.current_thread().session_user
         else:
-            record.perf_info = "- - -"
+            record.perf_info = "- - - Remote=- Odoo=- Session=-"
         return True
 
 
 class ColoredPerfFilter(PerfFilter):
-    def format_perf(self, query_count, query_time, remaining_time):
+    def format_perf(self, query_count, query_time, remaining_time, remote, uid, session):
         def colorize_time(time, format, low=1, high=5):
             if time > high:
                 return COLOR_PATTERN % (30 + RED, 40 + DEFAULT, format % time)
@@ -128,8 +129,11 @@ class ColoredPerfFilter(PerfFilter):
         return (
             colorize_time(query_time, "%.3f", 100, 1000),
             colorize_time(query_time, "%.3f", 0.1, 3),
-            colorize_time(remaining_time, "%.3f", 1, 5)
-            )
+            colorize_time(remaining_time, "%.3f", 1, 5),
+            colorize_time(remote, "%s"),
+            colorize_time(uid, "%s"),
+            colorize_time(session, "%s")
+        )
 
 
 class DBFormatter(logging.Formatter):
@@ -156,9 +160,6 @@ def init_logger():
     def makeRecord(*args, **kwargs):
         record = old_make_record(*args, **kwargs)
         record.perf_info = ""
-        record.remote_user = None
-        record.odoo_user = None
-        record.session_user = None
         return record
 
     logging.Logger.makeRecord = makeRecord
@@ -169,7 +170,7 @@ def init_logger():
     resetlocale()
 
     # create a format for log messages and dates
-    format = '%(asctime)s %(pid)s %(levelname)s %(dbname)s %(name)s: %(message)s %(perf_info)s - USER Remote=%(remote_user)s Odoo=%(odoo_user)s Session=%(session_user)s'
+    format = '%(asctime)s %(pid)s %(levelname)s %(dbname)s %(name)s: %(message)s %(perf_info)s'
     # Normal Handler on stderr
     handler = logging.StreamHandler()
 

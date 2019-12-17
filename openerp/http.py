@@ -1634,15 +1634,15 @@ class Root(object):
             threading.current_thread().query_count = 0
             threading.current_thread().query_time = 0
             threading.current_thread().perf_t0 = time.time()
-            threading.current_thread().remote_user = httprequest.headers.environ.get('HTTP_REMOTE_USER', None)
-            threading.current_thread().odoo_user = None
+            threading.current_thread().remote_user = httprequest.headers.environ.get('HTTP_REMOTE_USER', "-")
+            threading.current_thread().odoo_user = "-"
 
             explicit_session = self.setup_session(httprequest)
             self.setup_db(httprequest)
             self.setup_lang(httprequest)
 
             request = self.get_request(httprequest)
-            threading.current_thread().session_user = request.httpsession.login
+            threading.current_thread().session_user = request.httpsession.get('login') if request.httprequest else "-"
 
             def _dispatch_nodb():
                 try:
