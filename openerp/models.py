@@ -3575,7 +3575,8 @@ class BaseModel(object):
            :raise UserError: * if current ir.rules do not permit this operation.
            :return: None if the operation is allowed
         """
-        if uid == SUPERUSER_ID:
+        if uid == SUPERUSER_ID or \
+                type(uid).__name__ == 'BaseSuspendSecurityUid':
             return
 
         if self.is_transient():
