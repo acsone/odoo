@@ -270,7 +270,7 @@ class RatingMixin(models.AbstractModel):
             rating = Rating.search([('res_model', '=', self._name), ('res_id', '=', self.ids[0])], limit=1)
         if rating:
             rating.write({'rating': rate, 'feedback': feedback, 'consumed': True})
-            if hasattr(self, 'message_post'):
+            if hasattr(self, 'message_post') and not self.env.context.get('do_not_post_rating_message', False):
                 feedback = tools.plaintext2html(feedback or '')
                 self.message_post(
                     body="<img src='/rating/static/src/img/rating_%s.png' alt=':%s/10' style='width:18px;height:18px;float:left;margin-right: 5px;'/>%s"
