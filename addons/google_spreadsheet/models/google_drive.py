@@ -59,9 +59,9 @@ class GoogleDrive(models.Model):
         }
         try:
             req = requests.post(
-                'https://sheets.googleapis.com/v4/spreadsheets/%s/values:batchUpdate?%s' % (spreadsheet_key, werkzeug.url_encode({'access_token': access_token})),
-                data=json.dumps(request),
-                headers={'content-type': 'application/json', 'If-Match': '*'},
+                'https://spreadsheets.google.com/feeds/cells/%s/od6/private/full/batch?%s' % (spreadsheet_key, werkzeug.urls.url_encode({'v': 3, 'access_token': access_token})),
+                data=request,
+                headers={'content-type': 'application/atom+xml', 'If-Match': '*'},
                 timeout=TIMEOUT,
             )
         except IOError:
