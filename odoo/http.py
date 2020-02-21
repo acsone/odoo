@@ -55,7 +55,6 @@ from .tools.func import lazy_property
 from .tools import ustr, consteq, frozendict, pycompat, unique, date_utils
 from .tools.mimetypes import guess_mimetype
 from .tools._vendor import sessions
-from .tools._vendor.useragents import UserAgent
 from .modules.module import module_manifest
 
 
