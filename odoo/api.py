@@ -18,7 +18,6 @@ import logging
 from collections import defaultdict
 from collections.abc import Mapping
 from contextlib import contextmanager
-from copy import deepcopy
 from inspect import signature
 from pprint import pformat
 from weakref import WeakSet

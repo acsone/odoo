@@ -19,13 +19,8 @@ from werkzeug.utils import escape as _escape
 
 from odoo.tools import pycompat, freehash, wrap_values
 
-try:
-    import builtins
-    builtin_defaults = {name: getattr(builtins, name) for name in dir(builtins)}
-except ImportError:
-    # pylint: disable=bad-python3-import
-    import __builtin__
-    builtin_defaults = {name: getattr(__builtin__, name) for name in dir(__builtin__)}
+import builtins
+builtin_defaults = {name: getattr(builtins, name) for name in dir(builtins)}
 
 try:
     import astor
