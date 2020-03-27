@@ -110,6 +110,17 @@ odoo.define('website_form.animation', function (require) {
                         // If the server return a list of bad fields, show these fields for users
                         self.check_error_fields(result_data.error_fields);
                     }
+                    if (result_data.error_msg) {
+                        let $error_span = self.$target.find(
+                            '#o_website_form_result'
+                        );
+                        if ($error_span.length > 0) {
+                            $error_span[0].insertAdjacentText(
+                                "beforeend",
+                                result_data.error_msg
+                            );
+                        }
+                    }
                 } else {
                     // Success, redirect or update status
                     var success_page = self.$target.attr('data-success_page');
