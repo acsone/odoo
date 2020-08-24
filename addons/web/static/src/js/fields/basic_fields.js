@@ -335,6 +335,7 @@ var InputField = DebouncedField.extend({
      */
     _onNavigationMove: function (ev) {
         this._super.apply(this, arguments);
+        var x = 1;
 
         // the following code only makes sense in edit mode, with an input
         if (this.mode === 'edit' && ev.data.direction !== 'cancel') {
@@ -354,6 +355,27 @@ var InputField = DebouncedField.extend({
                 } else {
                     this.removeInvalidClass();
                 }
+            }
+            if (ev.data.direction === 'down' && this.viewType === 'list') {
+                var x = 1;
+                var parent = this.getParent();
+
+                if (parent.arch && parent.arch.tag === 'tree') {
+                    console.log("moving to side line")
+                    parent._moveToSideLine(true, {force_create: false, cellIndex:parent.currentFieldIndex }).then(function() {
+                        // parent._selectCell(parent.currentFieldIndex, parent.currentRow + 1, {force: true})
+                    })
+                    x = 2;
+
+
+                    // var recordid = parent._getRecordID(parent.currentRow + 1)
+                    //
+                    // var $row = parent.$el.find('tr[data-id="'+ recordid + '"]');
+                    // var input_name = this.tagName + '[name="' + this.name + '"]';
+                    // $row.find(input_name).focus()
+                }
+                // this.trigger_up('navigation_move', ev);
+                ev.stopPropagation();
             }
         }
     },

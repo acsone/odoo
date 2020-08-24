@@ -644,6 +644,7 @@ var ListController = BasicController.extend({
             action: function () {
                 self._setMode('edit', ev.data.recordId)
                     .then(ev.data.onSuccess);
+                console.log(ev.data.recordId);
             },
         });
     },

@@ -413,7 +413,6 @@ class ProductProduct(models.Model):
 
     def name_get(self):
         # TDE: this could be cleaned a bit I think
-
         def _name_get(d):
             name = d.get('name', '')
             code = self._context.get('display_default_code', True) and d.get('default_code', False) or False

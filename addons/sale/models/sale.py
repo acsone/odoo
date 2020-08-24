@@ -1617,6 +1617,7 @@ class SaleOrderLine(models.Model):
         return [
             'product_id', 'name', 'price_unit', 'product_uom', 'product_uom_qty',
             'tax_id', 'analytic_tag_ids'
+            'tax_id', 'analytic_tag_ids'
         ]
 
     @api.onchange('product_id', 'price_unit', 'product_uom', 'product_uom_qty', 'tax_id')

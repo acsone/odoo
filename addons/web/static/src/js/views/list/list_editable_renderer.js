@@ -930,7 +930,8 @@ ListRenderer.include({
     _moveToSideLine: function (next, options) {
         options = options || {};
         const recordID = this._getRecordID(this.currentRow);
-        this.commitChanges(recordID).then(() => {
+        let def_cell_index = options.cellIndex || 0;
+        return this.commitChanges(recordID).then(() => {
             const record = this._getRecord(recordID);
             const multiEdit = this.isInMultipleRecordEdition(recordID);
             if (!multiEdit) {
@@ -945,7 +946,7 @@ ListRenderer.include({
             // compute the index of the next (record) row to select, if any
             const side = next ? 'first' : 'last';
             const borderRowIndex = this._getBorderRow(side).prop('rowIndex') - 1;
-            const cellIndex = next ? 0 : this.allFieldWidgets[recordID].length - 1;
+            const cellIndex = next ? def_cell_index : this.allFieldWidgets[recordID].length - 1;
             const cellOptions = { inc: next ? 1 : -1, force: true };
             const $currentRow = this._getRow(recordID);
             const $nextRow = this._getNearestEditableRow($currentRow, next);
@@ -1169,6 +1170,26 @@ ListRenderer.include({
             var $td = $('<td>', {class: 'o_list_record_remove'}).append($icon);
             $row.append($td);
         }
+
+        // var $tr = $('<tr/>');
+        //
+        // var $td = $('<td/>');
+        //
+        //     _.each(this.creates, function (create, index) {
+        //         var $a = $('<a href="#" role="button">')
+        //             .attr('data-context', create.context)
+        //             .text(create.string);
+        //         if (index > 0) {
+        //             $a.addClass('ml16');
+        //         }
+        //         $td.append($a);
+        //     });
+        //
+        // $tr.append($td);
+        //
+        //
+        // $row.insertAfter($tr)
+
         return $row;
     },
     /**
@@ -1183,6 +1204,7 @@ ListRenderer.include({
      */
     _renderRows: function () {
         var $rows = this._super();
+
         if (this.addCreateLine) {
             var $tr = $('<tr>');
             var colspan = this._getNumberOfCols();
@@ -1208,6 +1230,14 @@ ListRenderer.include({
                 $td.append($a);
             });
         }
+        var $new_rows = $('');
+
+        var cur_section = undefined;
+
+        _.each($rows, function($row) {
+           $new_rows.insertAfter($row);
+        });
+
         return $rows;
     },
     /**

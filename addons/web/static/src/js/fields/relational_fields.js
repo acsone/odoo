@@ -797,6 +797,7 @@ var FieldMany2One = AbstractField.extend({
      * @param {OdooEvent} ev
      */
     _onNavigationMove: function (ev) {
+        var x = 1;
         // TODO Maybe this should be done in a mixin or, better, the m2o field
         // should be an InputField (but this requires some refactoring).
         basicFields.InputField.prototype._onNavigationMove.apply(this, arguments);
@@ -1484,6 +1485,7 @@ var FieldX2Many = AbstractField.extend({
      * @private
      */
     _onNavigationMove: function (ev) {
+        var x  = 1;
         if (this.view.arch.tag === 'tree') {
             var $curControl = this.renderer.$('.o_field_x2many_list_row_add a:focus');
             if ($curControl.length) {
