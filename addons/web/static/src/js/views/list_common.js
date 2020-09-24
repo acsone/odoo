@@ -129,7 +129,11 @@ var Record = Class.extend(/** @lends Record# */{
             if (typeof val !== 'object') {
                 output[k] = val;
             } else if (val instanceof Array) {
-                output[k] = val[0];
+                if (val.some(isNaN)){ //m2o [1, "display_name"]
+                    output[k] = val[0];
+                } else { //m2M O2M [1, 2, 5]
+                    output[k] = val;
+                }
             } else {
                 throw new Error(_.str.sprintf(_t("Can't convert value %s to context"), val));
             }
