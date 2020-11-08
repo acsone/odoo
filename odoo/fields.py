@@ -206,6 +206,9 @@ class Field(MetaField('DummyField', (object,), {})):
     type = None                         # type of the field (string)
     relational = False                  # whether the field is a relational one
     translate = False                   # whether the field is translated
+    translation_storage = None          # possible values: None, json
+                                        # None: Translations are stored into ir.translation model
+                                        # json: Translations are stored into current model as jsonb column
 
     column_type = None                  # database column type (ident, spec)
     column_format = '%s'                # placeholder for value in queries
@@ -1349,6 +1352,9 @@ class _String(Field):
     _slots = {
         'translate': False,             # whether the field is translated
         'prefetch': None,
+        'translation_storage': None     # possible values: None, json
+                                        # None: Translations are stored into ir.translation model
+                                        # json: Translations are stored into current model as jsonb column
     }
 
     def __init__(self, string=Default, **kwargs):
@@ -1364,6 +1370,23 @@ class _String(Field):
             self.prefetch = not callable(self.translate)
 
     _related_translate = property(attrgetter('translate'))
+
+    def update_db_index(self, model, column):
+        if self.translation_storage == "json":
+            langs = model.env['res.lang'].get_installed()
+            for code, _ in langs:
+                indexname = '%s_%s_%s_index' % (model._table, self.name, code)
+                if self.index:
+                    try:
+                        with model._cr.savepoint(flush=False):
+                            sql.create_json_translation_index(
+                                model._cr, indexname, model._table, self.name, code)
+                    except psycopg2.OperationalError:
+                        _schema.error("Unable to add index for %s", self)
+                else:
+                    sql.drop_index(model._cr, indexname, model._table)
+        else:
+            super().update_db_index(model, column)
 
     def _description_translate(self, env):
         return bool(self.translate)
@@ -1430,7 +1453,10 @@ class _String(Field):
         single_lang = len(records.env['res.lang'].get_installed()) <= 1
         if self.translate:
             lang = records.env.lang or None  # used in _update_translations below
-            if single_lang:
+            if self.translation_storage == 'json':
+                update_column = True
+                update_trans = False
+            elif single_lang:
                 # a single language is installed
                 update_trans = True
             elif callable(self.translate) or lang == 'en_US':
@@ -1449,7 +1475,7 @@ class _String(Field):
             for rid in real_recs._ids:
                 # cache_value is already in database format
                 towrite[rid][self.name] = cache_value
-            if self.translate is True and cache_value is not None:
+            if self.translate is True and cache_value is not None and self.translation_storage != "json":
                 tname = "%s,%s" % (records._name, self.name)
                 records.env['ir.translation']._set_source(tname, real_recs._ids, value)
             if self.translate:
@@ -1512,7 +1538,7 @@ class Char(_String):
     :type translate: bool or callable
     """
     type = 'char'
-    column_cast_from = ('text',)
+    column_cast_from = ('text', 'jsonb')
     _slots = {
         'size': None,                   # maximum size of values (deprecated)
         'trim': True,                   # whether value is trimmed (only by web client)
@@ -1520,7 +1546,8 @@ class Char(_String):
 
     @property
     def column_type(self):
-        return ('varchar', pg_varchar(self.size))
+        return ('varchar', pg_varchar(self.size)) if self.translation_storage != "json" else \
+               ('jsonb', 'jsonb')
 
     def update_db_column(self, model, column):
         if (
@@ -1566,13 +1593,17 @@ class Text(_String):
     :type translate: bool or callable
     """
     type = 'text'
-    column_type = ('text', 'text')
-    column_cast_from = ('varchar',)
+    column_cast_from = ('varchar', 'jsonb')
 
     def convert_to_cache(self, value, record, validate=True):
         if value is None or value is False:
             return None
         return ustr(value)
+
+    @property
+    def column_type(self):
+        return ('text', 'text') if self.translation_storage != "json" else \
+               ('jsonb', 'jsonb')
 
 
 class Html(_String):
