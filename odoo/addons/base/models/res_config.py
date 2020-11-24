@@ -428,7 +428,7 @@ class ResConfigSettings(models.TransientModel, ResConfigModuleInstallationMixin)
                 self._onchange_methods[name].append(method)
 
     @api.model
-    def _get_classified_fields(self):
+    def _get_classified_fields(self, fnames=None):
         """ return a dictionary with the fields classified by category::
 
                 {   'default': [('default_foo', 'model', 'foo'), ...],
@@ -441,16 +441,13 @@ class ResConfigSettings(models.TransientModel, ResConfigModuleInstallationMixin)
         IrModule = self.env['ir.module.module']
         IrModelData = self.env['ir.model.data']
         Groups = self.env['res.groups']
-
-        def ref(xml_id):
-            res_model, res_id = IrModelData._xmlid_to_res_model_res_id(xml_id)
-            return self.env[res_model].browse(res_id)
-
+        ref = self.env.ref
         if fnames is None:
             fnames = self._fields.keys()
 
         defaults, groups, modules, configs, others = [], [], [], [], []
-        for name, field in self._fields.items():
+        for name in fnames:
+            field = self._fields[name]
             if name.startswith('default_'):
                 if not hasattr(field, 'default_model'):
                     raise Exception("Field %s without attribute 'default_model'" % field)
@@ -487,7 +484,7 @@ class ResConfigSettings(models.TransientModel, ResConfigModuleInstallationMixin)
     def default_get(self, fields):
         IrDefault = self.env['ir.default']
         IrConfigParameter = self.env['ir.config_parameter'].sudo()
-        classified = self._get_classified_fields()
+        classified = self._get_classified_fields(fields)
 
         res = super(ResConfigSettings, self).default_get(fields)
 
