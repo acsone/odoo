@@ -443,8 +443,15 @@ class ResConfigSettings(models.TransientModel, ResConfigModuleInstallationMixin)
                 }
         """
         IrModule = self.env['ir.module.module']
+        IrModelData = self.env['ir.model.data']
         Groups = self.env['res.groups']
-        ref = self.env.ref
+
+        def ref(xml_id):
+            res_model, res_id = IrModelData._xmlid_to_res_model_res_id(xml_id)
+            return self.env[res_model].browse(res_id)
+
+        if fnames is None:
+            fnames = self._fields.keys()
 
         defaults, groups, modules, configs, others = [], [], [], [], []
         for name, field in self._fields.items():
