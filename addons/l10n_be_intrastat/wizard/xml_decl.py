@@ -296,7 +296,7 @@ class XmlDeclaration(models.TransientModel):
             #We have the key
             #calculate amounts
             if inv_line.price_unit and inv_line.quantity:
-                amount = inv_line.price_unit * inv_line.quantity
+                amount = inv_line.price_subtotal
             else:
                 amount = 0
             weight = (inv_line.product_id.weight or 0.0) * \
