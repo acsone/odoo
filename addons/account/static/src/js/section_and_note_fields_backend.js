@@ -17,26 +17,37 @@ var SectionAndNoteListRenderer = ListRenderer.extend({
      * We want section and note to take the whole line (except handle and trash)
      * to look better and to hide the unnecessary fields.
      *
+     * THIS IMPLEMENTATION IS A COMPLETE JOKE.
+     *
      * @override
      */
     _renderBodyCell: function (record, node, index, options) {
         var $cell = this._super.apply(this, arguments);
 
-        var isSection = record.data.display_type === 'line_section';
-        var isNote = record.data.display_type === 'line_note';
+        let isSection = record.data.display_type === 'line_section';
+        let isNote = record.data.display_type === 'line_note';
 
         if (isSection || isNote) {
+            let hasProductField = this._hasProductField();
             if (node.attrs.widget === "handle") {
                 return $cell;
             } else if (node.attrs.name === "name") {
-                var nbrColumns = this._getNumberOfCols();
+                let nbrColumns = this._getNumberOfCols();
                 if (this.handleField) {
                     nbrColumns--;
                 }
                 if (this.addTrashIcon) {
                     nbrColumns--;
                 }
+                if (hasProductField) {
+                    nbrColumns--;
+                }
+                this.$nameCell = $cell;
                 $cell.attr('colspan', nbrColumns);
+            } else if (this._isNodeProductField(node)) {
+                // do nothing
+            } else if (node.attrs.name === 'sequence') {
+                // do nothing
             } else {
                 $cell.removeClass('o_invisible_modifier');
                 return $cell.addClass('o_hidden');
@@ -44,6 +55,28 @@ var SectionAndNoteListRenderer = ListRenderer.extend({
         }
 
         return $cell;
+    },
+
+    _isNodeProductField: function(node) {
+        console.log(node);
+        return (
+            node.attrs.name === "product_id"
+            || node.attrs.name === "product_template_id"
+        )
+    },
+
+    _hasProductField: function() {
+        let self = this;
+        let hasProductField = false;
+
+        this.columns.forEach(function(column) {
+            if (self._isNodeProductField(column)) {
+                hasProductField = true;
+                return true;
+            }
+        })
+
+        return hasProductField;
     },
     /**
      * We add the o_is_{display_type} class to allow custom behaviour both in JS and CSS.
