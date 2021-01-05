@@ -300,6 +300,14 @@ class MailThread(models.AbstractModel):
                 # based on tracked field to stay consistent with write
                 # we don't consider that a falsy field is a change, to stay consistent with previous implementation,
                 # but we may want to change that behaviour later.
+                if tracked_fields:
+                track_self = threads.with_lang()
+                initial_values = dict((record.id, dict(
+                    (key, False) for key in tracked_fields))
+                                        for record in track_self)
+                tracking = track_self.with_context(
+                    clean_context(self._context)).message_track(tracked_fields,
+                                                                initial_values)
                 thread._message_track_post_template(changes)
 
         return threads
