@@ -46,17 +46,22 @@ class StockMoveLine(models.Model):
         stock_valuation_layers = self.env['stock.valuation.layer']
         if move._is_in() and diff > 0 or move._is_out() and diff < 0:
             move.product_price_update_before_done(forced_qty=diff)
-            stock_valuation_layers |= move._create_in_svl(forced_quantity=abs(diff))
+            stock_valuation_layers |= move._create_in_svl(forced_quantity=abs(diff), forced_move_line=self)
             if move.product_id.cost_method in ('average', 'fifo'):
-                move.product_id._run_fifo_vacuum(move.company_id)
+                move.product_id._run_fifo_vacuum(move.company_id, move_line=self)
         elif move._is_in() and diff < 0 or move._is_out() and diff > 0:
-            stock_valuation_layers |= move._create_out_svl(forced_quantity=abs(diff))
+            stock_valuation_layers |= move._create_out_svl(forced_quantity=abs(diff), forced_move_line=self)
         elif move._is_dropshipped() and diff > 0 or move._is_dropshipped_returned() and diff < 0:
-            stock_valuation_layers |= move._create_dropshipped_svl(forced_quantity=abs(diff))
+            stock_valuation_layers |= move._create_dropshipped_svl(forced_quantity=abs(diff), forced_move_line=self)
         elif move._is_dropshipped() and diff < 0 or move._is_dropshipped_returned() and diff > 0:
-            stock_valuation_layers |= move._create_dropshipped_returned_svl(forced_quantity=abs(diff))
+            stock_valuation_layers |= move._create_dropshipped_returned_svl(forced_quantity=abs(diff), forced_move_line=self)
 
         for svl in stock_valuation_layers:
             if not svl.product_id.valuation == 'real_time':
                 continue
             svl.stock_move_id._account_entry_move(svl.quantity, svl.description, svl.id, svl.value)
+
+    def _prepare_common_svl_vals(self):
+        return {
+            'stock_move_line_id': self.id,
+        }
