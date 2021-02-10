@@ -866,7 +866,7 @@ class Picking(models.Model):
 
             for line in lines_to_check:
                 product = line.product_id
-                if product and product.tracking != 'none':
+                if product and product.sudo().tracking != 'none':
                     if not line.lot_name and not line.lot_id:
                         raise UserError(_('You need to supply a Lot/Serial number for product %s.') % product.display_name)
 
