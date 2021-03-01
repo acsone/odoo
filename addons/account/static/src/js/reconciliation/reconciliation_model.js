@@ -94,7 +94,8 @@ var _t = core._t;
  */
 var StatementModel = BasicModel.extend({
     avoidCreate: false,
-    quickCreateFields: ['account_id', 'amount', 'analytic_account_id', 'label', 'tax_ids', 'force_tax_included', 'analytic_tag_ids', 'to_check'],
+    // TODO silog
+    quickCreateFields: ['account_id', 'amount', 'analytic_account_id', 'spending_authorization_id', 'label', 'tax_ids', 'force_tax_included', 'analytic_tag_ids', 'to_check'],
 
     // overridden in ManualModel
     modes: ['create', 'match_rp', 'match_other'],
@@ -563,7 +564,8 @@ var StatementModel = BasicModel.extend({
         var self = this;
         var line = this.getLine(handle);
         var reconcileModel = _.find(this.reconcileModels, function (r) {return r.id === reconcileModelId;});
-        var fields = ['account_id', 'amount', 'amount_type', 'analytic_account_id', 'journal_id', 'label', 'force_tax_included', 'tax_ids', 'analytic_tag_ids', 'to_check', 'amount_from_label_regex', 'decimal_separator'];
+        // TODO silog
+        var fields = ['account_id', 'amount', 'amount_type', 'analytic_account_id', 'spending_authorization_id', 'journal_id', 'label', 'force_tax_included', 'tax_ids', 'analytic_tag_ids', 'to_check', 'amount_from_label_regex', 'decimal_separator'];
         this._blurProposition(handle);
         var focus = this._formatQuickCreate(line, _.pick(reconcileModel, fields));
         focus.reconcileModelId = reconcileModelId;
@@ -1301,6 +1303,8 @@ var StatementModel = BasicModel.extend({
             'account_id': account,
             'account_code': account ? this.accounts[account.id] : '',
             'analytic_account_id': this._formatNameGet(values.analytic_account_id),
+            // TODO silog
+            'spending_authorization_id': this._formatNameGet(values.spending_authorization_id),
             'analytic_tag_ids': this._formatMany2ManyTags(values.analytic_tag_ids || []),
             'journal_id': this._formatNameGet(values.journal_id),
             'tax_ids': this._formatMany2ManyTagsTax(values.tax_ids || []),
@@ -1428,6 +1432,8 @@ var StatementModel = BasicModel.extend({
         }
         if (!isNaN(prop.id)) result.counterpart_aml_id = prop.id;
         if (prop.analytic_account_id) result.analytic_account_id = prop.analytic_account_id.id;
+        // TODO silog
+        if (prop.spending_authorization_id) result.spending_authorization_id = prop.spending_authorization_id.id;
         if (prop.tax_ids && prop.tax_ids.length) result.tax_ids = [[6, null, _.pluck(prop.tax_ids, 'id')]];
 
         if (prop.tag_ids && prop.tag_ids.length) result.tag_ids = [[6, null, prop.tag_ids]];
@@ -1455,7 +1461,8 @@ var StatementModel = BasicModel.extend({
  * datas allowing manual reconciliation
  */
 var ManualModel = StatementModel.extend({
-    quickCreateFields: ['account_id', 'journal_id', 'amount', 'analytic_account_id', 'label', 'tax_ids', 'force_tax_included', 'analytic_tag_ids', 'date', 'to_check'],
+    // TODO silog
+    quickCreateFields: ['account_id', 'journal_id', 'amount', 'analytic_account_id', 'spending_authorization_id', 'label', 'tax_ids', 'force_tax_included', 'analytic_tag_ids', 'date', 'to_check'],
 
     modes: ['create', 'match'],
 

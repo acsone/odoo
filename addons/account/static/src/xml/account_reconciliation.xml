@@ -229,6 +229,11 @@
                     <td class="o_td_label"><label class="o_form_label">Analytic Acc.</label></td>
                     <td class="o_td_field"></td>
                 </tr>
+                <!--TODO silog-->
+                <tr class="create_spending_authorization_id" t-if="group_acc">
+                    <td class="o_td_label"><label class="o_form_label">Visa</label></td>
+                    <td class="o_td_field"></td>
+                </tr>
                 <tr class="create_analytic_tag_ids" t-if="group_tags">
                     <td class="o_td_label"><label class="o_form_label">Analytic Tags.</label></td>
                     <td class="o_td_field"></td>
