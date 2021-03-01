@@ -541,7 +541,24 @@ var LineRenderer = Widget.extend(FieldManagerMixin, {
             relation: 'account.analytic.account',
             type: 'many2one',
             name: 'analytic_account_id',
-        }, {
+        },
+        // TODO silog
+        {
+            relation: 'account.spending.authorization.base',
+            type: 'many2one',
+            name: 'spending_authorization_base_id',
+        },
+        {
+            relation: 'silog.cost.center',
+            type: 'many2one',
+            name: 'cost_center_id',
+        },
+        {
+            relation: 'silog.budget.article',
+            type: 'many2one',
+            name: 'payment_budget_article_id',
+        },
+        {
             relation: 'account.analytic.tag',
             type: 'many2many',
             name: 'analytic_tag_ids',
@@ -582,6 +599,14 @@ var LineRenderer = Widget.extend(FieldManagerMixin, {
             self.fields.analytic_account_id = new relational_fields.FieldMany2One(self,
                 'analytic_account_id', record, {mode: 'edit'});
 
+            // TODO silog
+            self.fields.spending_authorization_base_id = new relational_fields.FieldMany2One(self,
+                'spending_authorization_base_id', record, {mode: 'edit'});
+            self.fields.cost_center_id = new relational_fields.FieldMany2One(self,
+                'cost_center_id', record, {mode: 'edit'});
+            self.fields.payment_budget_article_id = new relational_fields.FieldMany2One(self,
+                'payment_budget_article_id', record, {mode: 'edit'});
+
             self.fields.analytic_tag_ids = new relational_fields.FieldMany2ManyTags(self,
                 'analytic_tag_ids', record, {mode: 'edit'});
 
@@ -606,6 +631,10 @@ var LineRenderer = Widget.extend(FieldManagerMixin, {
             self.fields.journal_id.appendTo($create.find('.create_journal_id .o_td_field'));
             self.fields.tax_ids.appendTo($create.find('.create_tax_id .o_td_field'));
             self.fields.analytic_account_id.appendTo($create.find('.create_analytic_account_id .o_td_field'));
+            // TODO silog
+            self.fields.cost_center_id.appendTo($create.find('.create_cost_center_id .o_td_field'));
+            self.fields.spending_authorization_base_id.appendTo($create.find('.create_spending_authorization_base_id .o_td_field'));
+            self.fields.payment_budget_article_id.appendTo($create.find('.create_payment_budget_article_id .o_td_field'));
             self.fields.analytic_tag_ids.appendTo($create.find('.create_analytic_tag_ids .o_td_field'));
             self.fields.force_tax_included.appendTo($create.find('.create_force_tax_included .o_td_field'));
             self.fields.label.appendTo($create.find('.create_label .o_td_field'))
