@@ -1353,8 +1353,7 @@ class AccountMove(models.Model):
         foreign_currency = self.currency_id if self.currency_id != self.company_id.currency_id else False
 
         reconciled_vals = []
-        pay_term_line_ids = self.line_ids.filtered(lambda line: line.account_id.user_type_id.type in ('receivable', 'payable'))
-        partials = pay_term_line_ids.mapped('matched_debit_ids') + pay_term_line_ids.mapped('matched_credit_ids')
+        partials = self.line_ids.mapped('matched_debit_ids') + self.line_ids.mapped('matched_credit_ids')
         for partial in partials:
             counterpart_lines = partial.debit_move_id + partial.credit_move_id
             # In case we are in an onchange, line_ids is a NewId, not an integer. By using line_ids.ids we get the correct integer value.
