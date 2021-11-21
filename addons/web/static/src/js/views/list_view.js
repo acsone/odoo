@@ -1383,13 +1383,13 @@ ListView.Groups = Class.extend({
             if (group.grouped_on) {
                 var row_data = {};
                 row_data[group.grouped_on] = group;
-                var group_label = _t("Undefined");
+                var group_label = self.get_undefined_value_group_label(group.grouped_on);
                 var group_column = _(self.columns).detect(function (column) {
                     return column.id === group.grouped_on; });
                 if (group_column) {
                     try {
                         group_label = group_column.format(row_data, {
-                            value_if_empty: _t("Undefined"),
+                            value_if_empty: group_label,
                             process_modifiers: false
                         });
                     } catch (e) {
@@ -1407,7 +1407,7 @@ ListView.Groups = Class.extend({
                         group_label = group_label[1];
                     }
                     if (group_label === false) {
-                        group_label = _t('Undefined');
+                        group_label = self.get_undefined_value_group_label(group.grouped_on);
                     }
                     group_label = _.str.escapeHTML(group_label);
                 }
@@ -1450,6 +1450,11 @@ ListView.Groups = Class.extend({
         });
         return placeholder;
     },
+
+    get_undefined_value_group_label: function(group_field) {
+        return _t("Undefined");
+    },
+
     bind_child_events: function (child) {
         var $this = $(this),
              self = this;
