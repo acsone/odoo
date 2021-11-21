@@ -205,10 +205,12 @@ var WeeklyTimesheet = form_common.FormWidget.extend(form_common.ReinitializeWidg
     },
     display_data: function() {
         var self = this;
+        var is_project_line_editable;
         self.$el.html(QWeb.render("hr_timesheet_sheet.WeeklyTimesheet", {widget: self}));
         _.each(self.projects, function(project) {
+            is_project_line_editable = self.is_project_line_editable(project);
             _.each(_.range(project.days.length), function(day_count) {
-                if (!self.get('effective_readonly')) {
+                if (is_project_line_editable) {
                     self.get_box(project, day_count).val(self.sum_box(project, day_count, true)).change(function() {
                         var num = $(this).val();
                         if (self.is_valid_value(num) && num !== 0) {
@@ -239,6 +241,11 @@ var WeeklyTimesheet = form_common.FormWidget.extend(form_common.ReinitializeWidg
             this.init_add_project();
         }
     },
+
+    is_project_line_editable: function(project) {
+        return !this.get('effective_readonly');
+    },
+
     init_add_project: function() {
         if (this.dfm) {
             this.dfm.destroy();
