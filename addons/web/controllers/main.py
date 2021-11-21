@@ -510,7 +510,7 @@ class WebClient(http.Controller):
         headers = [('Content-Type', 'application/javascript'), ('Cache-Control', 'max-age=%s' % (36000))]
         return request.make_response(momentjs_locale, headers)
 
-    @http.route('/web/webclient/qweb', type='http', auth="none", cors="*")
+    @http.route('/web/webclient/qweb', type='http', auth="none", methods=['GET', 'POST'], cors="*", csrf=False)
     def qweb(self, mods=None, db=None):
         files = [f[0] for f in manifest_glob('qweb', addons=mods, db=db)]
         last_modified = get_last_modified(files)
