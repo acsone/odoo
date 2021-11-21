@@ -19,6 +19,7 @@
             <field name="product_type">service</field>
             <field name="product_sale_ok" eval="False"/>
             <field name="partner_id" ref="res_partner_delivery"/>
+            <field name="categ_id" ref="product.product_category_1"/>
         </record>
 
         <record forcecreate="True" id="property_delivery_carrier" model="ir.property">
