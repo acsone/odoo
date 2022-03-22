@@ -441,11 +441,14 @@ class MailTemplate(models.Model):
                 )
 
             # Add report in attachments: generate once for all template_res_ids
-            if template.report_template:
+            if template.report_template or self.env.context.get("report_template_id"):
                 for res_id in template_res_ids:
                     attachments = []
                     report_name = self._render_template(template.report_name, template.model, res_id)
                     report = template.report_template
+                    if not report:
+                        report_template_id = self.env.context.get("report_template_id")
+                        report = self.env["ir.actions.report"].browse(report_template_id)
                     report_service = report.report_name
 
                     if report.report_type in ['qweb-html', 'qweb-pdf']:
