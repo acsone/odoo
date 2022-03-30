@@ -1283,7 +1283,9 @@ class AccountBankStatementLine(models.Model):
 
     def _find_or_create_bank_account(self):
         bank_account = self.env['res.partner.bank'].search(
-            [('company_id', '=', self.company_id.id), ('acc_number', '=', self.account_number)])
+            [('company_id', '=', self.company_id.id),
+             ('acc_number', '=', self.account_number),
+             ('partner_id', '=', self.partner_id.id)])
         if not bank_account:
             bank_account = self.env['res.partner.bank'].create({
                 'acc_number': self.account_number,
