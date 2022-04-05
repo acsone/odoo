@@ -19,6 +19,9 @@ class ResPartner(models.Model):
         ('unique_barcode', 'unique(barcode, company_id)', 'This barcode is already assigned to another contact. Please make sure you assign a unique barcode to this contact.'),
     ]
 
+    def _pos_can_be_deleted(self):
+        return False
+
     def _compute_pos_order(self):
         partners_data = self.env['pos.order'].read_group([('partner_id', 'in', self.ids)], ['partner_id'], ['partner_id'])
         mapped_data = dict([(partner['partner_id'][0], partner['partner_id_count']) for partner in partners_data])
@@ -41,10 +44,11 @@ class ResPartner(models.Model):
         return partner_id
 
     def unlink(self):
-        running_sessions = self.env['pos.session'].sudo().search([('state', '!=', 'closed')])
-        if running_sessions:
-            raise UserError(
-                _("You cannot delete contacts while there are active PoS sessions. Close the session(s) %s first.")
-                % ", ".join(session.name for session in running_sessions)
-            )
+        if not self._pos_can_be_deleted():
+            running_sessions = self.env['pos.session'].sudo().search([('state', '!=', 'closed')])
+            if running_sessions:
+                raise UserError(
+                    _("You cannot delete contacts while there are active PoS sessions. Close the session(s) %s first.")
+                    % ", ".join(session.name for session in running_sessions)
+                )
         return super(ResPartner, self).unlink()
