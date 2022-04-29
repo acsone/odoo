@@ -145,7 +145,7 @@ class ProductProduct(models.Model):
             vals['remaining_value'] = vals['value']
         return vals
 
-    def _prepare_out_svl_vals(self, quantity, company):
+    def _prepare_out_svl_vals(self, quantity, company, move_line=None):
         """Prepare the values for a stock valuation layer created by a delivery.
 
         :param quantity: the quantity to value, expressed in `self.uom_id`
@@ -165,7 +165,7 @@ class ProductProduct(models.Model):
             'quantity': quantity,
         }
         if self.cost_method in ('average', 'fifo'):
-            fifo_vals = self._run_fifo(abs(quantity), company)
+            fifo_vals = self._run_fifo(abs(quantity), company, move_line=move_line)
             vals['remaining_qty'] = fifo_vals.get('remaining_qty')
             # In case of AVCO, fix rounding issue of standard price when needed.
             if self.cost_method == 'average':
@@ -273,16 +273,19 @@ class ProductProduct(models.Model):
         # Actually update the standard price.
         self.with_context(force_company=company_id.id).sudo().write({'standard_price': new_price})
 
-    def _run_fifo(self, quantity, company):
+    def _run_fifo(self, quantity, company, move_line=None):
         self.ensure_one()
 
         # Find back incoming stock valuation layers (called candidates here) to value `quantity`.
         qty_to_take_on_candidates = quantity
-        candidates = self.env['stock.valuation.layer'].sudo().with_context(active_test=False).search([
+        svl_domain = [
             ('product_id', '=', self.id),
             ('remaining_qty', '>', 0),
             ('company_id', '=', company.id),
-        ])
+        ]
+        if move_line and move_line.lot_id:
+            svl_domain.append(('lot_id', '=', move_line.lot_id.id))
+        candidates = self.env['stock.valuation.layer'].sudo().with_context(active_test=False).search(svl_domain)
         new_standard_price = 0
         tmp_value = 0  # to accumulate the value taken on the candidates
         for candidate in candidates:
@@ -331,7 +334,7 @@ class ProductProduct(models.Model):
             }
         return vals
 
-    def _run_fifo_vacuum(self, company=None):
+    def _run_fifo_vacuum(self, company=None, move_line=None):
         """Compensate layer valued at an estimated price with the price of future receipts
         if any. If the estimated price is equals to the real price, no layer is created but
         the original layer is marked as compensated.
@@ -341,12 +344,15 @@ class ProductProduct(models.Model):
         self.ensure_one()
         if company is None:
             company = self.env.company
-        svls_to_vacuum = self.env['stock.valuation.layer'].sudo().search([
+        svl_domain = [
             ('product_id', '=', self.id),
             ('remaining_qty', '<', 0),
             ('stock_move_id', '!=', False),
             ('company_id', '=', company.id),
-        ], order='create_date, id')
+        ]
+        if move_line and move_line.lot_id:
+            svl_domain.append(('lot_id', '=', move_line.lot_id.id))
+        svls_to_vacuum = self.env['stock.valuation.layer'].sudo().search(svl_domain, order='create_date, id')
         for svl_to_vacuum in svls_to_vacuum:
             domain = [
                 ('company_id', '=', svl_to_vacuum.company_id.id),
@@ -358,6 +364,8 @@ class ProductProduct(models.Model):
                         ('create_date', '=', svl_to_vacuum.create_date),
                         ('id', '>', svl_to_vacuum.id)
             ]
+            if move_line and move_line.lot_id:
+                domain.append(('lot_id', '=', move_line.lot_id.id))
             candidates = self.env['stock.valuation.layer'].sudo().search(domain)
             if not candidates:
                 break
@@ -398,6 +406,7 @@ class ProductProduct(models.Model):
 
             corrected_value = svl_to_vacuum.currency_id.round(corrected_value)
             move = svl_to_vacuum.stock_move_id
+            move_line = svl_to_vacuum.stock_move_line_id
             vals = {
                 'product_id': self.id,
                 'value': corrected_value,
@@ -405,6 +414,7 @@ class ProductProduct(models.Model):
                 'quantity': 0,
                 'remaining_qty': 0,
                 'stock_move_id': move.id,
+                'stock_move_line_id': move_line.id,
                 'company_id': move.company_id.id,
                 'description': 'Revaluation of %s (negative inventory)' % move.picking_id.name or move.name,
                 'stock_valuation_layer_id': svl_to_vacuum.id,

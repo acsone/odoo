@@ -32,17 +32,27 @@ class StockMove(models.Model):
         self.ensure_one()
         return False
 
-    def _get_price_unit(self):
+    def _get_price_unit(self, move_line=None):
         """ Returns the unit price to value this stock move """
         self.ensure_one()
+        valuation_layer_model = self.env['stock.valuation.layer']
+        svls = valuation_layer_model.browse()
         price_unit = self.price_unit
-        precision = self.env['decimal.precision'].precision_get('Product Price')
+        if self.company_id.currency_id.is_zero(self.price_unit) and not self._should_force_price_unit():
+            price_unit = self.product_id.standard_price
+        if move_line and move_line.lot_id:
+            svl = valuation_layer_model.search([('lot_id', '=', move_line.lot_id.id)], limit=1)
+            price_unit = svl.unit_cost
         # If the move is a return, use the original move's price unit.
         if self.origin_returned_move_id and self.origin_returned_move_id.sudo().stock_valuation_layer_ids:
-            layers = self.origin_returned_move_id.sudo().stock_valuation_layer_ids
-            quantity = sum(layers.mapped("quantity"))
-            return layers.currency_id.round(sum(layers.mapped("value")) / quantity) if not float_is_zero(quantity, layers.uom_id.rounding) else 0
-        return price_unit if not float_is_zero(price_unit, precision) or self._should_force_price_unit() else self.product_id.standard_price
+            if move_line:
+                svls = self.origin_returned_move_id.sudo().stock_valuation_layer_ids.filtered(
+                    lambda s: s.stock_move_line_id == move_line)
+                if not svls:
+                    svls = self.origin_returned_move_id.sudo().stock_valuation_layer_ids
+            if svls:
+                price_unit = svls[-1].unit_cost
+        return price_unit
 
     @api.model
     def _get_valued_types(self):
@@ -147,7 +157,7 @@ class StockMove(models.Model):
             'description': self.reference and '%s - %s' % (self.reference, self.product_id.name) or self.product_id.name,
         }
 
-    def _create_in_svl(self, forced_quantity=None):
+    def _create_in_svl(self, forced_quantity=None, forced_move_line=None):
         """Create a `stock.valuation.layer` from `self`.
 
         :param forced_quantity: under some circunstances, the quantity to value is different than
@@ -157,20 +167,23 @@ class StockMove(models.Model):
         for move in self:
             move = move.with_context(force_company=move.company_id.id)
             valued_move_lines = move._get_in_move_lines()
-            valued_quantity = 0
             for valued_move_line in valued_move_lines:
-                valued_quantity += valued_move_line.product_uom_id._compute_quantity(valued_move_line.qty_done, move.product_id.uom_id)
-            unit_cost = abs(move._get_price_unit())  # May be negative (i.e. decrease an out move).
-            if move.product_id.cost_method == 'standard':
-                unit_cost = move.product_id.standard_price
-            svl_vals = move.product_id._prepare_in_svl_vals(forced_quantity or valued_quantity, unit_cost)
-            svl_vals.update(move._prepare_common_svl_vals())
-            if forced_quantity:
-                svl_vals['description'] = 'Correction of %s (modification of past move)' % move.picking_id.name or move.name
-            svl_vals_list.append(svl_vals)
+                move_line = forced_move_line or valued_move_line
+                valued_quantity = valued_move_line.product_uom_id._compute_quantity(valued_move_line.qty_done, move.product_id.uom_id)
+                unit_cost = abs(move._get_price_unit(move_line=move_line))  # May be negative (i.e. decrease an out move).
+                if move.product_id.cost_method == 'standard':
+                    unit_cost = move.product_id.standard_price
+                svl_vals = move.product_id._prepare_in_svl_vals(forced_quantity or valued_quantity, unit_cost)
+                svl_vals.update(move._prepare_common_svl_vals())
+                svl_vals.update(move_line._prepare_common_svl_vals())
+                if forced_quantity and forced_move_line:
+                    svl_vals['description'] = 'Correction of %s (modification of past move)' % move.picking_id.name or move.name
+                svl_vals_list.append(svl_vals)
+                if forced_quantity and forced_move_line:
+                    break
         return self.env['stock.valuation.layer'].sudo().create(svl_vals_list)
 
-    def _create_out_svl(self, forced_quantity=None):
+    def _create_out_svl(self, forced_quantity=None, forced_move_line=None):
         """Create a `stock.valuation.layer` from `self`.
 
         :param forced_quantity: under some circunstances, the quantity to value is different than
@@ -180,20 +193,23 @@ class StockMove(models.Model):
         for move in self:
             move = move.with_context(force_company=move.company_id.id)
             valued_move_lines = move._get_out_move_lines()
-            valued_quantity = 0
             for valued_move_line in valued_move_lines:
-                valued_quantity += valued_move_line.product_uom_id._compute_quantity(valued_move_line.qty_done, move.product_id.uom_id)
-            if float_is_zero(forced_quantity or valued_quantity, precision_rounding=move.product_id.uom_id.rounding):
-                continue
-            svl_vals = move.product_id._prepare_out_svl_vals(forced_quantity or valued_quantity, move.company_id)
-            svl_vals.update(move._prepare_common_svl_vals())
-            if forced_quantity:
-                svl_vals['description'] = 'Correction of %s (modification of past move)' % move.picking_id.name or move.name
-            svl_vals['description'] += svl_vals.pop('rounding_adjustment', '')
-            svl_vals_list.append(svl_vals)
+                move_line = forced_move_line or valued_move_line
+                valued_quantity = valued_move_line.product_uom_id._compute_quantity(valued_move_line.qty_done, move.product_id.uom_id)
+                if float_is_zero(forced_quantity or valued_quantity, precision_rounding=move.product_id.uom_id.rounding):
+                    continue
+                svl_vals = move.product_id._prepare_out_svl_vals(forced_quantity or valued_quantity, move.company_id, move_line=move_line)
+                svl_vals.update(move._prepare_common_svl_vals())
+                svl_vals.update(move_line._prepare_common_svl_vals())
+                if forced_quantity and forced_move_line:
+                    svl_vals['description'] = 'Correction of %s (modification of past move)' % move.picking_id.name or move.name
+                svl_vals['description'] += svl_vals.pop('rounding_adjustment', '')
+                svl_vals_list.append(svl_vals)
+                if forced_quantity and forced_move_line:
+                    break
         return self.env['stock.valuation.layer'].sudo().create(svl_vals_list)
 
-    def _create_dropshipped_svl(self, forced_quantity=None):
+    def _create_dropshipped_svl(self, forced_quantity=None, forced_move_line=None):
         """Create a `stock.valuation.layer` from `self`.
 
         :param forced_quantity: under some circunstances, the quantity to value is different than
@@ -203,43 +219,46 @@ class StockMove(models.Model):
         for move in self:
             move = move.with_context(force_company=move.company_id.id)
             valued_move_lines = move.move_line_ids
-            valued_quantity = 0
             for valued_move_line in valued_move_lines:
-                valued_quantity += valued_move_line.product_uom_id._compute_quantity(valued_move_line.qty_done, move.product_id.uom_id)
-            quantity = forced_quantity or valued_quantity
+                move_line = forced_move_line or valued_move_line
+                valued_quantity = valued_move_line.product_uom_id._compute_quantity(valued_move_line.qty_done, move.product_id.uom_id)
+                quantity = forced_quantity or valued_quantity
 
-            unit_cost = move._get_price_unit()
-            if move.product_id.cost_method == 'standard':
-                unit_cost = move.product_id.standard_price
+                unit_cost = move._get_price_unit(move_line=move_line)
+                if move.product_id.cost_method == 'standard':
+                    unit_cost = move.product_id.standard_price
 
-            common_vals = dict(move._prepare_common_svl_vals(), remaining_qty=0)
+                common_vals = dict(move._prepare_common_svl_vals(), remaining_qty=0)
+                common_vals.update(move_line._prepare_common_svl_vals())
 
-            # create the in
-            in_vals = {
-                'unit_cost': unit_cost,
-                'value': unit_cost * quantity,
-                'quantity': quantity,
-            }
-            in_vals.update(common_vals)
-            svl_vals_list.append(in_vals)
+                # create the in
+                in_vals = {
+                    'unit_cost': unit_cost,
+                    'value': unit_cost * quantity,
+                    'quantity': quantity,
+                }
+                in_vals.update(common_vals)
+                svl_vals_list.append(in_vals)
 
-            # create the out
-            out_vals = {
-                'unit_cost': unit_cost,
-                'value': unit_cost * quantity * -1,
-                'quantity': quantity * -1,
-            }
-            out_vals.update(common_vals)
-            svl_vals_list.append(out_vals)
+                # create the out
+                out_vals = {
+                    'unit_cost': unit_cost,
+                    'value': unit_cost * quantity * -1,
+                    'quantity': quantity * -1,
+                }
+                out_vals.update(common_vals)
+                svl_vals_list.append(out_vals)
+                if forced_quantity and forced_move_line:
+                    break
         return self.env['stock.valuation.layer'].sudo().create(svl_vals_list)
 
-    def _create_dropshipped_returned_svl(self, forced_quantity=None):
+    def _create_dropshipped_returned_svl(self, forced_quantity=None, forced_move_line=None):
         """Create a `stock.valuation.layer` from `self`.
 
         :param forced_quantity: under some circunstances, the quantity to value is different than
             the initial demand of the move (Default value = None)
         """
-        return self._create_dropshipped_svl(forced_quantity=forced_quantity)
+        return self._create_dropshipped_svl(forced_quantity=forced_quantity, forced_move_line=forced_move_line)
 
     def _action_done(self, cancel_backorder=False):
         # Init a dict that will group the moves by valuation type, according to `move._is_valued_type`.
