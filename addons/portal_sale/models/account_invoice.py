@@ -11,9 +11,16 @@ class AccountInvoice(models.Model):
     def invoice_validate(self):
         # fetch the partner's id and subscribe the partner to the invoice
         for invoice in self:
-            if invoice.partner_id not in invoice.message_partner_ids:
+            if invoice._auto_subscribe_partner_id_on_validate():
                 invoice.message_subscribe([invoice.partner_id.id])
         return super(AccountInvoice, self).invoice_validate()
+
+    @api.multi
+    def _auto_subscribe_partner_id_on_validate(self):
+        self.ensure_one()
+        return (
+            self.partner_id not in self.message_partner_ids
+        )
 
     @api.multi
     def get_signup_url(self):
