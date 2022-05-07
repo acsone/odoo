@@ -4,11 +4,13 @@
 import werkzeug.urls
 import urlparse
 import urllib2
+import requests
 import json
 
 from odoo import api, fields, models
 from odoo.exceptions import AccessDenied
 from odoo.addons.auth_signup.models.res_users import SignupError
+from odoo.addons.auth_oauth.controllers.main import OAuthLogin
 
 from odoo.addons import base
 base.res.res_users.USER_PRIVATE_FIELDS.append('oauth_access_token')
@@ -35,6 +37,31 @@ class ResUsers(models.Model):
         response = f.read()
         return json.loads(response)
 
+    @classmethod
+    def _get_redirect_uri(cls):
+        return OAuthLogin._get_redirect_uri()
+
+    @api.model
+    def _auth_oauth_post(self, provider, code):
+        auth = (provider.client_id, provider.client_secret)
+        return_url = self._get_redirect_uri() + 'auth_oauth/signin'
+        data = {
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': return_url,
+        }
+        r = requests.post(provider.validation_endpoint, data=data, auth=auth)
+        return r.json()
+
+    @api.model
+    def _auth_oauth_validate_code(self, provider, code):
+        """ return the validation data corresponding to the code """
+        oauth_provider = self.env['auth.oauth.provider'].browse(provider)
+        validation = self._auth_oauth_post(oauth_provider, code)
+        if validation.get("error"):
+            raise Exception(validation['error'])
+        return validation
+
     @api.model
     def _auth_oauth_validate(self, provider, access_token):
         """ return the validation data corresponding to the access token """
@@ -49,6 +76,11 @@ class ResUsers(models.Model):
 
     @api.model
     def _generate_signup_values(self, provider, validation, params):
+        oauth_provider = self.env['auth.oauth.provider'].browse(provider)
+        if oauth_provider.authorization_type == 'code':
+            access_token = validation['access_token']
+        else:
+            access_token = params['access_token']
         oauth_uid = validation['user_id']
         email = validation.get('email', 'provider_%s_user_%s' % (provider, oauth_uid))
         name = validation.get('name', email)
@@ -58,7 +90,7 @@ class ResUsers(models.Model):
             'email': email,
             'oauth_provider_id': provider,
             'oauth_uid': oauth_uid,
-            'oauth_access_token': params['access_token'],
+            'oauth_access_token': access_token,
             'active': True,
         }
 
@@ -73,13 +105,18 @@ class ResUsers(models.Model):
 
             This method can be overridden to add alternative signin methods.
         """
+        oauth_provider = self.env['auth.oauth.provider'].browse(provider)
+        if oauth_provider.authorization_type == 'code':
+            access_token = validation['access_token']
+        else:
+            access_token = params['access_token']
         oauth_uid = validation['user_id']
         try:
             oauth_user = self.search([("oauth_uid", "=", oauth_uid), ('oauth_provider_id', '=', provider)])
             if not oauth_user:
                 raise AccessDenied()
             assert len(oauth_user) == 1
-            oauth_user.write({'oauth_access_token': params['access_token']})
+            oauth_user.write({'oauth_access_token': access_token})
             return oauth_user.login
         except AccessDenied, access_denied_exception:
             if self.env.context.get('no_user_creation'):
@@ -100,8 +137,14 @@ class ResUsers(models.Model):
         #   abort()
         # else:
         #   continue with the process
-        access_token = params.get('access_token')
-        validation = self._auth_oauth_validate(provider, access_token)
+        oauth_provider = self.env['auth.oauth.provider'].browse(provider)
+        if oauth_provider.authorization_type == 'code':
+            code = params.get('code')
+            validation = self._auth_oauth_validate_code(provider, code)
+            access_token = validation.get('access_token')
+        else:
+            access_token = params.get('access_token')
+            validation = self._auth_oauth_validate(provider, access_token)
         # required check
         if not validation.get('user_id'):
             # Workaround: facebook does not send 'user_id' in Open Graph Api

@@ -51,16 +51,20 @@ def fragment_to_query_string(func):
 # Controller
 #----------------------------------------------------------
 class OAuthLogin(Home):
+    @classmethod
+    def _get_redirect_uri(cls):
+        return request.httprequest.url_root
+
     def list_providers(self):
         try:
             providers = request.env['auth.oauth.provider'].sudo().search_read([('enabled', '=', True)])
         except Exception:
             providers = []
+        return_url = self._get_redirect_uri() + 'auth_oauth/signin'
         for provider in providers:
-            return_url = request.httprequest.url_root + 'auth_oauth/signin'
             state = self.get_state(provider)
             params = dict(
-                response_type='token',
+                response_type=provider['authorization_type'],
                 client_id=provider['client_id'],
                 redirect_uri=return_url,
                 scope=provider['scope'],
@@ -78,7 +82,7 @@ class OAuthLogin(Home):
             p=provider['id'],
             r=werkzeug.url_quote_plus(redirect),
         )
-        token = request.params.get('token')
+        token = request.params.get(provider['authorization_type'])
         if token:
             state['t'] = token
         return state

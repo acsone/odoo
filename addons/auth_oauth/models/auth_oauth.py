@@ -21,3 +21,7 @@ class AuthOAuthProvider(models.Model):
     css_class = fields.Char(string='CSS class', default='zocial')
     body = fields.Char(required=True)
     sequence = fields.Integer()
+    authorization_type = fields.Selection(
+        [('token', 'Implicit Grant'), ('code', 'Code Grant'), ],
+        default='token', required=True)
+    client_secret = fields.Char()
