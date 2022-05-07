@@ -769,8 +769,6 @@ class SaleOrder(models.Model):
                 'It is not allowed to confirm an order in the following states: %s'
             ) % (', '.join(self._get_forbidden_state_confirm())))
 
-        for order in self.filtered(lambda order: order.partner_id not in order.message_partner_ids):
-            order.message_subscribe([order.partner_id.id])
         self.write({
             'state': 'sale',
             'confirmation_date': fields.Datetime.now()
