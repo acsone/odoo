@@ -611,9 +611,7 @@ var KanbanView = View.extend({
                 result.forEach(function(record) {
                     // Does not display the tag if color = 10
                     if (typeof record.color !== 'undefined' && record.color != 10){
-                        var $tag = $('<span>')
-                            .addClass('o_tag o_tag_color_' + record.color)
-                            .attr('title', _.str.escapeHTML(record.name));
+                        var $tag = self._get_tag_element(record);
                         $(rel.elements[record.id]).append($tag);
                     }
                 });
@@ -622,6 +620,14 @@ var KanbanView = View.extend({
             });
         });
     },
+
+    _get_tag_element: function(record) {
+        var $tag = $('<span>')
+            .addClass('o_tag o_tag_color_' + record.color)
+            .attr('title', _.str.escapeHTML(record.name))
+        return $tag;
+    },
+
     resequence: function (ids) {
         if ((ids.length <= 1) || !this.relation) {
             return;
