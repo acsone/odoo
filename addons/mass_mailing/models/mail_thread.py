@@ -5,7 +5,7 @@ import datetime
 
 from odoo import api, models, fields, tools
 
-BLACKLIST_MAX_BOUNCED_LIMIT = 5
+BLACKLIST_MAX_BOUNCED_LIMIT = 200
 
 
 class MailThread(models.AbstractModel):
