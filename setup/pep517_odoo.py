@@ -42,3 +42,21 @@ def build_sdist(*args, **kwargs):
 def build_wheel(*args, **kwargs):
     with _symlink_addons():
         return build_meta.build_wheel(*args, **kwargs)
+
+
+if hasattr(build_meta, "build_editable"):
+
+    def build_editable(
+        wheel_directory, config_settings=None, metadata_directory=None, **kwargs
+    ):
+        if config_settings is None:
+            config_settings = {}
+        # Use setuptools's compat editable mode, because the default mode for
+        # flat layout projects is not compatible with pkgutil.extend_path,
+        # and the strict mode is too strict for the Odoo development workflow
+        # where new files are added frequently. This is currently being discussed
+        # by the setuptools maintainers.
+        config_settings["editable-mode"] = "compat"
+        return build_meta.build_editable(
+            wheel_directory, config_settings, metadata_directory, **kwargs
+        )
