@@ -699,11 +699,15 @@ class PurchaseOrderLine(models.Model):
             return {'warning': warning}
         return {}
 
+    def _prepare_select_seller_params(self):
+        self.ensure_one()
+        return {'order_id': self.order_id}
+
     @api.onchange('product_qty', 'product_uom')
     def _onchange_quantity(self):
         if not self.product_id or self.invoice_lines:
             return
-        params = {'order_id': self.order_id}
+        params = self._prepare_select_seller_params()
         seller = self.product_id._select_seller(
             partner_id=self.partner_id,
             quantity=self.product_qty,
