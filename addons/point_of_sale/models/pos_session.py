@@ -299,7 +299,7 @@ class PosSession(models.Model):
                 self.sudo()._create_account_move()
             else:
                 raise e
-        if self.move_id.line_ids:
+        if self.move_id.sudo().line_ids:
             self.move_id.post() if not sudo else self.move_id.sudo().post()
             # Set the uninvoiced orders' state to 'done'
             self.env['pos.order'].search([('session_id', '=', self.id), ('state', '=', 'paid')]).write({'state': 'done'})
