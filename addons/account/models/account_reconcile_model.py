@@ -276,9 +276,19 @@ class AccountReconcileModel(models.Model):
             else:
                 balance = total_residual - line_residual
                 partner = partner or st_line.partner_id
+                if balance > 0:
+                    if not partner.customer and partner.supplier:
+                        open_balance_account_id = partner.property_account_payable_id.id
+                    else:
+                        open_balance_account_id = partner.property_account_receivable_id.id
+                else:
+                    if partner.customer and not partner.supplier:
+                        open_balance_account_id = partner.property_account_receivable_id.id
+                    else:
+                        open_balance_account_id = partner.property_account_payable_id.id
                 open_balance_dict = {
                     'name': '%s : %s' % (st_line.name, _('Open Balance')),
-                    'account_id': balance < 0 and partner.property_account_payable_id.id or partner.property_account_receivable_id.id,
+                    'account_id': open_balance_account_id,
                     'debit': balance > 0 and balance or 0,
                     'credit': balance < 0 and -balance or 0,
                 }

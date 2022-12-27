@@ -701,9 +701,15 @@ class AccountReconciliation(models.AbstractModel):
         }
         if st_line.partner_id:
             if amount > 0:
-                data['open_balance_account_id'] = st_line.partner_id.property_account_receivable_id.id
+                if not st_line.partner_id.customer and st_line.partner_id.supplier:
+                    data['open_balance_account_id'] = st_line.partner_id.property_account_payable_id.id
+                else:
+                    data['open_balance_account_id'] = st_line.partner_id.property_account_receivable_id.id
             else:
-                data['open_balance_account_id'] = st_line.partner_id.property_account_payable_id.id
+                if st_line.partner_id.customer and not st_line.partner_id.supplier:
+                    data['open_balance_account_id'] = st_line.partner_id.property_account_receivable_id.id
+                else:
+                    data['open_balance_account_id'] = st_line.partner_id.property_account_payable_id.id
 
         return data
 
