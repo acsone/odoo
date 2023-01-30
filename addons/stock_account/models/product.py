@@ -348,6 +348,8 @@ class ProductProduct(models.Model):
         ]
         if move_line and move_line.lot_id:
             svl_domain.append(('lot_id', '=', move_line.lot_id.id))
+        else:
+            svl_domain.append(('lot_id', '=', False))
         svls_to_vacuum = self.env['stock.valuation.layer'].sudo().search(svl_domain, order='create_date, id')
         for svl_to_vacuum in svls_to_vacuum:
             domain = [
@@ -362,6 +364,8 @@ class ProductProduct(models.Model):
             ]
             if move_line and move_line.lot_id:
                 domain.append(('lot_id', '=', move_line.lot_id.id))
+            else:
+                domain.append(('lot_id', '=', False))
             candidates = self.env['stock.valuation.layer'].sudo().search(domain)
             if not candidates:
                 break
