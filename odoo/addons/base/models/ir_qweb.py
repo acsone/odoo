@@ -16,6 +16,7 @@ from odoo.tools.safe_eval import assert_valid_codeobj, _BUILTINS, _SAFE_OPCODES
 from odoo.tools.misc import get_lang
 from odoo.http import request
 from odoo.modules.module import get_resource_path
+from odoo.tools.profiler import QwebTracker
 
 from odoo.addons.base.models.qweb import QWeb, Contextifier
 from odoo.addons.base.models.assetsbundle import AssetsBundle
@@ -118,15 +119,16 @@ class IrQWeb(models.AbstractModel, QWeb):
         if lang != env.context.get('lang'):
             env = env(context=dict(env.context, lang=lang))
 
-        template = env['ir.ui.view'].read_template(name)
+        view_id = self.env['ir.ui.view'].get_view_id(name)
+        template = env['ir.ui.view'].sudo()._read_template(view_id)
 
-        # QWeb's `read_template` will check if one of the first children of
+        # QWeb's `_read_template` will check if one of the first children of
         # what we send to it has a "t-name" attribute having `name` as value
         # to consider it has found it. As it'll never be the case when working
         # with view ids or children view or children primary views, force it here.
         def is_child_view(view_name):
             view_id = self.env['ir.ui.view'].get_view_id(view_name)
-            view = self.env['ir.ui.view'].browse(view_id)
+            view = self.env['ir.ui.view'].sudo().browse(view_id)
             return view.inherit_id is not None
 
         if isinstance(name, int) or is_child_view(name):
@@ -134,9 +136,9 @@ class IrQWeb(models.AbstractModel, QWeb):
             for node in view:
                 if node.get('t-name'):
                     node.set('t-name', str(name))
-            return view
+            return (view, view_id)
         else:
-            return template
+            return (template, view_id)
 
     # order
 
@@ -147,6 +149,10 @@ class IrQWeb(models.AbstractModel, QWeb):
         return directives
 
     # compile directives
+
+    @QwebTracker.wrap_compile_directive
+    def _compile_directive(self, el, options, directive, indent):
+        return super()._compile_directive(el, options, directive, indent)
 
     def _compile_directive_lang(self, el, options):
         lang = el.attrib.pop('t-lang', get_lang(self.env).code)

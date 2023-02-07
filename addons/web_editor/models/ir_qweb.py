@@ -75,10 +75,10 @@ class QWeb(models.AbstractModel):
         else:
             return []
 
-    def _compile_directive_tag(self, el, options):
+    def _compile_directive_tag(self, el, options, indent):
         if el.get('t-placeholder'):
             el.set('t-att-placeholder', el.attrib.pop('t-placeholder'))
-        return super(QWeb, self)._compile_directive_tag(el, options)
+        return super(QWeb, self)._compile_directive_tag(el, options, indent)
 
     # order and ignore
 
