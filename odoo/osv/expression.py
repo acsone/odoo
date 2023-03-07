@@ -619,7 +619,6 @@ class expression(object):
         stack = []
         for leaf in self.expression:
             push(leaf, self.root_model, self.root_alias)
-
         # stack of SQL expressions in the form: (expr, params)
         result_stack = []
 
@@ -668,8 +667,19 @@ class expression(object):
             # -> else: crash
             # ----------------------------------------
 
+            # Check if model has one json field and use it
+
             if not field:
-                raise ValueError("Invalid field %s.%s in leaf %s" % (model._name, path[0], str(leaf)))
+                json_field = False
+                for field_name, field_value in model._fields.items():
+                    if field_value.type == 'json':
+                        json_field = field_name
+                        break
+                if not json_field:
+                    raise ValueError("Invalid field %s.%s in leaf %s" % (model._name, path[0], str(leaf)))
+                else:
+                    expr, params = self.__leaf_to_sql((json_field, operator, right), model, alias, path[0])
+                    push_result(expr, params)
 
             elif field.inherited:
                 parent_model = model.env[field.related_field.model_name]
@@ -723,7 +733,6 @@ class expression(object):
             elif len(path) > 1 and field.store and field.type in ('many2many', 'one2many'):
                 right_ids = comodel.with_context(**field.context)._search([(path[1], operator, right)], order='id')
                 push((path[0], 'in', right_ids), model, alias)
-
             elif not field.store:
                 # Non-stored field should provide an implementation of search.
                 if not field.search:
@@ -913,7 +922,6 @@ class expression(object):
                             push(dom_leaf, model, alias)
                     else:
                         push((left, 'in', res_ids), model, alias)
-
                 else:
                     # right == [] or right == False and all other cases are handled by __leaf_to_sql()
                     expr, params = self.__leaf_to_sql(leaf, model, alias)
@@ -1033,9 +1041,11 @@ class expression(object):
         where_clause, where_params = self.result
         self.query.add_where(where_clause, where_params)
 
-    def __leaf_to_sql(self, leaf, model, alias):
+    def __leaf_to_sql(self, leaf, model, alias, path=None):
+        """
+        params: path is optional and is used to generate the query for a jsonb field
+        """
         left, operator, right = leaf
-
         # final sanity checks - should never fail
         assert operator in (TERM_OPERATORS + ('inselect', 'not inselect')), \
             "Invalid operator %r in domain term %r" % (operator, leaf)
@@ -1128,13 +1138,27 @@ class expression(object):
             field = model._fields.get(left)
             if field is None:
                 raise ValueError("Invalid field %r in domain term %r" % (left, leaf))
+            # if field has a path means that is a json field and we need to use the jsonb operators
 
+            if path:
+                need_wildcard = operator in ('like', 'ilike', 'not like', 'not ilike')
+                sql_operator = {'=like': 'like', '=ilike': 'ilike'}.get(operator, operator)
+
+                unaccent = self._unaccent(field) if sql_operator.endswith('like') else lambda x: x
+                column = '%s.\"%s\"->>\'%s\'' % (table_alias, left,path)
+                query = f'({unaccent(column)} {sql_operator} {unaccent("%s")})'
+                if need_wildcard:
+                    params = ['%%%s%%' % pycompat.to_text(right)]
+                else:
+                    params = [pycompat.to_text(right)]
+                return query, params
             need_wildcard = operator in ('like', 'ilike', 'not like', 'not ilike')
             sql_operator = {'=like': 'like', '=ilike': 'ilike'}.get(operator, operator)
             cast = '::text' if sql_operator.endswith('like') else ''
 
             unaccent = self._unaccent(field) if sql_operator.endswith('like') else lambda x: x
             column = '%s.%s' % (table_alias, _quote(left))
+
             query = f'({unaccent(column + cast)} {sql_operator} {unaccent("%s")})'
 
             if (need_wildcard and not right) or (right and operator in NEGATIVE_TERM_OPERATORS):
