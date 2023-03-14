@@ -977,14 +977,17 @@ class HolidaysRequest(models.Model):
                     holiday_sudo.activity_update()
         return holidays
 
+    def _condition_modify_begun_time_off(self):
+        self.ensure_one
+        return self.date_from.date() < fields.Date.today() and self.employee_id.leave_manager_id != self.env.user and self.state not in ('confirm', 'draft')
+
     def write(self, values):
         if 'active' in values and not self.env.context.get('from_cancel_wizard'):
             raise UserError(_("You can't manually archive/unarchive a time off."))
 
         is_officer = self.env.user.has_group('hr_holidays.group_hr_holidays_user') or self.env.is_superuser()
         if not is_officer and values.keys() - {'attachment_ids', 'supported_attachment_ids', 'message_main_attachment_id'}:
-            if any(hol.date_from.date() < fields.Date.today() and hol.employee_id.leave_manager_id != self.env.user
-                   and hol.state not in ('confirm', 'draft') for hol in self):
+            if any(hol._condition_modify_begun_time_off() for hol in self):
                 raise UserError(_('You must have manager rights to modify/validate a time off that already begun'))
 
         # Unlink existing resource.calendar.leaves for validated time off
