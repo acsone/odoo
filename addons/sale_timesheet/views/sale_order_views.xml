@@ -42,7 +42,7 @@
                             </div>
                         </button>
                     </xpath>
-                    <xpath expr="//field[@name='analytic_account_id']" position="after">
+                    <xpath expr="//group[@name='sale_info']" position="inside">
                        <field name="visible_project" invisible="1"/>
                        <field name="project_id" options="{'no_create': True}" attrs="{'invisible': [('visible_project', '=', False)]}"/>
                     </xpath>
