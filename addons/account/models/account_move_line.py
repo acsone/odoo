@@ -1467,6 +1467,11 @@ class AccountMoveLine(models.Model):
         lines._check_constrains_account_id_journal_id()
         return lines
 
+    def _get_field_to_restrict(self):
+        if self.env.context.get("force_write_tax"):
+            return ()
+        return ('tax_ids', 'tax_line_id')
+
     def write(self, vals):
         if not vals:
             return True
@@ -1495,7 +1500,9 @@ class AccountMoveLine(models.Model):
                 line_to_write -= line
                 continue
 
-            if line.parent_state == 'posted' and any(self.env['account.move']._field_will_change(line, vals, field_name) for field_name in ('tax_ids', 'tax_line_id')):
+            field_restriction = self._get_field_to_restrict()
+
+            if line.parent_state == 'posted' and any(self.env['account.move']._field_will_change(line, vals, field_name) for field_name in field_restriction):
                 raise UserError(_('You cannot modify the taxes related to a posted journal item, you should reset the journal entry to draft to do so.'))
 
             # Check the lock date.
