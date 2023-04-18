@@ -68,6 +68,15 @@ class AccountAccountTag(models.Model):
         for record in self:
             if record.applicability == 'taxes' and not record.country_id:
                 raise ValidationError(_("A tag defined to be used on taxes must always have a country set."))
+    
+    @api.model
+    def _get_tax_tags(self, tag_name, country_id):
+        """ Returns all the tax tags corresponding to the tag name given in parameter
+        in the specified country.
+        """
+        escaped_tag_name = tag_name.replace('\\', '\\\\').replace('%', '\%').replace('_', '\_')
+        domain = [('name', '=like', '_' + escaped_tag_name), ('country_id', '=', country_id), ('applicability', '=', 'taxes')]
+        return self.env['account.account.tag'].with_context(active_test=False).search(domain)
 
 
 class AccountTaxReportLine(models.Model):
@@ -95,13 +104,28 @@ class AccountTaxReportLine(models.Model):
 
     @api.model
     def create(self, vals):
+        # Manage tags
         tag_name = vals.get('tag_name', '')
-        if tag_name:
-            vals['tag_ids'] = self._get_tags_create_vals(tag_name, vals.get('country_id'))
+        if tag_name and vals.get('country_id'):
+            existing_tags = self.env['account.account.tag']._get_tax_tags(tag_name, vals.get('country_id'))
+
+            if len(existing_tags) < 2:
+                # We create new one(s)
+                # We can have only one tag in case we archived it and deleted its unused complement sign
+                vals['tag_ids'] = self._get_tags_create_vals(tag_name, vals.get('country_id'), existing_tag=existing_tags)
+            else:
+                # We connect the new report line to the already existing tags
+                vals['tag_ids'] = [(6, 0, existing_tags.ids)]
+
         return super(AccountTaxReportLine, self).create(vals)
 
     @api.model
-    def _get_tags_create_vals(self, tag_name, country_id):
+    def _get_tags_create_vals(self, tag_name, country_id, existing_tag=None):
+        """
+            We create the plus and minus tags with tag_name.
+            In case there is an existing_tag (which can happen if we deleted its unused complement sign)
+            we only recreate the missing sign.
+        """
         minus_tag_vals = {
           'name': '-' + tag_name,
           'applicability': 'taxes',
@@ -114,7 +138,12 @@ class AccountTaxReportLine(models.Model):
           'tax_negate': False,
           'country_id': country_id,
         }
-        return [(0, 0, minus_tag_vals), (0, 0, plus_tag_vals)]
+        res = []
+        if not existing_tag or not existing_tag.tax_negate:
+            res.append((0, 0, minus_tag_vals))
+        if not existing_tag or existing_tag.tax_negate:
+            res.append((0, 0, plus_tag_vals))
+        return res
 
     def write(self, vals):
         rslt = super(AccountTaxReportLine, self).write(vals)
