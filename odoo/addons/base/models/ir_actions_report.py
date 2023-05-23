@@ -786,6 +786,15 @@ class IrActionsReport(models.Model):
             collected_streams[False] = {'stream': pdf_content_stream, 'attachment': None}
 
         return collected_streams
+    
+    def _create_attachments(self, attachment_vals_list, record, buffer):
+        attachment_names = ', '.join(str(x['name']) for x in attachment_vals_list)
+        try:
+            self.env['ir.attachment'].create(attachment_vals_list)
+        except AccessError:
+            _logger.info("Cannot save PDF report %r attachments for user %r", attachment_names, self.env.user.display_name)
+        else:
+            _logger.info("The PDF documents %r are now saved in the database", attachment_names)
 
     def _render_qweb_pdf(self, report_ref, res_ids=None, data=None):
         if not data:
@@ -835,13 +844,7 @@ class IrActionsReport(models.Model):
                 })
 
             if attachment_vals_list:
-                attachment_names = ', '.join(x['name'] for x in attachment_vals_list)
-                try:
-                    self.env['ir.attachment'].create(attachment_vals_list)
-                except AccessError:
-                    _logger.info("Cannot save PDF report %r attachments for user %r", attachment_names, self.env.user.display_name)
-                else:
-                    _logger.info("The PDF documents %r are now saved in the database", attachment_names)
+                report_sudo._create_attachments(attachment_vals_list, record, stream_data["stream"])
 
         # Merge all streams together for a single record.
         streams_to_merge = [x['stream'] for x in collected_streams.values() if x['stream']]
