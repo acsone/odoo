@@ -351,7 +351,7 @@ class IrFieldsConverter(models.AbstractModel):
             if value == '':
                 return False, field_type, warnings
             flush()
-            ids = RelatedModel.name_search(name=value, operator='=')
+            ids = RelatedModel.with_context(search_field=field.name).name_search(name=value, operator='=')
             if ids:
                 if len(ids) > 1:
                     warnings.append(ImportWarning(
