@@ -121,6 +121,7 @@ var FieldMany2One = AbstractField.extend({
     init: function (parent, name, record, options) {
         this._super.apply(this, arguments);
         this.limit = 7;
+        this.alwaysSearchMore = false;
         this.orderer = new concurrency.DropMisordered();
 
         // should normally also be set, except in standalone M20
@@ -414,7 +415,9 @@ var FieldMany2One = AbstractField.extend({
      */
     _manageSearchMore: function (values, search_val, domain, context) {
         var self = this;
-        values = values.slice(0, this.limit);
+        if (values.length > self.limit) {
+            values = values.slice(0, this.limit);
+        }
         values.push({
             label: _t("Search More..."),
             action: function () {
@@ -600,7 +603,7 @@ var FieldMany2One = AbstractField.extend({
                 });
 
                 // search more... if more results than limit
-                if (values.length > self.limit) {
+                if (values.length > self.limit || self.alwaysSearchMore) {
                     values = self._manageSearchMore(values, search_val, domain, context);
                 }
                 var create_enabled = self.can_create && !self.nodeOptions.no_create;
