@@ -530,6 +530,16 @@ class IrActionsServer(models.Model):
                 raise AccessError(_("You don't have enough access rights to run this action."))
 
             eval_context = self._get_eval_context(action)
+            records = eval_context.get('record') or eval_context['model']
+            records |= eval_context.get('records') or eval_context['model']
+            if records:
+                try:
+                    records.check_access_rule('write')
+                except AccessError:
+                    _logger.warning("Forbidden server action %r executed while the user %s does not have access to %s.",
+                        action.name, self.env.user.login, records,
+                    )
+                    raise
             if hasattr(self, 'run_action_%s_multi' % action.state):
                 # call the multi method
                 run_self = self.with_context(eval_context['env'].context)
