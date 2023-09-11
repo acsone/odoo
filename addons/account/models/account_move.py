@@ -1763,7 +1763,7 @@ class AccountMove(models.Model):
             invoice_new.update(vals)
             values = invoice_new._move_autocomplete_invoice_lines_values()
             values.pop('invoice_line_ids', None)
-            invoice.write(values)
+            super(AccountMove, invoice).write(values)
         return True
 
     @api.model_create_multi
