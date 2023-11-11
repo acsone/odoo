@@ -38,6 +38,7 @@ setup(
         'MarkupSafe',
         'num2words',
         'ofxparse',
+        'packaging',
         'passlib',
         'pillow',  # windows binary http://www.lfd.uci.edu/~gohlke/pythonlibs/
         'polib',

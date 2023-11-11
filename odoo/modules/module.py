@@ -8,11 +8,13 @@ import functools
 import importlib
 import logging
 import os
-import pkg_resources
 import re
 import sys
 import warnings
+from importlib import metadata
 from os.path import join as opj, normpath
+
+from packaging.requirements import Requirement, InvalidRequirement
 
 import odoo
 import odoo.tools as tools
@@ -457,23 +459,40 @@ def adapt_version(version):
 current_test = None
 
 
-def check_python_external_dependency(pydep):
+def _check_python_external_dependency_import_fallback(pydep, str) -> None:
+    """Check that a python external dependency is installed using the legacy import fallback."""
     try:
-        pkg_resources.get_distribution(pydep)
-    except pkg_resources.DistributionNotFound as e:
+        importlib.import_module(pydep)
+        _logger.info("python external dependency on '%s' does not appear to be a valid PyPI package. Using a PyPI package name is recommended.", pydep)
+    except ImportError:
+        # backward compatibility attempt failed
+        _logger.warning("DistributionNotFound: %s", e)
+        raise Exception('Python library not installed: %s' % (pydep,))
+
+
+def check_python_external_dependency(pydep: str) -> None:
+    """Check that a python external dependency is installed.
+
+    Raise Exception if the required dependency is not installed or the installed version
+    does not match the provided version specifier.
+    """
+    try:
+        requirement = Requirement(pydep)
+    except InvalidRequirement as e:
+        _logger.warning(f"InvalidRequirement: {e}")
+        raise Exception(f"Invalid python external dependency requirement: {pydep}") from e
+    try:
+        installed_version = metadata.version(requirement.name)
+    except metadata.PackageNotFoundError as e:
         try:
             importlib.import_module(pydep)
-            _logger.info("python external dependency on '%s' does not appear to be a valid PyPI package. Using a PyPI package name is recommended.", pydep)
+            _logger.info(f"Python external dependency on '{pydep}' does not appear to be a valid PyPI package. Using a PyPI package name is recommended.")
         except ImportError:
             # backward compatibility attempt failed
-            _logger.warning("DistributionNotFound: %s", e)
-            raise Exception('Python library not installed: %s' % (pydep,))
-    except pkg_resources.VersionConflict as e:
-        _logger.warning("VersionConflict: %s", e)
-        raise Exception('Python library version conflict: %s' % (pydep,))
-    except Exception as e:
-        _logger.warning("get_distribution(%s) failed: %s", pydep, e)
-        raise Exception('Error finding python library %s' % (pydep,))
+            _logger.warning(f"PackageNotFound: {e}")
+            raise Exception(f"Python library not installed: {pydep}") from e
+    if requirement.specifier and installed_version not in requirement.specifier:
+        raise Exception(f"Python library version conflict: {pydep}")
 
 
 def check_manifest_dependencies(manifest):
