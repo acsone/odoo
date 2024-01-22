@@ -914,7 +914,7 @@ exports.PosModel = Backbone.Model.extend({
                         transfer.then(function(order_server_id){
                             // generate the pdf and download it
                             if (order_server_id.length && !order.is_to_email()) {
-                                self.chrome.do_action('point_of_sale.pos_invoice_report',{additional_context:{
+                                self.chrome.do_action(self._get_invoice_action_report(),{additional_context:{
                                     active_ids:order_server_id,
                                 }}).then(function () {
                                     resolveInvoiced(order_server_id);
@@ -941,6 +941,10 @@ exports.PosModel = Backbone.Model.extend({
         });
 
         return invoiced;
+    },
+
+    _get_invoice_action_report: function() {
+        return 'point_of_sale.pos_invoice_report';
     },
 
     // wrapper around the _save_to_server that updates the synch status widget
