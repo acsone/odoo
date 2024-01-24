@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+import datetime
 import logging
 _logger = logging.getLogger('precompute_setter')
 
@@ -1886,3 +1887,86 @@ class UnsearchableO2M(models.Model):
     def _compute_parent_id(self):
         for r in self:
             r.parent_id = r.stored_parent_id
+
+class AnyParent(models.Model):
+    _name = 'test_new_api.any.parent'
+    _description = 'Any Parent'
+
+    name = fields.Char()
+    child_ids = fields.One2many('test_new_api.any.child', 'parent_id')
+
+
+class AnyChild(models.Model):
+    _name = 'test_new_api.any.child'
+    _description = 'Any Child'
+    _inherits = {
+        'test_new_api.any.parent': 'parent_id',
+    }
+
+    parent_id = fields.Many2one('test_new_api.any.parent', required=True, ondelete='cascade')
+    link_sibling_id = fields.Many2one('test_new_api.any.child')
+    quantity = fields.Integer()
+    tag_ids = fields.Many2many('test_new_api.any.tag')
+
+
+class AnyTag(models.Model):
+    _name = 'test_new_api.any.tag'
+    _description = 'Any tag'
+
+    name = fields.Char()
+    child_ids = fields.Many2many('test_new_api.any.child')
+
+
+class CustomView(models.Model):
+    _name = _description = "test_new_api.custom.view"
+    _auto = False
+    _depends = {
+        'test_new_api.any.tag': ['name'],
+        'test_new_api.any.child': ['quantity'],
+    }
+
+    sum_quantity = fields.Integer()
+    tag_id = fields.Many2one('test_new_api.any.tag')
+
+    def init(self):
+        query = """
+            CREATE or REPLACE VIEW test_new_api_custom_view AS (
+                SELECT tag.id AS id, SUM(child.quantity) AS sum_quantity, tag.id AS tag_id
+                FROM test_new_api_any_child AS child
+                JOIN test_new_api_any_child_test_new_api_any_tag_rel AS rel ON rel.test_new_api_any_child_id = child.id
+                JOIN test_new_api_any_tag AS tag ON tag.id = rel.test_new_api_any_tag_id
+                GROUP BY tag.id
+            )
+        """
+        self.env.cr.execute(query)
+
+class CustomTableQuery(models.Model):
+    _name = _description = "test_new_api.custom.table_query"
+    _auto = False
+    _depends = {
+        'test_new_api.any.tag': ['name'],
+        'test_new_api.any.child': ['quantity'],
+    }
+
+    sum_quantity = fields.Integer()
+    tag_id = fields.Many2one('test_new_api.any.tag')
+
+    @property
+    def _table_query(self):
+        return """
+            SELECT tag.id AS id, SUM(child.quantity) AS sum_quantity, tag.id AS tag_id
+            FROM test_new_api_any_child AS child
+            JOIN test_new_api_any_child_test_new_api_any_tag_rel AS rel ON rel.test_new_api_any_child_id = child.id
+            JOIN test_new_api_any_tag AS tag ON tag.id = rel.test_new_api_any_tag_id
+            GROUP BY tag.id
+        """
+
+
+class ModelAutovacuumed(models.Model):
+    _name = _description = 'test_new_api.autovacuumed'
+
+    expire_at = fields.Datetime('Expires at')
+
+    @api.autovacuum
+    def _gc(self):
+        self.search([('expire_at', '<', datetime.datetime.now() - datetime.timedelta(days=1))]).unlink()
