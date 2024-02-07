@@ -547,6 +547,12 @@ registry.Parallax = Animation.extend({
      */
     destroy: function () {
         this._super.apply(this, arguments);
+        this._updateBgCss({
+            transform: '',
+            top: '',
+            bottom: '',
+        });
+
         $(window).off('.animation_parallax');
         if (this.modalEl) {
             $(this.modalEl).off('.animation_parallax');
@@ -573,7 +579,8 @@ registry.Parallax = Animation.extend({
         // Reset offset if parallax effect will not be performed and leave
         var noParallaxSpeed = (this.speed === 0 || this.speed === 1);
         if (noParallaxSpeed) {
-            this.$bg.css({
+            // TODO remove in master, kept for compatibility in stable
+            this._updateBgCss({
                 transform: '',
                 top: '',
                 bottom: '',
@@ -589,10 +596,32 @@ registry.Parallax = Animation.extend({
 
         // Provide a "safe-area" to limit parallax
         const absoluteRatio = Math.abs(this.ratio);
-        this.$bg.css({
+        this._updateBgCss({
             top: -absoluteRatio,
             bottom: -absoluteRatio,
         });
+    },
+    /**
+     * Updates the parallax background element style with the provided CSS
+     * values.
+     * If the editor is enabled, it deactivates the observer during the CSS
+     * update.
+     *
+     * @param {Object} cssValues - The CSS values to apply to the background.
+     */
+    _updateBgCss(cssValues) {
+        if (!this.$bg) {
+            // Safety net in case the `destroy` is called before the `start` is
+            // executed.
+            return;
+        }
+        if (this.options.wysiwyg) {
+            this.options.wysiwyg.odooEditor.observerUnactive('_updateBgCss');
+        }
+        this.$bg.css(cssValues);
+        if (this.options.wysiwyg) {
+            this.options.wysiwyg.odooEditor.observerActive('_updateBgCss');
+        }
     },
 
     //--------------------------------------------------------------------------
@@ -615,7 +644,7 @@ registry.Parallax = Animation.extend({
         var vpEndOffset = scrollOffset + this.viewport;
         if (vpEndOffset >= this.visibleArea[0]
          && vpEndOffset <= this.visibleArea[1]) {
-            this.$bg.css('transform', 'translateY(' + _getNormalizedPosition.call(this, vpEndOffset) + 'px)');
+            this._updateBgCss({'transform': 'translateY(' + _getNormalizedPosition.call(this, vpEndOffset) + 'px)'});
         }
 
         function _getNormalizedPosition(pos) {
@@ -1096,7 +1125,16 @@ registry.FullScreenHeight = publicWidget.Widget.extend({
         // Doing it that way allows to considerer fixed headers, hidden headers,
         // connected users, ...
         const firstContentEl = $('#wrapwrap > main > :first-child')[0]; // first child to consider the padding-top of main
+        // When a modal is open, we remove the "modal-open" class from the body.
+        // This is because this class sets "#wrapwrap" and "<body>" to
+        // "overflow: hidden," preventing the "closestScrollable" function from
+        // correctly recognizing the scrollable element closest to the element
+        // for which the height needs to be calculated. Without this, the
+        // "mainTopPos" variable would be incorrect.
+        const modalOpen = document.body.classList.contains("modal-open");
+        document.body.classList.remove("modal-open");
         const mainTopPos = firstContentEl.getBoundingClientRect().top + dom.closestScrollable(firstContentEl.parentNode).scrollTop;
+        document.body.classList.toggle("modal-open", modalOpen);
         return (windowHeight - mainTopPos);
     },
 });

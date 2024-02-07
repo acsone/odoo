@@ -56,7 +56,7 @@ msgstr "คำตอบ"
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_question__once_per_order
 msgid "Ask once per order"
-msgstr ""
+msgstr "ถามหนึ่งครั้งต่อคำสั่งซื้อ"
 
 #. module: website_event_questions
 #: model:ir.model.fields,field_description:website_event_questions.field_event_registration__registration_answer_ids
@@ -243,7 +243,7 @@ msgstr "ประเภทคำถาม"
 #: code:addons/website_event_questions/models/event_question.py:0
 #, python-format
 msgid "Question cannot be linked to both an Event and an Event Type."
-msgstr ""
+msgstr "คำถามไม่สามารถเชื่อมโยงกับทั้งกิจกรรมและประเภทกิจกรรมได้"
 
 #. module: website_event_questions
 #: code:addons/website_event_questions/models/event_question.py:0
@@ -278,7 +278,7 @@ msgstr "การขาย"
 #. module: website_event_questions
 #: model_terms:ir.ui.view,arch_db:website_event_questions.event_registration_view_tree
 msgid "Selected Answers"
-msgstr ""
+msgstr "คำตอบที่เลือก"
 
 #. module: website_event_questions
 #: model_terms:ir.ui.view,arch_db:website_event_questions.event_registration_answer_view_tree
@@ -359,14 +359,14 @@ msgstr "คุณไม่สามารถเปลี่ยนประเภ
 #, python-format
 msgid ""
 "You cannot delete a question that has already been answered by attendees."
-msgstr ""
+msgstr "คุณไม่สามารถลบคำถามที่ผู้เข้าร่วมตอบไปแล้วได้"
 
 #. module: website_event_questions
 #: code:addons/website_event_questions/models/event_question.py:0
 #, python-format
 msgid ""
 "You cannot delete an answer that has already been selected by attendees."
-msgstr ""
+msgstr "คุณไม่สามารถลบคำตอบที่ผู้เข้าร่วมเลือกไว้แล้วได้"
 
 #. module: website_event_questions
 #: model_terms:ir.ui.view,arch_db:website_event_questions.event_event_view_form

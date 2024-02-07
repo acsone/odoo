@@ -959,6 +959,7 @@ class StockQuant(models.Model):
             'state': 'confirmed',
             'location_id': location_id.id,
             'location_dest_id': location_dest_id.id,
+            'restrict_partner_id':  self.owner_id.id,
             'is_inventory': True,
             'move_line_ids': [(0, 0, {
                 'product_id': self.product_id.id,
@@ -1171,6 +1172,8 @@ class QuantPackage(models.Model):
             return [('id', '=', False)]
 
     def unpack(self):
+        # remove inventory mode
+        self = self.with_context(inventory_mode=False)
         unpacked_quants = self.env['stock.quant']
         for package in self:
             move_line_to_modify = self.env['stock.move.line'].search([

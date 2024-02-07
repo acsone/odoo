@@ -49,8 +49,6 @@ import {
     fillEmpty,
     isEmptyBlock,
     getCursorDirection,
-    firstLeaf,
-    lastLeaf,
 } from '../utils/utils.js';
 
 const TEXT_CLASSES_REGEX = /\btext-[^\s]*\b/;
@@ -326,7 +324,9 @@ export const editorCommands = {
             !descendants(block).some(descendant => selectedBlocks.includes(descendant)) &&
             block.isContentEditable
         ));
-        const [startContainer, startOffset, endContainer, endOffset] = [firstLeaf(range.startContainer), range.startOffset, lastLeaf(range.endContainer), range.endOffset];
+        let { startContainer, startOffset, endContainer, endOffset } = range;
+        const startContainerChild = startContainer.firstChild;
+        const endContainerChild = endContainer.lastChild;
         for (const block of deepestSelectedBlocks) {
             if (
                 ['P', 'PRE', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'BLOCKQUOTE'].includes(
@@ -337,6 +337,7 @@ export const editorCommands = {
                 if (inLI && tagName === "P") {
                     inLI.oToggleList(0);
                 } else {
+                    block.classList.remove('h1', 'h2', 'h3', 'h4', 'h5', 'h6');
                     setTagName(block, tagName);
                 }
             } else {
@@ -348,10 +349,17 @@ export const editorCommands = {
                 children.forEach(child => newBlock.appendChild(child));
             }
         }
+        const isContextBlock = container => ['TD', 'DIV', 'LI'].includes(container.nodeName);
+        if (!startContainer.isConnected || isContextBlock(startContainer)) {
+            startContainer = startContainerChild.parentNode;
+        }
+        if (!endContainer.isConnected || isContextBlock(endContainer)) {
+            endContainer = endContainerChild.parentNode;
+        }
         const newRange = new Range();
-        newRange.setStart(startContainer,startOffset);
-        newRange.setEnd(endContainer,endOffset);
-        getDeepRange(editor.editable, { range: newRange, select: true, });
+        newRange.setStart(startContainer, startOffset);
+        newRange.setEnd(endContainer, endOffset);
+        getDeepRange(editor.editable, { range: newRange, select: true });
         editor.historyStep();
     },
 
@@ -371,7 +379,11 @@ export const editorCommands = {
         const changedElements = [];
         const defaultDirection = editor.options.direction;
         const shouldApplyStyle = !isSelectionFormat(editor.editable, 'switchDirection');
-        for (const block of new Set(selectedTextNodes.map(textNode => closestElement(textNode, 'ul,ol') || closestBlock(textNode)))) {
+        let blocks = new Set(selectedTextNodes.map(textNode => closestElement(textNode, 'ul,ol') || closestBlock(textNode)));
+        blocks.forEach(block => {
+            blocks = [...blocks, ...block.querySelectorAll('ul,ol')];
+        })
+        for (const block of blocks) {
             if (!shouldApplyStyle) {
                 block.removeAttribute('dir');
             } else {
@@ -483,7 +495,8 @@ export const editorCommands = {
                 cli.tagName == 'LI' &&
                 !li.has(cli) &&
                 !cli.classList.contains('oe-nested') &&
-                cli.isContentEditable
+                cli.isContentEditable &&
+                !cli.classList.contains('nav-item')
             ) {
                 li.add(cli);
             }
@@ -510,10 +523,14 @@ export const editorCommands = {
             if (node.nodeType === Node.TEXT_NODE && !isVisibleStr(node) && closestElement(node).isContentEditable) {
                 node.remove();
             } else {
+                // Ensure nav-item lists are excluded from toggling
+                const isNavItemList = node => node.nodeName === 'LI' && node.classList.contains('nav-item');
                 let block = closestBlock(node);
-                if (!['OL', 'UL'].includes(block.tagName) && block.isContentEditable) {
-                    block = block.closest('li') || block;
-                    const ublock = block.closest('ol, ul');
+                block = isNavItemList(block) ? node : block;
+                if (!['OL', 'UL'].includes(block.tagName) && (block.isContentEditable || block.nodeType === Node.TEXT_NODE)) {
+                    const closestLi = closestElement(block, 'li');
+                    block = closestLi && !isNavItemList(closestLi) ? closestLi : block;
+                    const ublock = block.nodeName === 'LI' && block.closest('ol, ul');
                     ublock && getListMode(ublock) == mode ? li.add(block) : blocks.add(block);
                 }
             }
@@ -583,6 +600,7 @@ export const editorCommands = {
                     (node.nodeType === Node.TEXT_NODE && isVisibleStr(node)) ||
                     (isEmptyBlock(node.parentNode)) ||
                     (node.nodeType === Node.ELEMENT_NODE &&
+                    node.nodeName !== 'FIGURE' &&
                     ['inline', 'inline-block'].includes(getComputedStyle(node).display) &&
                     isVisibleStr(node.textContent) &&
                     !node.classList.contains('btn') &&
