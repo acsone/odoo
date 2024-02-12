@@ -1219,6 +1219,12 @@ class HolidaysRequest(models.Model):
             holidays.sudo().action_validate()
         self.activity_update()
         return True
+    
+    def condition_to_send_mail_on_approval(self):
+        """
+            Allows to avoid sending mail on approval of holiday
+        """
+        return True
 
     def action_approve(self):
         # if validation_type == 'both': this method is the first approval approval
@@ -1231,7 +1237,7 @@ class HolidaysRequest(models.Model):
 
 
         # Post a second message, more verbose than the tracking message
-        for holiday in self.filtered(lambda holiday: holiday.employee_id.user_id):
+        for holiday in self.filtered(lambda holiday: holiday.employee_id.user_id and holiday.condition_to_send_mail_on_approval()):
             user_tz = timezone(holiday.tz)
             utc_tz = pytz.utc.localize(holiday.date_from).astimezone(user_tz)
             holiday.message_post(
