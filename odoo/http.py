@@ -1179,12 +1179,12 @@ class OpenERPSession(werkzeug.contrib.sessions.Session):
 
 def session_gc(session_store):
     if random.random() < 0.001:
-        # we keep session one week
-        last_week = time.time() - 60*60*24*7
+        # we keep session 8h
+        exp_time = time.time() - 60*60*8
         for fname in os.listdir(session_store.path):
             path = os.path.join(session_store.path, fname)
             try:
-                if os.path.getmtime(path) < last_week:
+                if os.path.getmtime(path) < exp_time:
                     os.unlink(path)
             except OSError:
                 pass
