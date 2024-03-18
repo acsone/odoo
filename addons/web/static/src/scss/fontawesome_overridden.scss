@@ -36,3 +36,18 @@
         }
     }
 }
+// This is a patch of the font awesome library to add the new "Twitter" X icon.
+@font-face {
+    font-family: 'FontAwesome-twitter-x-only';
+    src: url('../../src/fonts/twitter_x_only.woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+.fa.fa-x-twitter {
+    font-family: 'FontAwesome-twitter-x-only' !important;
+
+    &:before {
+        content: '\e61b';
+    }
+}
