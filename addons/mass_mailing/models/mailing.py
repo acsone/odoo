@@ -556,7 +556,8 @@ class MassMailing(models.Model):
             # auto-commit except in testing mode
             auto_commit = not getattr(threading.currentThread(), 'testing', False)
             composer.send_mail(auto_commit=auto_commit)
-            mailing.write({'state': 'done', 'sent_date': fields.Datetime.now()})
+            if not mailing._get_remaining_recipients():
+                mailing.write({'state': 'done', 'sent_date': fields.Datetime.now()})
         return True
 
     def convert_links(self):
