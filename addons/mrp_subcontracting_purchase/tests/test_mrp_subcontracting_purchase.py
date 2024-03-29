@@ -379,3 +379,43 @@ class MrpSubcontractingPurchaseTest(TestMrpSubcontractingCommon):
         comp_receipt.move_ids.quantity_done = 1
         comp_receipt.button_validate()
         self.assertEqual(ressuply_pick.state, 'assigned')
+
+    def test_update_qty_purchased_with_subcontracted_product(self):
+        """
+        Test That we can update the quantity of a purchase order line with a subcontracted product
+        """
+        mto_route = self.env.ref('stock.route_warehouse0_mto')
+        buy_route = self.env['stock.route'].search([('name', '=', 'Buy')])
+        mto_route.active = True
+        self.finished.route_ids = mto_route.ids + buy_route.ids
+        seller = self.env['product.supplierinfo'].create({
+            'partner_id': self.vendor.id,
+            'price': 12.0,
+            'delay': 0
+        })
+        self.finished.seller_ids = [(6, 0, [seller.id])]
+
+        mo = self.env['mrp.production'].create({
+            'product_id': self.finished2.id,
+            'product_qty': 3.0,
+            'move_raw_ids': [(0, 0, {
+                'product_id': self.finished.id,
+                'product_uom_qty': 3.0,
+                'product_uom': self.finished.uom_id.id,
+            })]
+        })
+        mo.action_confirm()
+        po = self.env['purchase.order.line'].search([('product_id', '=', self.finished.id)]).order_id
+        po.button_confirm()
+        self.assertEqual(len(po.picking_ids), 1)
+        picking = po.picking_ids
+        picking.move_ids.quantity_done = 2.0
+        # When we validate the picking manually, we create a backorder.
+        backorder_wizard_dict = picking.button_validate()
+        backorder_wizard = Form(self.env[backorder_wizard_dict['res_model']].with_context(backorder_wizard_dict['context'])).save()
+        backorder_wizard.process()
+        self.assertEqual(len(po.picking_ids), 2)
+        picking.backorder_ids.action_cancel()
+        self.assertEqual(picking.backorder_ids.state, 'cancel')
+        po.order_line.product_qty = 2.0
+        self.assertEqual(po.order_line.product_qty, 2.0)

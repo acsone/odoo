@@ -17,7 +17,7 @@ from odoo.addons.test_mail.data.test_mail_data import MAIL_TEMPLATE
 from odoo.addons.test_mail.models.test_mail_models import MailTestGateway
 from odoo.addons.test_mail.tests.common import TestMailCommon
 from odoo.sql_db import Cursor
-from odoo.tests import tagged
+from odoo.tests import tagged, RecordCapturer
 from odoo.tests.common import users
 from odoo.tools import email_split_and_format, formataddr, mute_logger
 
@@ -1225,6 +1225,48 @@ class TestMailgateway(TestMailCommon):
     # Thread formation
     # --------------------------------------------------
 
+    @mute_logger('odoo.addons.mail.models.mail_thread', 'odoo.models.unlink', 'odoo.addons.mail.models.mail_mail')
+    def test_message_process_external_notification_reply(self):
+        """Ensure responses bot messages are discussions."""
+        bot_notification_message = self._create_gateway_message(
+            self.test_record,
+            'bot_notif_message',
+            author_id=self.env.ref('base.partner_root').id,
+            message_type='auto_comment',
+            is_internal=True,
+            subtype_id=self.env.ref('mail.mt_note').id,
+        )
+
+        self.format_and_process(
+            MAIL_TEMPLATE, self.email_from, '',
+            subject='Reply to bot notif',
+            extra=f'References: {bot_notification_message.message_id}'
+        )
+        new_msg = self.test_record.message_ids[0]
+        self.assertFalse(new_msg.is_internal, "Responses to messages sent by odoobot should always be public.")
+        self.assertEqual(new_msg.parent_id, bot_notification_message)
+        self.assertEqual(new_msg.subtype_id, self.env.ref('mail.mt_comment'))
+
+        # Also check the regular case
+        some_notification_message = self._create_gateway_message(
+            self.test_record,
+            'some_notif_message',
+            message_type='notification',
+            is_internal=True,
+            subtype_id=self.env.ref('mail.mt_note').id,
+        )
+
+        self.format_and_process(
+            MAIL_TEMPLATE, self.email_from, '',
+            subject='Reply to some notif',
+            extra=f'References: {some_notification_message.message_id}'
+        )
+        new_msg = self.test_record.message_ids[0]
+        self.assertTrue(new_msg.is_internal, "Responses to messages sent by anyone but odoobot should keep"
+                        "the 'is_internal' value of the parent.")
+        self.assertEqual(new_msg.parent_id, some_notification_message)
+        self.assertEqual(new_msg.subtype_id, self.env.ref('mail.mt_note'))
+
     @mute_logger('odoo.addons.mail.models.mail_thread', 'odoo.models')
     def test_message_process_in_reply_to(self):
         """ Incoming email using in-rely-to should go into the right destination even with a wrong destination """
@@ -1657,6 +1699,35 @@ class TestMailgateway(TestMailCommon):
             self.assertEqual(file_content, attachment.raw.decode(encoding or 'utf-8'))
             if encoding not in ['', 'UTF-8']:
                 self.assertNotEqual(file_content, attachment.raw.decode('utf-8'))
+
+    def test_message_hebrew_iso8859_8_i(self):
+        # This subject was found inside an email of one of our customer.
+        # The charset is iso-8859-8-i which isn't natively supported by
+        # python, check that Odoo is still capable of decoding it.
+        subject = "בוקר טוב! צריך איימק ושתי מסכים"
+        encoded_subject = "=?iso-8859-8-i?B?4eX3+CDo5eEhIPb46eog4Onp7vcg5fn66SDu8evp7Q==?="
+
+        # This content was made up using google translate. The charset
+        # is iso-8859-8 which is natively supported by python.
+        charset = "iso-8859-8"
+        content = "שלום וברוכים הבאים למקרה המבחן הנפלא הזה"
+        encoded_content = base64.b64encode(content.encode(charset)).decode()
+
+        with RecordCapturer(self.env['mail.test.gateway'], []) as capture:
+            mail = test_mail_data.MAIL_FILE_ENCODING.format(
+                msg_id="<test_message_hebrew_iso8859_8_i@iron.sky>",
+                subject=encoded_subject,
+                charset=f'; charset="{charset}"',
+                content=encoded_content,
+            )
+            self.env['mail.thread'].message_process('mail.test.gateway', mail)
+
+        capture.records.ensure_one()
+        self.assertEqual(capture.records.name, subject)
+        self.assertEqual(
+            capture.records.message_ids.attachment_ids.raw.decode(charset),
+            content
+        )
 
     # --------------------------------------------------
     # Emails loop detection

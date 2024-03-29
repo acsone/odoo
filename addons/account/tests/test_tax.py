@@ -220,12 +220,27 @@ class TestTax(TestTaxCommon):
         res = self.group_tax_percent.with_context({'force_price_include':True}).compute_all(100.0)
         self._check_compute_all_results(
             100,    # 'total_included'
-            83.33,    # 'total_excluded'
+            83.33,  # 'total_excluded'
             [
                 # base , amount     | seq | amount | incl | incl_base
                 # ---------------------------------------------------
                 (83.33, 8.33),    # |  1  |    10% |      |
                 (83.33, 8.34),    # |  2  |    10% |      |
+                # ---------------------------------------------------
+            ],
+            res
+        )
+
+        self.env.company.country_id = self.env.ref('base.in')
+        res = self.group_tax_percent.with_context({'force_price_include':True}).compute_all(100.0)
+        self._check_compute_all_results(
+            100,    # 'total_included'
+            83.34,    # 'total_excluded'
+            [
+                # base , amount     | seq | amount | incl | incl_base
+                # ---------------------------------------------------
+                (83.34, 8.33),    # |  1  |    10% |      |
+                (83.34, 8.33),    # |  2  |    10% |      |
                 # ---------------------------------------------------
             ],
             res
@@ -845,7 +860,8 @@ class TestTax(TestTaxCommon):
         )
 
     def test_rounding_tax_included_round_per_line_03(self):
-        ''' Test the rounding of a 8% and 0% price included tax in an invoice having 8 * 15.55 as line.
+        ''' Test the rounding of a 8% and 0% price included tax in an invoice having 8 * 15.55 as line
+        and a sequence that is solely dependent on the ID, as the tax sequence is identical.
         The decimal precision is set to 2.
         '''
         self.tax_0_percent.company_id.currency_id.rounding = 0.01
@@ -862,8 +878,8 @@ class TestTax(TestTaxCommon):
             [
                 # base , amount
                 # -------------
-                (115.19, 9.21),
                 (115.19, 0.00),
+                (115.19, 9.21),
                 # -------------
             ],
             res1

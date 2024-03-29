@@ -37,6 +37,7 @@ from .tools import DEFAULT_SERVER_DATETIME_FORMAT as DATETIME_FORMAT
 from .tools.translate import html_translate, _
 from .tools.mimetypes import guess_mimetype
 
+from odoo import SUPERUSER_ID
 from odoo.exceptions import CacheMiss
 from odoo.osv import expression
 
@@ -344,8 +345,8 @@ class Field(MetaField('DummyField', (object,), {})):
 
     def __repr__(self):
         if self.name is None:
-            return "<%s.%s>" % (__name__, type(self).__name__)
-        return "%s.%s" % (self.model_name, self.name)
+            return f"{'<%s.%s>'!r}" % (__name__, type(self).__name__)
+        return f"{'%s.%s'!r}" % (self.model_name, self.name)
 
     ############################################################################
     #
@@ -1822,6 +1823,8 @@ class _String(Field):
                     matches = get_close_matches(old_term_text, text2terms, 1, 0.9)
                     if matches:
                         closest_term = get_close_matches(old_term, text2terms[matches[0]], 1, 0)[0]
+                        if closest_term in translation_dictionary:
+                            continue
                         old_is_text = old_term == self.get_text_content(old_term)
                         closest_is_text = closest_term == self.get_text_content(closest_term)
                         if old_is_text or not closest_is_text:
@@ -2599,8 +2602,6 @@ class Selection(Field):
             # We cannot use field.selection or field.selection_add here
             # because those attributes are overridden by ``_setup_attrs``.
             if 'selection' in field.args:
-                if self.related:
-                    _logger.warning("%s: selection attribute will be ignored as the field is related", self)
                 selection = field.args['selection']
                 if isinstance(selection, list):
                     if values is not None and values != [kv[0] for kv in selection]:
@@ -2615,8 +2616,6 @@ class Selection(Field):
                     self.ondelete = None
 
             if 'selection_add' in field.args:
-                if self.related:
-                    _logger.warning("%s: selection_add attribute will be ignored as the field is related", self)
                 selection_add = field.args['selection_add']
                 assert isinstance(selection_add, list), \
                     "%s: selection_add=%r must be a list" % (self, selection_add)
@@ -3522,7 +3521,7 @@ class Properties(Field):
             current_model = env[self.model_name]
             definition_record_field = current_model._fields[self.definition_record]
             container_model_name = definition_record_field.comodel_name
-            container_id = env[container_model_name].browse(container_id)
+            container_id = env[container_model_name].sudo().browse(container_id)
 
         properties_definition = container_id[self.definition_record_field]
         if not properties_definition:
@@ -4287,6 +4286,13 @@ class _RelationalMulti(_Relational):
             assert not any(record_ids)
             return self.write_new(records_commands_list)
 
+    def _check_sudo_commands(self, comodel):
+        # if the model doesn't accept sudo commands
+        if not comodel._allow_sudo_commands:
+            # Then, disable sudo and reset the transaction origin user
+            return comodel.sudo(False).with_user(comodel.env.uid_origin)
+        return comodel
+
 
 class One2many(_RelationalMulti):
     """One2many field; the value of such a field is the recordset of all the
@@ -4403,6 +4409,7 @@ class One2many(_RelationalMulti):
 
         model = records_commands_list[0][0].browse()
         comodel = model.env[self.comodel_name].with_context(**self.context)
+        comodel = self._check_sudo_commands(comodel)
 
         ids = OrderedSet(rid for recs, cs in records_commands_list for rid in recs.ids)
         records = records_commands_list[0][0].browse(ids)
@@ -4514,6 +4521,7 @@ class One2many(_RelationalMulti):
         model = records_commands_list[0][0].browse()
         cache = model.env.cache
         comodel = model.env[self.comodel_name].with_context(**self.context)
+        comodel = self._check_sudo_commands(comodel)
 
         ids = {record.id for records, _ in records_commands_list for record in records}
         records = model.browse(ids)
@@ -4781,6 +4789,7 @@ class Many2many(_RelationalMulti):
 
         model = records_commands_list[0][0].browse()
         comodel = model.env[self.comodel_name].with_context(**self.context)
+        comodel = self._check_sudo_commands(comodel)
         cr = model.env.cr
 
         # determine old and new relation {x: ys}
@@ -4945,6 +4954,7 @@ class Many2many(_RelationalMulti):
 
         model = records_commands_list[0][0].browse()
         comodel = model.env[self.comodel_name].with_context(**self.context)
+        comodel = self._check_sudo_commands(comodel)
         new = lambda id_: id_ and NewId(id_)
 
         # determine old and new relation {x: ys}

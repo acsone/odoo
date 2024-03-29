@@ -454,10 +454,10 @@ registry.slider = publicWidget.Widget.extend({
         $(window).on('resize.slider', _.debounce(() => this._computeHeights(), 250));
         if (this.editableMode) {
             // Prevent carousel slide to be an history step.
-            this.$target.on('slide.bs.carousel', () => {
+            this.$target.on('slide.bs.carousel.slider', () => {
                 this.options.wysiwyg.odooEditor.observerUnactive();
             });
-            this.$target.on('slid.bs.carousel', () => {
+            this.$target.on('slid.bs.carousel.slider', () => {
                 this.options.wysiwyg.odooEditor.observerActive();
             });
         }
@@ -475,7 +475,7 @@ registry.slider = publicWidget.Widget.extend({
             $(el).css('min-height', '');
         });
         $(window).off('.slider');
-        this.$target.off('.carousel');
+        this.$target.off('.slider');
     },
 
     //--------------------------------------------------------------------------
@@ -547,6 +547,12 @@ registry.Parallax = Animation.extend({
      */
     destroy: function () {
         this._super.apply(this, arguments);
+        this._updateBgCss({
+            transform: '',
+            top: '',
+            bottom: '',
+        });
+
         $(window).off('.animation_parallax');
         if (this.modalEl) {
             $(this.modalEl).off('.animation_parallax');
@@ -573,7 +579,8 @@ registry.Parallax = Animation.extend({
         // Reset offset if parallax effect will not be performed and leave
         var noParallaxSpeed = (this.speed === 0 || this.speed === 1);
         if (noParallaxSpeed) {
-            this.$bg.css({
+            // TODO remove in master, kept for compatibility in stable
+            this._updateBgCss({
                 transform: '',
                 top: '',
                 bottom: '',
@@ -589,10 +596,32 @@ registry.Parallax = Animation.extend({
 
         // Provide a "safe-area" to limit parallax
         const absoluteRatio = Math.abs(this.ratio);
-        this.$bg.css({
+        this._updateBgCss({
             top: -absoluteRatio,
             bottom: -absoluteRatio,
         });
+    },
+    /**
+     * Updates the parallax background element style with the provided CSS
+     * values.
+     * If the editor is enabled, it deactivates the observer during the CSS
+     * update.
+     *
+     * @param {Object} cssValues - The CSS values to apply to the background.
+     */
+    _updateBgCss(cssValues) {
+        if (!this.$bg) {
+            // Safety net in case the `destroy` is called before the `start` is
+            // executed.
+            return;
+        }
+        if (this.options.wysiwyg) {
+            this.options.wysiwyg.odooEditor.observerUnactive('_updateBgCss');
+        }
+        this.$bg.css(cssValues);
+        if (this.options.wysiwyg) {
+            this.options.wysiwyg.odooEditor.observerActive('_updateBgCss');
+        }
     },
 
     //--------------------------------------------------------------------------
@@ -615,7 +644,7 @@ registry.Parallax = Animation.extend({
         var vpEndOffset = scrollOffset + this.viewport;
         if (vpEndOffset >= this.visibleArea[0]
          && vpEndOffset <= this.visibleArea[1]) {
-            this.$bg.css('transform', 'translateY(' + _getNormalizedPosition.call(this, vpEndOffset) + 'px)');
+            this._updateBgCss({'transform': 'translateY(' + _getNormalizedPosition.call(this, vpEndOffset) + 'px)'});
         }
 
         function _getNormalizedPosition(pos) {
@@ -842,13 +871,13 @@ registry.backgroundVideo = publicWidget.Widget.extend(MobileYoutubeAutoplayMixin
         if (relativeRatio >= 1.0) {
             style['width'] = '100%';
             style['height'] = (relativeRatio * 100) + '%';
-            style['left'] = '0';
-            style['top'] = (-(relativeRatio - 1.0) / 2 * 100) + '%';
+            style['inset-inline-start'] = '0';
+            style['inset-block-start'] = (-(relativeRatio - 1.0) / 2 * 100) + '%';
         } else {
             style['width'] = ((1 / relativeRatio) * 100) + '%';
             style['height'] = '100%';
-            style['left'] = (-((1 / relativeRatio) - 1.0) / 2 * 100) + '%';
-            style['top'] = '0';
+            style['inset-inline-start'] = (-((1 / relativeRatio) - 1.0) / 2 * 100) + '%';
+            style['inset-block-start'] = '0';
         }
         this.$iframe.css(style);
 
@@ -924,8 +953,11 @@ registry.socialShare = publicWidget.Widget.extend({
     _renderSocial: function (social) {
         var url = this.$el.data('urlshare') || document.URL.split(/[?#]/)[0];
         url = encodeURIComponent(url);
-        var title = document.title.split(" | ")[0];  // get the page title without the company name
-        var hashtags = ' #' + document.title.split(" | ")[1].replace(' ', '') + ' ' + this.hashtags;  // company name without spaces (for hashtag)
+        const titleParts = document.title.split(" | ");
+        const title = titleParts[0]; // Get the page title without the company name
+        const hashtags = titleParts.length === 1
+            ? ` ${this.hashtags}`
+            : ` #${titleParts[1].replace(" ", "")} ${this.hashtags}`; // Company name without spaces (for hashtag)
         var socialNetworks = {
             'facebook': 'https://www.facebook.com/sharer/sharer.php?u=' + url,
             'twitter': 'https://twitter.com/intent/tweet?original_referer=' + url + '&text=' + encodeURIComponent(title + hashtags + ' - ') + url,
@@ -1096,7 +1128,16 @@ registry.FullScreenHeight = publicWidget.Widget.extend({
         // Doing it that way allows to considerer fixed headers, hidden headers,
         // connected users, ...
         const firstContentEl = $('#wrapwrap > main > :first-child')[0]; // first child to consider the padding-top of main
+        // When a modal is open, we remove the "modal-open" class from the body.
+        // This is because this class sets "#wrapwrap" and "<body>" to
+        // "overflow: hidden," preventing the "closestScrollable" function from
+        // correctly recognizing the scrollable element closest to the element
+        // for which the height needs to be calculated. Without this, the
+        // "mainTopPos" variable would be incorrect.
+        const modalOpen = document.body.classList.contains("modal-open");
+        document.body.classList.remove("modal-open");
         const mainTopPos = firstContentEl.getBoundingClientRect().top + dom.closestScrollable(firstContentEl.parentNode).scrollTop;
+        document.body.classList.toggle("modal-open", modalOpen);
         return (windowHeight - mainTopPos);
     },
 });
