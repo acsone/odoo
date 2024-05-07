@@ -214,6 +214,65 @@ class AutomaticEntryWizard(models.TransientModel):
             'line_ids': [(0, 0, line) for line in line_vals],
         }]
 
+    def _get_move_line_dict_vals_change_period(self, aml):
+        """Returns a couple (new_date_lines, old_date_lines)"""
+        accrual_account = self.revenue_accrual_account if self.account_type == 'income' else self.expense_accrual_account
+
+        reported_debit = aml.company_id.currency_id.round(
+            (self.percentage / 100) * aml.debit)
+        reported_credit = aml.company_id.currency_id.round(
+            (self.percentage / 100) * aml.credit)
+        reported_amount_currency = aml.currency_id.round(
+            (self.percentage / 100) * aml.amount_currency)
+
+        new_date_lines = [
+            (0, 0, {
+                'name': aml.name or '',
+                'debit': reported_debit,
+                'credit': reported_credit,
+                'amount_currency': reported_amount_currency,
+                'currency_id': aml.currency_id.id,
+                'account_id': aml.account_id.id,
+                'partner_id': aml.partner_id.id,
+                'analytic_distribution': aml.analytic_distribution,
+            }),
+            (0, 0, {
+                'name': self._format_strings(
+                    _('{percent:0.2f}% recognized on {new_date}'), aml.move_id),
+                'debit': reported_credit,
+                'credit': reported_debit,
+                'amount_currency': -reported_amount_currency,
+                'currency_id': aml.currency_id.id,
+                'account_id': accrual_account.id,
+                'partner_id': aml.partner_id.id,
+                'analytic_distribution': aml.analytic_distribution,
+            }),
+        ]
+        old_date_lines = [
+            (0, 0, {
+                'name': aml.name or '',
+                'debit': reported_credit,
+                'credit': reported_debit,
+                'amount_currency': -reported_amount_currency,
+                'currency_id': aml.currency_id.id,
+                'account_id': aml.account_id.id,
+                'partner_id': aml.partner_id.id,
+                'analytic_distribution': aml.analytic_distribution,
+            }),
+            (0, 0, {
+                'name': self._format_strings(
+                    _('{percent:0.2f}% to recognize on {new_date}'), aml.move_id),
+                'debit': reported_debit,
+                'credit': reported_credit,
+                'amount_currency': reported_amount_currency,
+                'currency_id': aml.currency_id.id,
+                'account_id': accrual_account.id,
+                'partner_id': aml.partner_id.id,
+                'analytic_distribution': aml.analytic_distribution,
+            }),
+        ]
+        return new_date_lines, old_date_lines
+
     def _get_move_dict_vals_change_period(self):
         reference_move = self.env['account.move'].new({'journal_id': self.journal_id.id, 'move_type': 'entry'})
 
@@ -222,7 +281,6 @@ class AutomaticEntryWizard(models.TransientModel):
             return reference_move._get_accounting_date(aml.date, aml.move_id._affect_tax_report())
 
         # set the change_period account on the selected journal items
-        accrual_account = self.revenue_accrual_account if self.account_type == 'income' else self.expense_accrual_account
 
         move_data = {'new_date': {
             'currency_id': self.journal_id.currency_id.id or self.journal_id.company_id.currency_id.id,
@@ -248,54 +306,9 @@ class AutomaticEntryWizard(models.TransientModel):
         # compute the account.move.lines and the total amount per move
         for aml in self.move_line_ids:
             # account.move.line data
-            reported_debit = aml.company_id.currency_id.round((self.percentage / 100) * aml.debit)
-            reported_credit = aml.company_id.currency_id.round((self.percentage / 100) * aml.credit)
-            reported_amount_currency = aml.currency_id.round((self.percentage / 100) * aml.amount_currency)
-
-            move_data['new_date']['line_ids'] += [
-                (0, 0, {
-                    'name': aml.name or '',
-                    'debit': reported_debit,
-                    'credit': reported_credit,
-                    'amount_currency': reported_amount_currency,
-                    'currency_id': aml.currency_id.id,
-                    'account_id': aml.account_id.id,
-                    'partner_id': aml.partner_id.id,
-                    'analytic_distribution': aml.analytic_distribution,
-                }),
-                (0, 0, {
-                    'name': self._format_strings(_('{percent:0.2f}% recognized on {new_date}'), aml.move_id),
-                    'debit': reported_credit,
-                    'credit': reported_debit,
-                    'amount_currency': -reported_amount_currency,
-                    'currency_id': aml.currency_id.id,
-                    'account_id': accrual_account.id,
-                    'partner_id': aml.partner_id.id,
-                    'analytic_distribution': aml.analytic_distribution,
-                }),
-            ]
-            move_data[get_lock_safe_date(aml)]['line_ids'] += [
-                (0, 0, {
-                    'name': aml.name or '',
-                    'debit': reported_credit,
-                    'credit': reported_debit,
-                    'amount_currency': -reported_amount_currency,
-                    'currency_id': aml.currency_id.id,
-                    'account_id': aml.account_id.id,
-                    'partner_id': aml.partner_id.id,
-                    'analytic_distribution': aml.analytic_distribution,
-                }),
-                (0, 0, {
-                    'name': self._format_strings(_('{percent:0.2f}% to recognize on {new_date}'), aml.move_id),
-                    'debit': reported_debit,
-                    'credit': reported_credit,
-                    'amount_currency': reported_amount_currency,
-                    'currency_id': aml.currency_id.id,
-                    'account_id': accrual_account.id,
-                    'partner_id': aml.partner_id.id,
-                    'analytic_distribution': aml.analytic_distribution,
-                }),
-            ]
+            new_date_lines, old_date_lines = self._get_move_line_dict_vals_change_period(aml)
+            move_data['new_date']['line_ids'] += new_date_lines
+            move_data[get_lock_safe_date(aml)]['line_ids'] += old_date_lines
 
         move_vals = [m for m in move_data.values()]
         return move_vals
