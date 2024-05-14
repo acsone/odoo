@@ -29,6 +29,6 @@ It also enables the "optional products" feature.
             'sale_product_configurator/static/src/js/sale_product_field.js',
         ],
     },
-    'auto_install': True,
+    'auto_install': False,
     'license': 'LGPL-3',
 }
