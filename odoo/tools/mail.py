@@ -16,7 +16,8 @@ import html as htmllib
 import idna
 import markupsafe
 from lxml import etree, html
-from lxml.html import clean, defs
+from lxml.html import defs
+from lxml_html_clean import clean
 from werkzeug import urls
 
 import odoo
