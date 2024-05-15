@@ -45,6 +45,7 @@ class AccountBankStatementLine(models.Model):
         comodel_name='account.move',
         auto_join=True,
         string='Journal Entry', required=True, readonly=True, ondelete='cascade',
+        index=True,
         check_company=True)
     statement_id = fields.Many2one(
         comodel_name='account.bank.statement',
@@ -665,8 +666,9 @@ class AccountBankStatementLine(models.Model):
                 ],
             )
             for domain in domains:
-                partner = self.env['res.partner'].search(list(domain) + [('parent_id', '=', False)], limit=1)
-                if partner:
+                partner = self.env['res.partner'].search(list(domain) + [('parent_id', '=', False)], limit=2)
+                # Return the partner if there is only one with this name
+                if len(partner) == 1:
                     return partner
 
         # Retrieve the partner from the 'reconcile models'.

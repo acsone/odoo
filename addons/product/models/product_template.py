@@ -474,7 +474,18 @@ class ProductTemplate(models.Model):
             default = {}
         if 'name' not in default:
             default['name'] = _("%s (copy)", self.name)
-        return super(ProductTemplate, self).copy(default=default)
+
+        res = super().copy(default=default)
+
+        # Since we don't copy the product template attribute values, we need to match the extra prices.
+        for ptal, copied_ptal in zip(self.attribute_line_ids, res.attribute_line_ids):
+            for ptav, copied_ptav in zip(ptal.product_template_value_ids, copied_ptal.product_template_value_ids):
+                if not ptav.price_extra:
+                    continue
+                # security check
+                if ptav.attribute_id == copied_ptav.attribute_id and ptav.product_attribute_value_id == copied_ptav.product_attribute_value_id:
+                    copied_ptav.price_extra = ptav.price_extra
+        return res
 
     def name_get(self):
         # Prefetch the fields used by the `name_get`, so `browse` doesn't fetch other fields
@@ -670,7 +681,7 @@ class ProductTemplate(models.Model):
 
             else:
                 for variant in existing_variants.values():
-                    is_combination_possible = self._is_combination_possible_by_config(
+                    is_combination_possible = tmpl_id._is_combination_possible_by_config(
                         combination=variant.product_template_attribute_value_ids,
                         ignore_no_variant=True,
                     )

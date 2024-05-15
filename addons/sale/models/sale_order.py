@@ -184,7 +184,7 @@ class SaleOrder(models.Model):
     currency_rate = fields.Float(
         string="Currency Rate",
         compute='_compute_currency_rate',
-        digits=(12, 6),
+        digits=0,
         store=True, precompute=True)
     user_id = fields.Many2one(
         comodel_name='res.users',
@@ -822,7 +822,8 @@ class SaleOrder(models.Model):
 
         self.with_context(context)._action_confirm()
 
-        if self.create_uid.has_group('sale.group_auto_done_setting'):  # Public user can confirm SO
+        if self[:1].create_uid.has_group('sale.group_auto_done_setting'):
+            # Public user can confirm SO, so we check the group on any record creator.
             self.action_done()
 
         return True
@@ -946,6 +947,7 @@ class SaleOrder(models.Model):
     def action_update_taxes(self):
         self.ensure_one()
 
+        self._recompute_prices()
         self._recompute_taxes()
 
         if self.partner_id:
@@ -1274,7 +1276,7 @@ class SaleOrder(models.Model):
 
         return groups
 
-    def _notify_by_email_prepare_rendering_context(self, message, msg_vals, model_description=False,
+    def _notify_by_email_prepare_rendering_context(self, message, msg_vals=False, model_description=False,
                                                    force_email_company=False, force_email_lang=False):
         render_context = super()._notify_by_email_prepare_rendering_context(
             message, msg_vals, model_description=model_description,

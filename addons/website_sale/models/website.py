@@ -284,7 +284,10 @@ class Website(models.Model):
         return pricelist
 
     def sale_product_domain(self):
-        return expression.AND([self._product_domain(), self.get_current_website().website_domain()])
+        website_domain = self.get_current_website().website_domain()
+        if not self.env.user._is_internal():
+            website_domain = expression.AND([website_domain, [('is_published', '=', True)]])
+        return expression.AND([self._product_domain(), website_domain])
 
     def _product_domain(self):
         return [('sale_ok', '=', True)]
@@ -407,9 +410,8 @@ class Website(models.Model):
         self.ensure_one()
         addr = partner_sudo.address_get(['delivery'])
         if not request.website.is_public_user():
-            # FIXME VFE why not use last_website_so_id field ?
             last_sale_order = self.env['sale.order'].sudo().search(
-                [('partner_id', '=', partner_sudo.id)],
+                [('partner_id', '=', partner_sudo.id), ('website_id', '=', self.id)],
                 limit=1,
                 order="date_order desc, id desc",
             )

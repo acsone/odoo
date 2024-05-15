@@ -121,6 +121,7 @@ class MailComposer(models.TransientModel):
     active_domain = fields.Text('Active domain', readonly=True)
     # characteristics
     message_type = fields.Selection([
+        ('auto_comment', 'Automated Targeted Notification'),
         ('comment', 'Comment'),
         ('notification', 'System notification')],
         'Type', required=True, default='comment',
@@ -568,7 +569,7 @@ class MailComposer(models.TransientModel):
         return []
 
     def _onchange_template_id(self, template_id, composition_mode, model, res_id):
-        """ - mass_mailing: we cannot render, so return the template values
+        r""" - mass_mailing: we cannot render, so return the template values
             - normal mode: return rendered values
             /!\ for x2many field, this onchange return command instead of ids
         """

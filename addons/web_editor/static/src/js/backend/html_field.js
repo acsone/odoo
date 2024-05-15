@@ -94,7 +94,7 @@ export class HtmlField extends Component {
         });
 
         useBus(this.env.bus, "RELATIONAL_MODEL:WILL_SAVE_URGENTLY", () => this.commitChanges({ urgent: true }));
-        useBus(this.env.bus, "RELATIONAL_MODEL:NEED_LOCAL_CHANGES", ({detail}) => detail.proms.push(this.commitChanges()));
+        useBus(this.env.bus, "RELATIONAL_MODEL:NEED_LOCAL_CHANGES", ({ detail }) => detail.proms.push(this.commitChanges({ shouldInline: true })));
 
         this._onUpdateIframeId = 'onLoad_' + _.uniqueId('FieldHtml');
 
@@ -368,17 +368,23 @@ export class HtmlField extends Component {
      * @param {Object} position
      */
     positionDynamicPlaceholder(popover, position) {
-        let topPosition = this.wysiwygRangePosition.top;
+        // make sure the popover won't be out(below) of the page
+        const enoughSpaceBelow = window.innerHeight - popover.clientHeight - this.wysiwygRangePosition.top;
+        let topPosition = (enoughSpaceBelow > 0) ? this.wysiwygRangePosition.top : this.wysiwygRangePosition.top + enoughSpaceBelow;
+
         // Offset the popover to ensure the arrow is pointing at
         // the precise range location.
         let leftPosition = this.wysiwygRangePosition.left - 14;
+        // make sure the popover won't be out(right) of the page
+        const enoughSpaceRight = window.innerWidth - popover.clientWidth - leftPosition;
+        leftPosition = (enoughSpaceRight > 0) ? leftPosition : leftPosition + enoughSpaceRight;
 
         // Apply the position back to the element.
         popover.style.top = topPosition + 'px';
         popover.style.left = leftPosition + 'px';
     }
-    async commitChanges({ urgent } = {}) {
-        if (this._isDirty() || urgent) {
+    async commitChanges({ urgent, shouldInline } = {}) {
+        if (this._isDirty() || urgent || (shouldInline && this.props.isInlineStyle)) {
             let saveModifiedImagesPromise, toInlinePromise;
             if (this.wysiwyg && this.wysiwyg.odooEditor) {
                 this.wysiwyg.odooEditor.observerUnactive('commitChanges');
@@ -590,7 +596,9 @@ export class HtmlField extends Component {
     }
     _onWysiwygBlur() {
         // Avoid save on blur if the html field is in inline mode.
-        if (!this.props.isInlineStyle) {
+        if (this.props.isInlineStyle) {
+            this.updateValue();
+        } else {
             this.commitChanges();
         }
     }

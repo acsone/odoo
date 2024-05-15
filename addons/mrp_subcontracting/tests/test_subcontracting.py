@@ -660,6 +660,66 @@ class TestSubcontractingFlows(TestMrpSubcontractingCommon):
 
         self.assertEqual(self.env['mrp.production'].search_count([('bom_id', '=', bom.id)]), 3)
 
+    def test_several_backorders_2(self):
+        # This test ensure that the backorders finished moves are correctly made (Production -> Subcontracting -> Stock)
+        # When the receipt is done, the Subcontracting location should have 0 quantity of the finished product.
+        # In more detail, this test checks that everything is done correctly
+        # when the quantity of the backorder is set on the stock.move.line instead of the stock.move,
+        # it can for example happens if the finished product is tracked by Serial Number.
+
+        def process_picking_with_backorder(picking, qty):
+            # Process the picking by putting the given quantity on the stock.move.line
+            picking.move_line_ids.ensure_one().qty_done = qty
+            action = picking.button_validate()
+            if isinstance(action, dict):
+                wizard = Form(self.env[action['res_model']].with_context(action['context'])).save()
+                wizard.process()
+            return picking.backorder_ids
+
+        def check_quants(product, stock_qty, sub_qty, prod_qty):
+            # Check the quantities of the Stock, Subcontracting and Production locations for the given product
+            subcontracting_location = self.env.company.subcontracting_location_id
+            production_location = product.property_stock_production
+            stock_location = self.env.ref('stock.stock_location_stock')
+
+            self.assertEqual(sub_qty, self.env['stock.quant']._gather(product, subcontracting_location).quantity)
+            self.assertEqual(stock_qty, self.env['stock.quant']._gather(product, stock_location).quantity)
+            self.assertEqual(prod_qty, self.env['stock.quant']._gather(product, production_location).quantity)
+
+        in_pck_type = self.env.ref('stock.picking_type_in')
+        in_pck_type.write({'show_operations': True, 'show_reserved': True})
+
+        finished = self.env['product.product'].create({'name': 'Finished Product', 'type': 'product'})
+        component = self.env['product.product'].create([{'name': 'Component', 'type': 'product'}])
+        self.env['mrp.bom'].create({
+            'product_tmpl_id': finished.product_tmpl_id.id,
+            'product_qty': 1.0,
+            'type': 'subcontract',
+            'subcontractor_ids': [(4, self.subcontractor_partner1.id)],
+            'bom_line_ids': [(0, 0, {'product_id': component.id, 'product_qty': 1.0})],
+        })
+
+        picking_form = Form(self.env['stock.picking'])
+        picking_form.picking_type_id = in_pck_type
+        picking_form.partner_id = self.subcontractor_partner1
+        with picking_form.move_ids_without_package.new() as move:
+            move.product_id = finished
+            move.product_uom_qty = 6
+        picking = picking_form.save()
+        picking.action_confirm()
+
+        backorder01 = process_picking_with_backorder(picking, 1)
+        check_quants(product=finished, stock_qty=1, sub_qty=0, prod_qty=-1)
+        check_quants(product=component, stock_qty=0, sub_qty=-1, prod_qty=1)
+
+        backorder02 = process_picking_with_backorder(backorder01, 2)
+        check_quants(product=finished, stock_qty=3, sub_qty=0, prod_qty=-3)
+        check_quants(product=component, stock_qty=0, sub_qty=-3, prod_qty=3)
+
+        process_picking_with_backorder(backorder02, 3)
+        check_quants(product=finished, stock_qty=6, sub_qty=0, prod_qty=-6)
+        check_quants(product=component, stock_qty=0, sub_qty=-6, prod_qty=6)
+
     def test_subcontracting_rules_replication(self):
         """ Test activate/archive subcontracting location rules."""
         reference_location_rules = self.env['stock.rule'].search(['|', ('location_src_id', '=', self.env.company.subcontracting_location_id.id), ('location_dest_id', '=', self.env.company.subcontracting_location_id.id)])
@@ -844,11 +904,18 @@ class TestSubcontractingFlows(TestMrpSubcontractingCommon):
         mo.subcontracting_record_component()
         self.assertEqual(move.quantity_done, 7)
 
+        # Check MO state before validating without backorder
+        action = move.action_show_details()
+        mo = self.env['mrp.production'].browse(action['res_id'])
+        self.assertEqual(mo.state, 'to_close')
+
         # Validate picking without backorder
         backorder_wizard_dict = picking_receipt.button_validate()
         backorder_wizard_form = Form(self.env[backorder_wizard_dict['res_model']].with_context(backorder_wizard_dict['context']))
         backorder_wizard_form.save().process_cancel_backorder()
 
+        self.assertEqual(mo.product_qty, 3)
+        self.assertEqual(mo.state, 'cancel')
         self.assertRecordValues(move._get_subcontract_production(), [
             {'product_qty': 5, 'state': 'done'},
             {'product_qty': 2, 'state': 'done'},
@@ -1552,3 +1619,38 @@ class TestSubcontractingSerialMassReceipt(TransactionCase):
         self.assertEqual(picking_receipt.state, 'done')
         self.assertEqual(self.env['stock.quant']._get_available_quantity(self.raw_material, self.env.ref('stock.stock_location_stock')), 0)
         self.assertEqual(self.env['stock.quant']._get_available_quantity(self.raw_material, self.subcontractor.property_stock_subcontractor, allow_negative=True), -quantity)
+
+    def test_bom_subcontracting_product_dynamic_attribute(self):
+        """
+            Test that the report BOM data is available for a product with an dynamic attribute
+            but without variant.
+        """
+        dynamic_attribute = self.env['product.attribute'].create({
+            'name': 'flavour',
+            'create_variant': 'dynamic',
+        })
+        value_1 = self.env['product.attribute.value'].create({
+            'name': 'Vanilla',
+            'attribute_id': dynamic_attribute.id,
+        })
+        value_2 = self.env['product.attribute.value'].create({
+            'name': 'Chocolate',
+            'attribute_id': dynamic_attribute.id,
+        })
+        product_template = self.env['product.template'].create({
+            'name': 'Cake',
+            'uom_id': self.env.ref('uom.product_uom_unit').id,
+            'detailed_type': 'product',
+        })
+        self.env['product.template.attribute.line'].create({
+            'product_tmpl_id': product_template.id,
+            'attribute_id': dynamic_attribute.id,
+            'value_ids': [Command.set([value_1.id, value_2.id])],
+        })
+        bom = self.env['mrp.bom'].create({
+            'product_tmpl_id': product_template.id,
+            'type': 'subcontract',
+            'subcontractor_ids': [Command.set([self.subcontractor.id])],
+        })
+        report_values = self.env['report.mrp.report_bom_structure']._get_report_data(bom_id=bom.id, searchVariant=False)
+        self.assertTrue(report_values)

@@ -7,7 +7,9 @@ from werkzeug.urls import url_encode
 
 import odoo
 import odoo.tests
+from odoo import http
 from odoo.addons.base.tests.common import HttpCaseWithUserDemo
+from odoo.addons.web_editor.controllers.main import Web_Editor
 
 
 @odoo.tests.tagged('-at_install', 'post_install')
@@ -150,8 +152,35 @@ class TestUiHtmlEditor(HttpCaseWithUserDemo):
         self.start_tour(self.env['website'].get_client_action_url('/contactus'), 'test_html_editor_scss', login='admin')
         self.start_tour(self.env['website'].get_client_action_url('/'), 'test_html_editor_scss_2', login='demo')
 
-    def media_dialog_undraw(self):
+    def test_media_dialog_undraw(self):
+        BASE_URL = self.base_url()
+        banner = '/website/static/src/img/snippets_demo/s_banner.jpg'
+
+        def mock_media_library_search(self, **params):
+            return {
+                'results': 1,
+                'media': [{
+                    'id': 1,
+                    'media_url': BASE_URL + banner,
+                    'thumbnail_url': BASE_URL + banner,
+                    'tooltip': False,
+                    'author': 'undraw',
+                    'author_link': BASE_URL,
+                }],
+            }
+
+        # disable undraw, no third party should be called in tests
+        # Mocked for the previews in the media dialog
+        mock_media_library_search.routing_type = 'json'
+        Web_Editor.media_library_search = http.route(['/web_editor/media_library_search'], type='json', auth='user', website=True)(mock_media_library_search)
+
         self.start_tour("/", 'website_media_dialog_undraw', login='admin')
+
+
+@odoo.tests.tagged('external', '-standard', '-at_install', 'post_install')
+class TestUiHtmlEditorWithExternal(HttpCaseWithUserDemo):
+    def test_media_dialog_external_library(self):
+        self.start_tour("/", 'website_media_dialog_external_library', login='admin')
 
 
 @odoo.tests.tagged('-at_install', 'post_install')
@@ -330,6 +359,7 @@ class TestUi(odoo.tests.HttpCase):
         self.start_tour('/web', 'conditional_visibility_2', login='admin')
         self.start_tour(self.env['website'].get_client_action_url('/'), 'conditional_visibility_3', login='admin')
         self.start_tour(self.env['website'].get_client_action_url('/'), 'conditional_visibility_4', login='admin')
+        self.start_tour(self.env['website'].get_client_action_url('/'), 'conditional_visibility_5', login='admin')
 
     def test_11_website_snippet_background_edition(self):
         self.env['ir.attachment'].create({
@@ -459,6 +489,9 @@ class TestUi(odoo.tests.HttpCase):
     def test_28_website_text_edition(self):
         self.start_tour('/@/', 'website_text_edition', login='admin')
 
+    def test_20_website_edit_megamenu_big_icons_subtitles(self):
+        self.start_tour(self.env['website'].get_client_action_url('/'), 'edit_megamenu_big_icons_subtitles', login='admin')
+
     def test_29_website_backend_menus_redirect(self):
         Menu = self.env['ir.ui.menu']
         menu_root = Menu.create({'name': 'Test Root'})
@@ -519,3 +552,11 @@ class TestUi(odoo.tests.HttpCase):
         website.menu_id.child_id[1:].unlink()
 
         self.start_tour('/', 'website_no_dirty_page', login='admin')
+
+    def test_widget_lifecycle(self):
+        self.env['ir.asset'].create({
+            'name': 'wysiwyg_patch_start_and_destroy',
+            'bundle': 'website.assets_wysiwyg',
+            'path': 'website/static/tests/tour_utils/widget_lifecycle_patch_wysiwyg.js',
+        })
+        self.start_tour(self.env['website'].get_client_action_url('/'), 'widget_lifecycle', login='admin')

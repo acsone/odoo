@@ -33,6 +33,35 @@ wTourUtils.registerWebsitePreviewTour('link_tools', {
         run: 'text odoo.com'
     },
     clickOnImgStep,
+    // Remove the link.
+    {
+        content: "Click on the newly created link",
+        trigger: 'iframe #wrap .s_text_image a[href="http://odoo.com"]:contains("odoo.com")',
+    },
+    {
+        content: "Remove the link.",
+        trigger: 'iframe .popover:contains("http://odoo.com") a .fa-chain-broken',
+    },
+    {
+        content: "Check that the link was removed",
+        trigger: 'iframe #wrap .s_text_image p:contains("Go to odoo:"):not(:has(a))',
+        run: () => {}, // It's a check.
+    },
+    // Recreate the link.
+    {
+        content: "Select first paragraph, to insert a new link",
+        trigger: 'iframe #wrap .s_text_image p',
+    },
+    {
+        content: "Open link tools",
+        trigger: "#toolbar #create-link",
+    },
+    {
+        content: "Type the link URL odoo.com",
+        trigger: '#o_link_dialog_url_input',
+        run: 'text odoo.com'
+    },
+    clickOnImgStep,
     // 2. Edit the link with the link tools.
     {
         content: "Click on the newly created link, change content to odoo website",
@@ -42,10 +71,9 @@ wTourUtils.registerWebsitePreviewTour('link_tools', {
     {
         content: "Link tools, should be open, change the url",
         trigger: '#o_link_dialog_url_input',
-        run: 'text odoo.be'
+        run: 'text_blur odoo.be'
     },
 
-    clickOnImgStep,
     ...wTourUtils.clickOnSave(),
     // 3. Edit a link after saving the page.
     ...wTourUtils.clickOnEditAndWaitEditMode(),
@@ -104,7 +132,28 @@ wTourUtils.registerWebsitePreviewTour('link_tools', {
         trigger: 'iframe .popover div a:contains("http://odoo.com")',
         run: () => {}, // It's a check.
     },
+    ...wTourUtils.clickOnSave(),
+    {
+        content: "Check that the first image was saved.",
+        trigger: 'iframe .s_three_columns .row > :nth-child(1) div > a > img',
+        run: () => {}, // It's a check.
+    },
+    {
+        content: "Check that the second image was saved.",
+        trigger: 'iframe .s_three_columns .row > :nth-child(2) div > img',
+        run: () => {}, // It's a check.
+    },
     // 5. Remove link from image.
+    ...wTourUtils.clickOnEditAndWaitEditMode(),
+    {
+        content: "Reselect the first image.",
+        trigger: 'iframe .s_three_columns .row > :nth-child(1) div > a > img',
+    },
+    {
+        content: "Check that link tools appear.",
+        trigger: 'iframe .popover div a:contains("http://odoo.com")',
+        run: () => {}, // It's a check.
+    },
     {
         content: "Remove link.",
         trigger: 'iframe .popover:contains("http://odoo.com") a .fa-chain-broken',
@@ -178,7 +227,7 @@ wTourUtils.registerWebsitePreviewTour('link_tools', {
     {
         content: "Change URL back into a http one",
         trigger: "#o_link_dialog_url_input",
-        run: "text callmemaybe.com",
+        run: "text_blur callmemaybe.com",
     },
     {
         content: "Check that link was updated and link content is synced with URL",
@@ -188,14 +237,15 @@ wTourUtils.registerWebsitePreviewTour('link_tools', {
     {
         content: "Edit link label",
         trigger: "iframe .s_text_image p a",
-        run() {
+        run(actions) {
             // Simulating text input.
             const link = this.$anchor[0];
-            link.textContent = "callmemaybe.com/shop";
-            // Trick the editor into keyboardType === 'PHYSICAL'
-            link.dispatchEvent(new KeyboardEvent('keydown', { key: 'o', bubbles: true }));
+            actions.text("callmemaybe.com/shops");
+            // Trick the editor into keyboardType === 'PHYSICAL' and delete the
+            // last character "s" and end with "callmemaybe.com/shop"
+            link.dispatchEvent(new KeyboardEvent("keydown", { key: "Backspace", bubbles: true }));
             // Trigger editor's '_onInput' handler, which leads to a history step.
-            link.dispatchEvent(new InputEvent('input', {inputType: 'insertText', bubbles: true}))
+            link.dispatchEvent(new InputEvent('input', {inputType: 'insertText', bubbles: true}));
         },
     },
     {
