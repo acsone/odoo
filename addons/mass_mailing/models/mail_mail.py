@@ -82,14 +82,27 @@ class MailMail(models.Model):
     def _send_prepare_values(self, partner=None):
         # TDE: temporary addition (mail was parameter) due to semi-new-API
         res = super(MailMail, self)._send_prepare_values(partner)
-        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url').rstrip('/')
-        if self.mailing_id and res.get('body') and res.get('email_to'):
+        if self.mailing_id and res.get('email_to'):
+            base_url = self.mailing_id.get_base_url()
             emails = tools.email_split(res.get('email_to')[0])
             email_to = emails and emails[0] or False
+
             unsubscribe_url = self._get_unsubscribe_url(email_to)
-            link_to_replace = base_url + '/unsubscribe_from_list'
-            if link_to_replace in res['body']:
-                res['body'] = res['body'].replace(link_to_replace, unsubscribe_url if unsubscribe_url else '#')
+
+            # replace links in body
+            if f'{base_url}/unsubscribe_from_list' in res['body']:
+                res['body'] = res['body'].replace(
+                    f'{base_url}/unsubscribe_from_list',
+                    unsubscribe_url,
+                )
+
+            # add headers
+            res.setdefault("headers", {}).update({
+                'List-Unsubscribe': f'<{unsubscribe_url}>',
+                'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+                'Precedence': 'list',
+                'X-Auto-Response-Suppress': 'OOF',  # avoid out-of-office replies from MS Exchange
+            })
         return res
 
     def _postprocess_sent_message(self, success_pids, failure_reason=False, failure_type=None):
