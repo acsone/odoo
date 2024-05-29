@@ -73,6 +73,7 @@
 //
 @function o-get-most-contrast($color, $c1, $c2, $background: #FFFFFF, $threshold: false, $cross-mix: true) {
     $background: if($background == null, #FFFFFF, $background);
+    $color: if($color == null, #FFFFFF, $color);
 
     $real-color: mix(rgba($color, 1.0), $background, percentage(alpha($color)));
     $luma: luma($real-color);
