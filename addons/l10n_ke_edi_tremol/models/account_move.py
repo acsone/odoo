@@ -172,11 +172,12 @@ class AccountMove(models.Model):
             percentage = 0
             for tax in tax_details['tax_details_per_record'][line]['tax_details']:
                 if tax['tax'].amount in (16, 8, 0): # This should only occur once
-                    tax_details = tax_details['tax_details_per_record'][line]['tax_details'][tax]
-                    price_total = abs(tax_details['base_amount_currency']) + abs(tax_details['tax_amount_currency'])
+                    line_tax_details = tax_details['tax_details_per_record'][line]['tax_details'][tax]
+                    price_total = abs(line_tax_details['base_amount_currency']) + abs(line_tax_details['tax_amount_currency'])
                     percentage = tax['tax'].amount
 
             price = round(price_total / abs(line.quantity) * 100 / (100 - line.discount), 2) * currency_rate
+            price = ('%.5f' % price).rstrip('0').rstrip('.')
 
             # Letter to classify tax, 0% taxes are handled conditionally, as the tax can be zero-rated or exempt
             letter = ''
@@ -196,7 +197,7 @@ class AccountMove(models.Model):
             line_data = b';'.join([
                 self._l10n_ke_fmt(line.name, 36),               # 36 symbols for the article's name
                 self._l10n_ke_fmt(letter, 1),                   # 1 symbol for article's vat class ('A', 'B', 'C', 'D', or 'E')
-                str(price)[:13].encode('cp1251'),               # 1 to 13 symbols for article's price
+                price[:15].encode('cp1251'),                    # 1 to 15 symbols for article's price with up to 5 digits after decimal point
                 self._l10n_ke_fmt(uom, 3),                      # 3 symbols for unit of measure
                 hscode,                                         # 10 symbols for HS code in the format xxxx.xx.xx (can be empty)
                 hsname,                                         # 20 symbols for the HS name (can be empty)

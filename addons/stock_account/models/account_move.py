@@ -212,9 +212,11 @@ class AccountMove(models.Model):
                         lambda line: line.account_id == product_interim_account and not line.reconciled and line.move_id.state == "posted"
                     )
 
-                    stock_aml = product_account_moves.filtered(lambda aml: aml.move_id.sudo().stock_valuation_layer_ids.stock_move_id)
-                    invoice_aml = product_account_moves.filtered(lambda aml: aml.move_id == move)
-                    correction_amls = product_account_moves - stock_aml - invoice_aml
+                    correction_amls = product_account_moves.filtered(
+                        lambda aml: aml.move_id.sudo().stock_valuation_layer_ids.stock_valuation_layer_id or (aml.display_type == 'cogs' and not aml.quantity)
+                    )
+                    invoice_aml = product_account_moves.filtered(lambda aml: aml not in correction_amls and aml.move_id == move)
+                    stock_aml = product_account_moves - correction_amls - invoice_aml
                     # Reconcile.
                     if correction_amls:
                         if sum(correction_amls.mapped('balance')) > 0:
@@ -253,6 +255,9 @@ class AccountMoveLine(models.Model):
         return self.product_id.type == 'product' and self.product_id.valuation == 'real_time'
 
     def _get_gross_unit_price(self):
+        if float_is_zero(self.quantity, precision_rounding=self.product_uom_id.rounding):
+            return self.price_unit
+
         price_unit = self.price_subtotal / self.quantity
         return -price_unit if self.move_id.move_type == 'in_refund' else price_unit
 

@@ -777,7 +777,7 @@ class Picking(models.Model):
         })
         if any(line.reserved_qty or line.qty_done for line in self.move_ids.move_line_ids):
             return {'warning': {
-                    'title': 'Locations to update',
+                    'title': _("Locations to update"),
                     'message': _("You might want to update the locations of this transfer's operations")
                 }
             }
@@ -995,15 +995,14 @@ class Picking(models.Model):
                     else:
                         move_lines_in_package_level = move_lines_to_pack.filtered(lambda ml: ml.move_id.package_level_id)
                         move_lines_without_package_level = move_lines_to_pack - move_lines_in_package_level
+
+                        if pack.package_use == 'disposable':
+                            (move_lines_in_package_level | move_lines_without_package_level).result_package_id = pack
+                        move_lines_in_package_level.result_package_id = pack
                         for ml in move_lines_in_package_level:
-                            ml.write({
-                                'result_package_id': pack.id,
-                                'package_level_id': ml.move_id.package_level_id.id,
-                            })
-                        move_lines_without_package_level.write({
-                            'result_package_id': pack.id,
-                            'package_level_id': package_level_ids[0].id,
-                        })
+                            ml.package_level_id = ml.move_id.package_level_id.id
+
+                        move_lines_without_package_level.package_level_id = package_level_ids[0]
                         for pl in package_level_ids:
                             pl.location_dest_id = self._get_entire_pack_location_dest(pl.move_line_ids) or picking.location_dest_id.id
 
@@ -1358,7 +1357,7 @@ class Picking(models.Model):
         """
         for (parent, responsible), rendering_context in documents.items():
             note = render_method(rendering_context)
-            parent.activity_schedule(
+            parent.sudo().activity_schedule(
                 'mail.mail_activity_data_warning',
                 date.today(),
                 note=note,
@@ -1502,11 +1501,18 @@ class Picking(models.Model):
                 })
         return package
 
-    def _package_move_lines(self):
+    def _package_move_lines(self, batch_pack=False):
         picking_move_lines = self.move_line_ids
+        # in theory, the following values in the "if" statement after this should always be the same
+        # (i.e. for batch transfers), but customizations may bypass it and cause unexpected behavior
+        # so we avoid allowing those situations
+        if len(self.picking_type_id) > 1:
+            raise UserError(_("You cannot pack products into the same package when they are from different transfers with different operation types."))
+        if len(set(self.mapped("immediate_transfer"))) > 1:
+            raise UserError(_("You cannot pack products into the same package when they are from both immediate and planned transfers."))
         if (
             not self.picking_type_id.show_reserved
-            and not self.immediate_transfer
+            and any(not p.immediate_transfer for p in self)
             and not self.env.context.get('barcode_view')
         ):
             picking_move_lines = self.move_line_nosuggest_ids

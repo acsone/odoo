@@ -89,9 +89,9 @@ class HolidaysRequest(models.Model):
 
         if 'state' in fields_list and not defaults.get('state'):
             lt = self.env['hr.leave.type'].browse(defaults.get('holiday_status_id'))
-            defaults['state'] = 'confirm'
+            defaults['state'] = 'confirm' if lt and lt.leave_validation_type != 'no_validation' else 'draft'
 
-        if 'date_from' and 'date_to' in fields_list:
+        if 'date_from' and 'date_to' in fields_list and not ('request_date_from' and 'request_date_to' in defaults):
             now = fields.Datetime.now()
             if 'date_from' not in defaults:
                 defaults['date_from'] = now.replace(hour=0, minute=0, second=0)
@@ -612,9 +612,9 @@ class HolidaysRequest(models.Model):
     @api.depends_context('uid')
     @api.depends('state', 'employee_id')
     def _compute_can_cancel(self):
-        now = fields.Datetime.now()
+        now = fields.Datetime.now().date()
         for leave in self:
-            leave.can_cancel = leave.id and leave.employee_id.user_id == self.env.user and leave.state == 'validate' and leave.date_from and leave.date_from > now
+            leave.can_cancel = leave.id and leave.employee_id.user_id == self.env.user and leave.state == 'validate' and leave.date_from and leave.date_from.date() >= now
 
     @api.depends('state')
     def _compute_is_hatched(self):
@@ -768,7 +768,7 @@ class HolidaysRequest(models.Model):
         that happens it's possible we need to adjust one of the dates. This function adjust the
         date, so that it can be passed to datetime().
 
-        E.g. a leave in US/Pacific for one day:
+        E.g. a leave in America/Los_Angeles for one day:
         - request_date_from: 1st of Jan
         - request_date_to:   1st of Jan
         - hour_from:         15:00 (7:00 local)
@@ -841,7 +841,7 @@ class HolidaysRequest(models.Model):
                         ))
                 else:
                     if leave.number_of_days > 1 and date_from_utc and date_to_utc:
-                        display_date += ' / %s' % format_date(self.env, date_to_utc) or ""
+                        display_date += ' - %s' % format_date(self.env, date_to_utc) or ""
                     if not target or self.env.context.get('hide_employee_name') and 'employee_id' in self.env.context.get('group_by', []):
                         res.append((
                             leave.id,
@@ -1018,13 +1018,13 @@ class HolidaysRequest(models.Model):
     def _unlink_if_correct_states(self):
         error_message = _('You cannot delete a time off which is in %s state')
         state_description_values = {elem[0]: elem[1] for elem in self._fields['state']._description_selection(self.env)}
-        now = fields.Datetime.now()
+        now = fields.Datetime.now().date()
 
         if not self.user_has_groups('hr_holidays.group_hr_holidays_user'):
             for hol in self:
                 if hol.state not in ['draft', 'confirm']:
                     raise UserError(error_message % state_description_values.get(self[:1].state))
-                if hol.date_from < now:
+                if hol.date_from.date() < now:
                     raise UserError(_('You cannot delete a time off which is in the past'))
                 if hol.sudo().employee_ids and not hol.employee_id:
                     raise UserError(_('You cannot delete a time off assigned to several employees'))
@@ -1456,8 +1456,8 @@ class HolidaysRequest(models.Model):
     def _split_leave_on_gto(self, gto): #gto = global time off
         self.ensure_one()
 
-        leave_start = date_utils.start_of(self.date_from, 'day')
-        leave_end = date_utils.end_of(self.date_to - timedelta(seconds=1), 'day')
+        leave_start = self.date_from
+        leave_end = self.date_to - timedelta(seconds=1)
         gto_start = date_utils.start_of(gto['date_from'], 'day')
         gto_end = date_utils.end_of(gto['date_to'], 'day')
         leave_tz = timezone(self.employee_id.resource_id.tz)
@@ -1490,6 +1490,12 @@ class HolidaysRequest(models.Model):
                         .astimezone(UTC).replace(tzinfo=None)
             })
             return self.env['hr.leave']
+        # If none of the cases above is detected, that means the
+        # leave was entirely covered by the public time off.
+        self._force_cancel(
+            _('a public holiday that previously covered this leave has been cancelled or amended.')
+        )
+        return self.env['hr.leave']
 
     def split_leave(self, time_domain_dict):
         self.ensure_one()
@@ -1537,13 +1543,13 @@ class HolidaysRequest(models.Model):
             if holiday.state == 'draft':
                 to_clean |= holiday
             elif holiday.state == 'confirm':
-                holiday.activity_schedule(
+                holiday.with_context(short_name=False).activity_schedule(
                     'hr_holidays.mail_act_leave_approval',
                     note=note,
                     user_id=holiday.sudo()._get_responsible_for_approval().id or self.env.user.id)
             elif holiday.state == 'validate1':
                 holiday.activity_feedback(['hr_holidays.mail_act_leave_approval'])
-                holiday.activity_schedule(
+                holiday.with_context(short_name=False).activity_schedule(
                     'hr_holidays.mail_act_leave_second_approval',
                     note=note,
                     user_id=holiday.sudo()._get_responsible_for_approval().id or self.env.user.id)

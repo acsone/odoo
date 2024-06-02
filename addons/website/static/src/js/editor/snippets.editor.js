@@ -277,6 +277,9 @@ const wSnippetMenu = weSnippetEditor.SnippetsMenu.extend({
      */
     _addToolbar() {
         this._super(...arguments);
+        if (this.options.enableTranslation) {
+            this._$toolbarContainer[0].querySelector(":scope .o_we_animate_text").classList.add("d-none");
+        }
         this.$('#o_we_editor_toolbar_container > we-title > span').after($(`
             <div class="btn fa fa-fw fa-2x o_we_highlight_animated_text d-none
                 ${this.$body.hasClass('o_animated_text_highlighted') ? 'fa-eye text-success' : 'fa-eye-slash'}"
@@ -285,6 +288,18 @@ const wSnippetMenu = weSnippetEditor.SnippetsMenu.extend({
         `));
         this._toggleAnimatedTextButton();
         this._toggleHighlightAnimatedTextButton();
+    },
+    /**
+    * @override
+    */
+    _checkEditorToolbarVisibility: function (e) {
+        this._super(...arguments);
+        // Close the option's dropdowns manually on outside click if any open.
+        if (this._$toolbarContainer && this._$toolbarContainer.length) {
+            this._$toolbarContainer[0].querySelectorAll(".dropdown-toggle.show").forEach(toggleEl => {
+                Dropdown.getOrCreateInstance(toggleEl).hide();
+            });
+        }
     },
     /**
      * Activates the button to animate text if the selection is in an

@@ -24,7 +24,10 @@ class StockMove(models.Model):
 
     @api.model
     def _prepare_merge_negative_moves_excluded_distinct_fields(self):
-        return super()._prepare_merge_negative_moves_excluded_distinct_fields() + ['created_purchase_line_id']
+        excluded_fields = super()._prepare_merge_negative_moves_excluded_distinct_fields() + ['created_purchase_line_id']
+        if self.env['ir.config_parameter'].sudo().get_param('purchase_stock.merge_different_procurement'):
+            excluded_fields += ['procure_method']
+        return excluded_fields
 
     def _should_ignore_pol_price(self):
         self.ensure_one()
@@ -136,6 +139,47 @@ class StockMove(models.Model):
                 'amount_currency': svl.price_diff_value,
             }
         return rslt
+
+    def _account_entry_move(self, qty, description, svl_id, cost):
+        """
+        In case of a PO return, if the value of the returned product is
+        different from the purchased one, we need to empty the stock_in account
+        with the difference
+        """
+        am_vals_list = super()._account_entry_move(qty, description, svl_id, cost)
+        returned_move = self.origin_returned_move_id
+        pdiff_exists = bool((self | returned_move).stock_valuation_layer_ids.stock_valuation_layer_ids.account_move_line_id)
+
+        if not am_vals_list or not self.purchase_line_id or pdiff_exists:
+            return am_vals_list
+
+        layer = self.env['stock.valuation.layer'].browse(svl_id)
+        returned_move = self.origin_returned_move_id
+
+        if returned_move and self._is_out() and self._is_returned(valued_type='out'):
+            returned_layer = returned_move.stock_valuation_layer_ids.filtered(lambda svl: not svl.stock_valuation_layer_id)[:1]
+            returned_unit_cost = returned_layer.value / returned_layer.quantity
+            unit_diff = layer.unit_cost - returned_unit_cost
+        elif returned_move and returned_move._is_out() and returned_move._is_returned(valued_type='out'):
+            returned_layer = returned_move.stock_valuation_layer_ids.filtered(lambda svl: not svl.stock_valuation_layer_id)[:1]
+            unit_diff = returned_layer.unit_cost - self.purchase_line_id._get_gross_price_unit()
+        else:
+            return am_vals_list
+
+        diff = unit_diff * qty
+        company = self.purchase_line_id.company_id
+        if company.currency_id.is_zero(diff):
+            return am_vals_list
+
+        sm = self.with_company(company).with_context(is_returned=True)
+        accounts = sm.product_id.product_tmpl_id.get_product_accounts()
+        acc_exp_id = accounts['expense'].id
+        acc_stock_in_id = accounts['stock_input'].id
+        journal_id = accounts['stock_journal'].id
+        vals = sm._prepare_account_move_vals(acc_exp_id, acc_stock_in_id, journal_id, qty, description, False, diff)
+        am_vals_list.append(vals)
+
+        return am_vals_list
 
     def _prepare_extra_move_vals(self, qty):
         vals = super(StockMove, self)._prepare_extra_move_vals(qty)
