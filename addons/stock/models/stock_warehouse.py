@@ -361,12 +361,15 @@ class Warehouse(models.Model):
                     sequence.name = _("%(name)s (copy)(%(id)s)", name=sequence.name, id=str(sequence.id))
                 values.update(warehouse_id=self.id, color=color, sequence_id=sequence.id)
                 warehouse_data[picking_type] = PickingType.create(values).id
+        self._post_process_create_or_update_sequences_and_picking_types(warehouse_data)
+        return warehouse_data
 
+    def _post_process_create_or_update_sequences_and_picking_types(self, warehouse_data):
+        PickingType = self.env['stock.picking.type']
         if 'out_type_id' in warehouse_data:
             PickingType.browse(warehouse_data['out_type_id']).write({'return_picking_type_id': warehouse_data.get('return_type_id', False)})
         if 'in_type_id' in warehouse_data:
             PickingType.browse(warehouse_data['in_type_id']).write({'return_picking_type_id': warehouse_data.get('out_type_id', False)})
-        return warehouse_data
 
     def _create_or_update_global_routes_rules(self):
         """ Some rules are not specific to a warehouse(e.g MTO, Buy, ...)
