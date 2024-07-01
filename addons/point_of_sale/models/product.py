@@ -70,25 +70,10 @@ class ProductProduct(models.Model):
         pricelist_list = [{'name': pl.name, 'price': price_per_pricelist_id[pl.id]} for pl in pricelists]
 
         # Warehouses
-        warehouse_list = [
-            {'name': w.name,
-            'available_quantity': self.with_context({'warehouse': w.id}).qty_available,
-            'forecasted_quantity': self.with_context({'warehouse': w.id}).virtual_available,
-            'uom': self.uom_name}
-            for w in self.env['stock.warehouse'].search([])]
+        warehouse_list = self._get_product_info_pos_warehouse_list(price, quantity, pos_config_id)
 
         # Suppliers
-        key = itemgetter('partner_id')
-        supplier_list = []
-        for key, group in groupby(sorted(self.seller_ids, key=key), key=key):
-            for s in list(group):
-                if not((s.date_start and s.date_start > date.today()) or (s.date_end and s.date_end < date.today()) or (s.min_qty > quantity)):
-                    supplier_list.append({
-                        'name': s.partner_id.name,
-                        'delay': s.delay,
-                        'price': s.price
-                    })
-                    break
+        supplier_list = self._get_product_info_pos_seller(price, quantity, pos_config_id)
 
         # Variants
         variant_list = [{'name': attribute_line.attribute_id.name,
@@ -102,6 +87,33 @@ class ProductProduct(models.Model):
             'suppliers': supplier_list,
             'variants': variant_list
         }
+
+    def _get_product_info_pos_warehouse_list(self, price, quantity, pos_config_id):
+        return [
+            {'name': w.name,
+             'available_quantity': self.with_context({'warehouse': w.id}).qty_available,
+             'forecasted_quantity': self.with_context({'warehouse': w.id}).virtual_available,
+             'uom': self.uom_name}
+            for w in self._get_product_info_pos_warehouses(price, quantity, pos_config_id)
+        ]
+
+    def _get_product_info_pos_warehouses(self, price, quantity, pos_config_id):
+        return self.env['stock.warehouse'].search([])
+
+    def _get_product_info_pos_seller(self, price, quantity, pos_config_id):
+        key = itemgetter('partner_id')
+        supplier_list = []
+        for key, group in groupby(sorted(self.seller_ids, key=key), key=key):
+            for s in list(group):
+                if not ((s.date_start and s.date_start > date.today()) or (
+                        s.date_end and s.date_end < date.today()) or (s.min_qty > quantity)):
+                    supplier_list.append({
+                        'name': s.partner_id.name,
+                        'delay': s.delay,
+                        'price': s.price
+                    })
+                    break
+        return supplier_list
 
 
 class UomCateg(models.Model):
