@@ -78,17 +78,7 @@ class ProductProduct(models.Model):
             for w in self.env['stock.warehouse'].search([])]
 
         # Suppliers
-        key = itemgetter('partner_id')
-        supplier_list = []
-        for key, group in groupby(sorted(self.seller_ids, key=key), key=key):
-            for s in list(group):
-                if not((s.date_start and s.date_start > date.today()) or (s.date_end and s.date_end < date.today()) or (s.min_qty > quantity)):
-                    supplier_list.append({
-                        'name': s.partner_id.name,
-                        'delay': s.delay,
-                        'price': s.price
-                    })
-                    break
+        supplier_list = self._get_product_info_pos_seller(price, quantity, pos_config_id)
 
         # Variants
         variant_list = [{'name': attribute_line.attribute_id.name,
@@ -102,6 +92,21 @@ class ProductProduct(models.Model):
             'suppliers': supplier_list,
             'variants': variant_list
         }
+
+    def _get_product_info_pos_seller(self, price, quantity, pos_config_id):
+        key = itemgetter('partner_id')
+        supplier_list = []
+        for key, group in groupby(sorted(self.seller_ids, key=key), key=key):
+            for s in list(group):
+                if not ((s.date_start and s.date_start > date.today()) or (
+                        s.date_end and s.date_end < date.today()) or (s.min_qty > quantity)):
+                    supplier_list.append({
+                        'name': s.partner_id.name,
+                        'delay': s.delay,
+                        'price': s.price
+                    })
+                    break
+        return supplier_list
 
 
 class UomCateg(models.Model):
