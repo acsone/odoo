@@ -10,10 +10,7 @@
 #----------------------------------------------------------
 import pkgutil
 import os.path
-__path__ = [
-    os.path.abspath(path)
-    for path in pkgutil.extend_path(__path__, __name__)
-]
+__path__ = pkgutil.extend_path(__path__, __name__)
 
 import sys
 MIN_PY_VERSION = (3, 7)
