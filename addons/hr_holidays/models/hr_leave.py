@@ -977,13 +977,17 @@ class HolidaysRequest(models.Model):
                     holiday_sudo.activity_update()
         return holidays
 
+    def _condition_modify_begun_time_off(self):
+        self.ensure_one
+        return self.date_from.date() < fields.Date.today() and self.employee_id.leave_manager_id != self.env.user
+
     def write(self, values):
         if 'active' in values and not self.env.context.get('from_cancel_wizard'):
             raise UserError(_("You can't manually archive/unarchive a time off."))
 
         is_officer = self.env.user.has_group('hr_holidays.group_hr_holidays_user') or self.env.is_superuser()
         if not is_officer and values.keys() - {'attachment_ids', 'supported_attachment_ids', 'message_main_attachment_id'}:
-            if any(hol.date_from.date() < fields.Date.today() and hol.employee_id.leave_manager_id != self.env.user for hol in self):
+            if any(hol._condition_modify_begun_time_off() for hol in self):
                 raise UserError(_('You must have manager rights to modify/validate a time off that already begun'))
 
         # Unlink existing resource.calendar.leaves for validated time off
@@ -1215,6 +1219,12 @@ class HolidaysRequest(models.Model):
             holidays.sudo().action_validate()
         self.activity_update()
         return True
+    
+    def condition_to_send_mail_on_approval(self):
+        """
+            Allows to avoid sending mail on approval of holiday
+        """
+        return True
 
     def action_approve(self):
         # if validation_type == 'both': this method is the first approval approval
@@ -1227,7 +1237,7 @@ class HolidaysRequest(models.Model):
 
 
         # Post a second message, more verbose than the tracking message
-        for holiday in self.filtered(lambda holiday: holiday.employee_id.user_id):
+        for holiday in self.filtered(lambda holiday: holiday.employee_id.user_id and holiday.condition_to_send_mail_on_approval()):
             user_tz = timezone(holiday.tz)
             utc_tz = pytz.utc.localize(holiday.date_from).astimezone(user_tz)
             holiday.message_post(
