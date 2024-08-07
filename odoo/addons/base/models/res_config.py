@@ -443,7 +443,7 @@ class ResConfigSettings(models.TransientModel, ResConfigModuleInstallationMixin)
         Groups = self.env['res.groups']
 
         def ref(xml_id):
-            res_model, res_id = IrModelData._xmlid_to_res_model_res_id(xml_id)
+            res_model, res_id = IrModelData.xmlid_to_res_model_res_id(xml_id)
             return self.env[res_model].browse(res_id)
 
         if fnames is None:
