@@ -2602,8 +2602,6 @@ class Selection(Field):
             # We cannot use field.selection or field.selection_add here
             # because those attributes are overridden by ``_setup_attrs``.
             if 'selection' in field.args:
-                if self.related:
-                    _logger.warning("%s: selection attribute will be ignored as the field is related", self)
                 selection = field.args['selection']
                 if isinstance(selection, list):
                     if values is not None and values != [kv[0] for kv in selection]:
@@ -2618,8 +2616,6 @@ class Selection(Field):
                     self.ondelete = None
 
             if 'selection_add' in field.args:
-                if self.related:
-                    _logger.warning("%s: selection_add attribute will be ignored as the field is related", self)
                 selection_add = field.args['selection_add']
                 assert isinstance(selection_add, list), \
                     "%s: selection_add=%r must be a list" % (self, selection_add)
