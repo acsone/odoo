@@ -10280,7 +10280,7 @@ msgstr ""
 "\n"
 "Es unterstützt verschiedene Arten von Mitgliedern:\n"
 "--------------------------------------------------------------------------------\n"
-"    * Freie Mitglieder\n"
+"    * Kostenbefreite Mitglieder\n"
 "    * Verknüpfte Mitglieder\n"
 "    * Zahlende Mitglieder\n"
 "    * Spezielle Mitgliedspreise\n"
@@ -21126,6 +21126,13 @@ msgid "France - Accounting Reports"
 msgstr "Frankreich - Buchhaltungsberichte"
 
 #. module: base
+#: model:ir.module.module,shortdesc:base.module_l10n_fr_invoice_addr
+msgid "France - Adding Mandatory Invoice Mentions (Decree no. 2022-1299)"
+msgstr ""
+"Frankreich - Hinzufügen von Pflichtangaben auf Rechnunge (Dekret Nr. "
+"2022-1299)"
+
+#. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_fr_fec
 msgid "France - FEC Export"
 msgstr "Frankreich - FEC-Export"
@@ -28696,6 +28703,14 @@ msgstr ""
 #, python-format
 msgid "Odoo is unable to merge the generated PDFs."
 msgstr "Odoo kann die erzeugten PDFs nicht zusammenzuführen."
+
+#. module: base
+#. odoo-python
+#: code:addons/base/models/ir_actions_report.py:0
+msgid ""
+"Odoo is unable to merge the generated PDFs because of {num_errors} corrupted"
+" file(s)"
+msgstr ""
 
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_sequence__padding
@@ -37402,6 +37417,12 @@ msgstr "Vererbungsmodus für Ansicht"
 #: model:ir.module.module,summary:base.module_website_crm_livechat
 msgid "View livechat sessions for leads"
 msgstr "Livechat-Sitzungen für Leads anzeigen"
+
+#. module: base
+#. odoo-python
+#: code:addons/base/models/ir_actions_report.py:0
+msgid "View Problematic Record(s)"
+msgstr ""
 
 #. module: base
 #. odoo-python

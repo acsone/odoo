@@ -20751,6 +20751,11 @@ msgid "France - Accounting Reports"
 msgstr "프랑스 - 회계 보고서"
 
 #. module: base
+#: model:ir.module.module,shortdesc:base.module_l10n_fr_invoice_addr
+msgid "France - Adding Mandatory Invoice Mentions (Decree no. 2022-1299)"
+msgstr ""
+
+#. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_fr_fec
 msgid "France - FEC Export"
 msgstr "프랑스 - FEC 내보내기"
@@ -28115,6 +28120,14 @@ msgstr ""
 #, python-format
 msgid "Odoo is unable to merge the generated PDFs."
 msgstr "Odoo는 생성된 PDF를 병합할 수 없습니다."
+
+#. module: base
+#. odoo-python
+#: code:addons/base/models/ir_actions_report.py:0
+msgid ""
+"Odoo is unable to merge the generated PDFs because of {num_errors} corrupted"
+" file(s)"
+msgstr ""
 
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_sequence__padding
@@ -36570,6 +36583,12 @@ msgstr "상속 모드 화면"
 #: model:ir.module.module,summary:base.module_website_crm_livechat
 msgid "View livechat sessions for leads"
 msgstr "영업제안 실시간 채팅 세션 보기"
+
+#. module: base
+#. odoo-python
+#: code:addons/base/models/ir_actions_report.py:0
+msgid "View Problematic Record(s)"
+msgstr ""
 
 #. module: base
 #. odoo-python

@@ -18118,7 +18118,7 @@ msgstr "Dash"
 #: model:ir.ui.menu,name:base.menu_board_root
 #: model:ir.ui.menu,name:base.menu_reporting_dashboard
 msgid "Dashboards"
-msgstr "Dasbor"
+msgstr "Dashboard"
 
 #. module: base
 #: model:ir.module.category,name:base.module_category_productivity_data_cleaning
@@ -22095,7 +22095,7 @@ msgstr "Human Readable"
 #: model:ir.module.category,name:base.module_category_human_resources
 #: model_terms:ir.ui.view,arch_db:base.user_groups_view
 msgid "Human Resources"
-msgstr "Personalia"
+msgstr "Sumber Daya Manusia"
 
 #. module: base
 #: model:res.country,name:base.hu
@@ -28542,6 +28542,14 @@ msgstr ""
 #, python-format
 msgid "Odoo is unable to merge the generated PDFs."
 msgstr "Odoo tidak dapat menggabungkan PDF yang dibuat."
+
+#. module: base
+#. odoo-python
+#: code:addons/base/models/ir_actions_report.py:0
+msgid ""
+"Odoo is unable to merge the generated PDFs because of {num_errors} corrupted"
+" file(s)"
+msgstr ""
 
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_sequence__padding
@@ -35327,7 +35335,7 @@ msgid ""
 "This module allows ecommerce users to choose to deliver to Pick-Up points "
 "for the FEDEX connector."
 msgstr ""
-"Modul ini memungkina user ecommerce untuk memilih untuk mengirim ke titik "
+"Modul ini memungkinkan user ecommerce untuk memilih untuk mengirim ke titik "
 "Pick-Up untuk konektor FEDEX."
 
 #. module: base
@@ -37153,6 +37161,12 @@ msgstr "View inheritance mode"
 #: model:ir.module.module,summary:base.module_website_crm_livechat
 msgid "View livechat sessions for leads"
 msgstr "Lihat sesi livechat untuk lead"
+
+#. module: base
+#. odoo-python
+#: code:addons/base/models/ir_actions_report.py:0
+msgid "View Problematic Record(s)"
+msgstr ""
 
 #. module: base
 #. odoo-python

@@ -23,6 +23,7 @@
 # rec_odoo <rec@odoo.com>, 2023
 # Olivier Moliteur, 2023
 # Mantas Malinauskas, 2023
+# Greta Šeštokė, 2024
 # Ramunė ViaLaurea <ramune.vialaurea@gmail.com>, 2024
 # 
 msgid ""
@@ -124,7 +125,7 @@ msgstr "%s galimybė"
 #: code:addons/crm/static/src/js/tours/crm.js:0
 #, python-format
 msgid "<b>Create your first opportunity.</b>"
-msgstr ""
+msgstr "<b>Sukurkite pirmąją pardavimo galimybę.</b>"
 
 #. module: crm
 #. odoo-javascript
@@ -147,7 +148,7 @@ msgstr "<b>Prognozuojamasis švino vertinimas</b>"
 #: code:addons/crm/static/src/js/tours/crm.js:0
 #, python-format
 msgid "<b>Write a few letters</b> to look for a company, or create a new one."
-msgstr ""
+msgstr "<b>Įveskite kelias raides</b> įmonės paieškai arba sukurkite naują."
 
 #. module: crm
 #: model_terms:ir.ui.view,arch_db:crm.crm_lead_partner_kanban_view
@@ -2258,12 +2259,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:crm.view_crm_case_leads_filter
 #: model_terms:ir.ui.view,arch_db:crm.view_crm_case_opportunities_filter
 msgid "Medium"
-msgstr "Vidutinis"
+msgstr "Medija"
 
 #. module: crm
 #: model_terms:ir.ui.view,arch_db:crm.crm_lead_merge_summary
 msgid "Medium:"
-msgstr ""
+msgstr "Medijos:"
 
 #. module: crm
 #. odoo-python

@@ -121,6 +121,7 @@ class ResPartner(models.Model):
     def _check_vies(self, vat):
         # Store the VIES result in the cache. In case an exception is raised during the request
         # (e.g. service unavailable), the fallback on simple_vat_check is not kept in cache.
+        _logger.info('Calling VIES service to check VAT for validation: %s', vat)
         return check_vies(vat)
 
     @api.model
@@ -822,7 +823,7 @@ class ResPartner(models.Model):
         return is_valid_vat(vat) or is_valid_stnr(vat)
 
     def check_vat_il(self, vat):
-        check_func = stdnum.util.get_cc_module('il', 'hp').is_valid if self.is_company else stdnum.util.get_cc_module('il', 'idnr').is_valid
+        check_func = stdnum.util.get_cc_module('il', 'idnr').is_valid
         return check_func(vat)
 
     def format_vat_sm(self, vat):

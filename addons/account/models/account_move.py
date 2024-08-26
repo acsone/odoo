@@ -2504,17 +2504,31 @@ class AccountMove(models.Model):
         # OVERRIDES sequence.mixin
         return not self.quick_edit_mode
 
+    def _prepare_get_last_sequence_domain(self, relaxed=False):
+        """
+        Prepare the where clause and the domain adding a test on state to exclude draft
+        account moves instead of name only
+        :param relaxed: bool
+        :return: str, dict, list | None
+        """
+        self.ensure_one()
+        domain = [('journal_id', '=', self.journal_id.id),
+                  ('id', '!=', self.id or self._origin.id),
+                  ('name', 'not in', ('/', '', False)),
+                  ] if not relaxed else None
+        where_string = "WHERE journal_id = %(journal_id)s AND name != '/'"
+        param = {'journal_id': self.journal_id.id}
+        return where_string, param, domain
+
     def _get_last_sequence_domain(self, relaxed=False):
         # EXTENDS account sequence.mixin
         self.ensure_one()
         if not self.date or not self.journal_id:
             return "WHERE FALSE", {}
-        where_string = "WHERE journal_id = %(journal_id)s AND name != '/'"
-        param = {'journal_id': self.journal_id.id}
+        where_string, param, domain = self._prepare_get_last_sequence_domain(relaxed)
         is_payment = self.payment_id or self._context.get('is_payment')
 
         if not relaxed:
-            domain = [('journal_id', '=', self.journal_id.id), ('id', '!=', self.id or self._origin.id), ('name', 'not in', ('/', '', False))]
             if self.journal_id.refund_sequence:
                 refund_types = ('out_refund', 'in_refund')
                 domain += [('move_type', 'in' if self.move_type in refund_types else 'not in', refund_types)]
@@ -3457,6 +3471,25 @@ class AccountMove(models.Model):
 
         return reverse_moves
 
+    def _can_be_unlinked(self):
+        self.ensure_one()
+        lock_date = self.company_id._get_user_fiscal_lock_date()
+        return not self.inalterable_hash and self.date > lock_date
+
+    def _unlink_or_reverse(self):
+        if not self:
+            return
+        to_reverse = self.env['account.move']
+        to_unlink = self.env['account.move']
+        for move in self:
+            if move._can_be_unlinked():
+                to_unlink += move
+            else:
+                to_reverse += move
+        to_unlink.filtered(lambda m: m.state in ('posted', 'cancel')).button_draft()
+        to_unlink.filtered(lambda m: m.state == 'draft').unlink()
+        return to_reverse._reverse_moves(cancel=True)
+
     def _post(self, soft=True):
         """Post/Validate the documents.
 
@@ -4376,7 +4409,11 @@ class AccountMove(models.Model):
             force_email_company=force_email_company, force_email_lang=force_email_lang
         )
         subtitles = [render_context['record'].name]
-        if self.invoice_date_due and self.payment_state not in ('in_payment', 'paid'):
+        if (
+            self.invoice_date_due
+            and self.is_invoice(include_receipts=True)
+            and self.payment_state not in ('in_payment', 'paid')
+        ):
             subtitles.append(_('%(amount)s due\N{NO-BREAK SPACE}%(date)s',
                            amount=format_amount(self.env, self.amount_total, self.currency_id, lang_code=render_context.get('lang')),
                            date=format_date(self.env, self.invoice_date_due, date_format='short', lang_code=render_context.get('lang'))

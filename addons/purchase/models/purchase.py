@@ -1248,7 +1248,7 @@ class PurchaseOrderLine(models.Model):
             if not line.product_id or line.invoice_lines or not line.company_id:
                 continue
             line = line.with_company(line.company_id)
-            params = {'order_id': line.order_id}
+            params = line._get_select_sellers_params()
             seller = line.product_id._select_seller(
                 partner_id=line.partner_id,
                 quantity=line.product_qty,
@@ -1360,11 +1360,11 @@ class PurchaseOrderLine(models.Model):
 
     def _get_gross_price_unit(self):
         self.ensure_one()
-        price_unit = self.price_unit
+        price_unit = self._convert_to_tax_base_line_dict()['price_unit']
         if self.taxes_id:
             qty = self.product_qty or 1
             price_unit_prec = self.env['decimal.precision'].precision_get('Product Price')
-            price_unit = self.taxes_id.with_context(round=False).compute_all(price_unit, currency=self.order_id.currency_id, quantity=qty)['total_void']
+            price_unit = self.taxes_id.with_context(round=False).compute_all(price_unit, currency=self.order_id.currency_id, quantity=qty, product=self.product_id)['total_void']
             price_unit = float_round(price_unit / qty, precision_digits=price_unit_prec)
         if self.product_uom.id != self.product_id.uom_id.id:
             price_unit *= self.product_uom.factor / self.product_id.uom_id.factor
@@ -1508,3 +1508,9 @@ class PurchaseOrderLine(models.Model):
                 'business_domain': 'purchase_order',
                 'company_id': line.company_id.id,
             })
+
+    def _get_select_sellers_params(self):
+        self.ensure_one()
+        return {
+            "order_id": self.order_id,
+        }

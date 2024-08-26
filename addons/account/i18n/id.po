@@ -3085,7 +3085,7 @@ msgstr "Saldo"
 #: code:addons/account/static/src/js/legacy_account_selection.js:0
 #, python-format
 msgid "Balance Sheet"
-msgstr "Lembar Saldo"
+msgstr "Neraca Keuangan"
 
 #. module: account
 #. odoo-python
@@ -9723,6 +9723,12 @@ msgid "Never"
 msgstr "Tidak pernah"
 
 #. module: account
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "Nested group of taxes are not allowed."
+msgstr ""
+
+#. module: account
 #: model:ir.model.fields,field_description:account.field_account_setup_bank_manual_config__new_journal_name
 msgid "New Journal Name"
 msgstr "New Journal Name"
@@ -10367,7 +10373,7 @@ msgstr "Operation not supported"
 #. module: account
 #: model:ir.model.fields.selection,name:account.selection__account_report__filter_hierarchy__optional
 msgid "Optional"
-msgstr "Opsiona"
+msgstr "Opsional"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_account_template__nocreate
@@ -14140,6 +14146,16 @@ msgid "The company this distribution line belongs to."
 msgstr "Perusahaan yang memiliki baris distribusi ini."
 
 #. module: account
+#: code:addons/account/models/partner.py:0
+#, python-format
+msgid ""
+"The country of the foreign VAT number could not be detected. Please assign a"
+" country to the fiscal position or set a country group"
+msgstr ""
+"Negara angka PPN asing tidak dapat dideteksi. Silakan tugaskan negara ke "
+"posisi fiskal atau tetapkan negara kelompok"
+
+#. module: account
 #: model:ir.model.fields,help:account.field_account_tax_group__country_id
 msgid "The country for which this tax group is applicable."
 msgstr "Negara di mana kelompok pajak ini berlaku."
@@ -16778,6 +16794,16 @@ msgstr ""
 
 #. module: account
 #. odoo-python
+#: code:addons/account/models/partner.py:0
+#, python-format
+msgid ""
+"You cannot create a fiscal position with a country outside of the selected "
+"country group."
+msgstr ""
+"Anda tidak dapat membuat posisi fiskal dengan negara di luar kelompok negara"
+" terpilih."
+
+#. module: account
 #: code:addons/account/models/partner.py:0
 #, python-format
 msgid ""

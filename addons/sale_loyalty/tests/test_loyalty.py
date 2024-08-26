@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import Command
@@ -873,3 +872,44 @@ class TestLoyalty(TestSaleCouponCommon):
         order._update_programs_and_rewards()
         rewards = [value.ids for value in order._get_claimable_rewards().values()]
         self.assertTrue(any(loyalty_program_tag.reward_ids[0].id in r for r in rewards))
+
+    def test_discount_reward_claimable_only_once(self):
+        """
+        Check that discount rewards already applied won't be shown in the claimable rewards anymore.
+        """
+        program = self.env['loyalty.program'].create({
+            'name': '10% Discount & Gift',
+            'applies_on': 'current',
+            'trigger': 'with_code',
+            'program_type': 'promotion',
+            'rule_ids': [Command.create({'mode': 'with_code', 'code': '10PERCENT&GIFT'})],
+            'reward_ids': [
+                Command.create({
+                    'reward_type': 'product',
+                    'reward_product_id': self.product_B.id,
+                    'reward_product_qty': 1,
+                }),
+                Command.create({
+                    'reward_type': 'discount',
+                    'discount': 10,
+                    'discount_mode': 'percent',
+                    'discount_applicability': 'specific',
+                }),
+            ],
+        })
+
+        coupon = self.env['loyalty.card'].create({
+            'program_id': program.id, 'points': 20, 'code': 'GIFT_CARD'
+        })
+
+        order = self.env['sale.order'].create({
+            'partner_id': self.partner_a.id,
+            'order_line': [Command.create({'product_id': self.product_a.id})]
+        })
+
+        product_reward = program.reward_ids.filtered(lambda reward: reward.reward_type == 'product')
+        discount_reward = program.reward_ids - product_reward
+        order._apply_program_reward(discount_reward, coupon)
+        rewards = order._get_claimable_rewards()[coupon]
+        msg = "Only the free product should be applicable, as the discount was already applied."
+        self.assertEqual(rewards, product_reward, msg)

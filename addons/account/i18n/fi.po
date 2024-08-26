@@ -41,6 +41,7 @@
 # Konsta Aavaranta, 2024
 # Miku Laitinen <miku.laitinen@gmail.com>, 2024
 # Jarmo Kortetjärvi <jarmo.kortetjarvi@gmail.com>, 2024
+# Jessica Jakara, 2024
 # Ossi Mantylahti <ossi.mantylahti@obs-solutions.fi>, 2024
 # 
 msgid ""
@@ -420,7 +421,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:account.view_account_payment_register_form
 msgid ""
 "<b>Early Payment Discount of %(payment_reference) has been applied.</b>"
-msgstr ""
+msgstr "<b>Ennakkomaksualennus %(payment_reference) on lisätty.</b>"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.report_invoice_document
@@ -7917,6 +7918,9 @@ msgid ""
 "Invalid \"Zip Range\", You have to configure both \"From\" and \"To\" values"
 " for the zip range and \"To\" should be greater than \"From\"."
 msgstr ""
+"Virheellinen \"postinumeroalue\". Sinun on määritettävä \"mistä\"-  "
+"\"mihin\"-arvot postinumeron alueelle ja \"mihin\" on oltava suurempi kuin "
+"\"mistä\"."
 
 #. module: account
 #. odoo-python
@@ -9718,6 +9722,12 @@ msgstr ""
 #: model:ir.model.fields.selection,name:account.selection__res_company__early_pay_discount_computation__excluded
 msgid "Never"
 msgstr "Ei koskaan"
+
+#. module: account
+#: code:addons/account/models/account_tax.py:0
+#, python-format
+msgid "Nested group of taxes are not allowed."
+msgstr "Sisäkkäiset veroryhmät eivät ole sallittuja."
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_setup_bank_manual_config__new_journal_name
@@ -14125,6 +14135,16 @@ msgid "The company this distribution line belongs to."
 msgstr "Yritys, jolle tämä jakorivi kuuluu."
 
 #. module: account
+#: code:addons/account/models/partner.py:0
+#, python-format
+msgid ""
+"The country of the foreign VAT number could not be detected. Please assign a"
+" country to the fiscal position or set a country group"
+msgstr ""
+"Ulkomaisen alv-numeron maata ei voitu havaita. Määritä maa verokannalle tai "
+"aseta maaryhmä"
+
+#. module: account
 #: model:ir.model.fields,help:account.field_account_tax_group__country_id
 msgid "The country for which this tax group is applicable."
 msgstr "Maa, johon tätä veroryhmää sovelletaan."
@@ -16736,6 +16756,14 @@ msgstr ""
 
 #. module: account
 #. odoo-python
+#: code:addons/account/models/partner.py:0
+#, python-format
+msgid ""
+"You cannot create a fiscal position with a country outside of the selected "
+"country group."
+msgstr "Et voi luoda verokantaa, jonka maa ei kuulu valittuun maaryhmään."
+
+#. module: account
 #: code:addons/account/models/partner.py:0
 #, python-format
 msgid ""
