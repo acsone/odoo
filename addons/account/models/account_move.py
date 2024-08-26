@@ -2504,17 +2504,31 @@ class AccountMove(models.Model):
         # OVERRIDES sequence.mixin
         return not self.quick_edit_mode
 
+    def _prepare_get_last_sequence_domain(self, relaxed=False):
+        """
+        Prepare the where clause and the domain adding a test on state to exclude draft
+        account moves instead of name only
+        :param relaxed: bool
+        :return: str, dict, list | None
+        """
+        self.ensure_one()
+        domain = [('journal_id', '=', self.journal_id.id),
+                  ('id', '!=', self.id or self._origin.id),
+                  ('name', 'not in', ('/', '', False)),
+                  ] if not relaxed else None
+        where_string = "WHERE journal_id = %(journal_id)s AND name != '/'"
+        param = {'journal_id': self.journal_id.id}
+        return where_string, param, domain
+
     def _get_last_sequence_domain(self, relaxed=False):
         # EXTENDS account sequence.mixin
         self.ensure_one()
         if not self.date or not self.journal_id:
             return "WHERE FALSE", {}
-        where_string = "WHERE journal_id = %(journal_id)s AND name != '/'"
-        param = {'journal_id': self.journal_id.id}
+        where_string, param, domain = self._prepare_get_last_sequence_domain(relaxed)
         is_payment = self.payment_id or self._context.get('is_payment')
 
         if not relaxed:
-            domain = [('journal_id', '=', self.journal_id.id), ('id', '!=', self.id or self._origin.id), ('name', 'not in', ('/', '', False))]
             if self.journal_id.refund_sequence:
                 refund_types = ('out_refund', 'in_refund')
                 domain += [('move_type', 'in' if self.move_type in refund_types else 'not in', refund_types)]
