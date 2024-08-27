@@ -16,7 +16,8 @@ import html as htmllib
 import idna
 import markupsafe
 from lxml import etree, html
-from lxml.html import clean, defs
+from lxml.html import defs
+from lxml_html_clean import clean, Cleaner
 from werkzeug import urls
 
 import odoo
@@ -49,7 +50,7 @@ SANITIZE_TAGS = {
 }
 
 
-class _Cleaner(clean.Cleaner):
+class _Cleaner(Cleaner):
 
     _style_re = re.compile(r'''([\w-]+)\s*:\s*((?:[^;"']|"[^";]*"|'[^';]*')+)''')
 
