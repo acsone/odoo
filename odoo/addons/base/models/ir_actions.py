@@ -647,26 +647,10 @@ class IrActionsServer(models.Model):
             if action_groups:
                 if not (action_groups & self.env.user.groups_id):
                     raise AccessError(_("You don't have enough access rights to run this action."))
-            else:
-                try:
-                    self.env[action.model_name].check_access_rights("write")
-                except AccessError:
-                    _logger.warning("Forbidden server action %r executed while the user %s does not have access to %s.",
-                        action.name, self.env.user.login, action.model_name,
-                    )
-                    raise
 
             eval_context = self._get_eval_context(action)
             records = eval_context.get('record') or eval_context['model']
             records |= eval_context.get('records') or eval_context['model']
-            if records:
-                try:
-                    records.check_access_rule('write')
-                except AccessError:
-                    _logger.warning("Forbidden server action %r executed while the user %s does not have access to %s.",
-                        action.name, self.env.user.login, records,
-                    )
-                    raise
 
             runner, multi = action._get_runner()
             if runner and multi:
