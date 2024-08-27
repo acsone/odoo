@@ -358,7 +358,8 @@ class OdooPdfFileWriter(PdfFileWriter):
             # First browse through all the pages of the pdf file, to get a reference to all the fonts used in the PDF.
             for page in pages:
                 for font in page.getObject()['/Resources']['/Font'].values():
-                    for descendant in font.getObject()['/DescendantFonts']:
+                    #There might be no /DescendantFonts (e.g. page with just an image)
+                    for descendant in font.getObject().get('/DescendantFonts',[]):
                         fonts[descendant.idnum] = descendant.getObject()
 
             # Then for each font, rewrite the width array with the information taken directly from the font file.
@@ -369,7 +370,7 @@ class OdooPdfFileWriter(PdfFileWriter):
                 stream = io.BytesIO(decompress(font_file._data))
                 ttfont = TTFont(stream)
                 font_upm = ttfont['head'].unitsPerEm
-                glyphs = ttfont.getGlyphSet()._hmtx.metrics
+                glyphs = ttfont.getGlyphSet().hMetrics
                 glyph_widths = []
                 for key, values in glyphs.items():
                     if key[:5] == 'glyph':
@@ -380,8 +381,10 @@ class OdooPdfFileWriter(PdfFileWriter):
         else:
             _logger.warning('The fonttools package is not installed. Generated PDF may not be PDF/A compliant.')
 
-        outlines = self._root_object['/Outlines'].getObject()
-        outlines[NameObject('/Count')] = NumberObject(1)
+        #There might be no /Outlines (e.g. page with just an image)
+        if self._root_object.get('/Outlines',False) :
+            outlines = self._root_object['/Outlines'].getObject()
+            outlines[NameObject('/Count')] = NumberObject(1)
 
         # Set odoo as producer
         self.addMetadata({
