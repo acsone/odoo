@@ -753,10 +753,13 @@ class StockQuant(models.Model):
             self.location_id = self.env['stock.warehouse'].search(
                 [('company_id', '=', company_id)], limit=1).in_type_id.default_location_dest_id
 
-    def _apply_inventory(self):
-        move_vals = []
+    def _check_is_apply_inventory_allowed(self):
         if not self.user_has_groups('stock.group_stock_manager'):
             raise UserError(_('Only a stock manager can validate an inventory adjustment.'))
+
+    def _apply_inventory(self):
+        move_vals = []
+        self._check_is_apply_inventory_allowed()
         for quant in self:
             # Create and validate a move so that the quant matches its `inventory_quantity`.
             if float_compare(quant.inventory_diff_quantity, 0, precision_rounding=quant.product_uom_id.rounding) > 0:
