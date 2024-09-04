@@ -174,6 +174,10 @@ export class FileSelector extends Component {
         return this.props.selectedMedia[this.props.id].filter(media => media.mediaType === 'attachment').map(({ id }) => id);
     }
 
+    get fetchAttachmentsMethod() {
+        return 'search_read';
+    }
+
     get attachmentsDomain() {
         const domain = [
             '&',
@@ -198,7 +202,7 @@ export class FileSelector extends Component {
         try {
             attachments = await this.orm.call(
                 'ir.attachment',
-                'search_read',
+                this.fetchAttachmentsMethod,
                 [],
                 {
                     domain: this.attachmentsDomain,
