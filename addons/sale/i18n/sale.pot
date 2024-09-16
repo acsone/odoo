@@ -27,7 +27,7 @@ msgstr ""
 
 #. module: sale
 #: model:mail.template,report_name:sale.email_template_edi_sale
-msgid "${(object.name or '').replace('/','_')}"
+msgid "${(object.name or '').replace('/','_')}${object.state == 'draft' and '_draft' or ''}"
 msgstr ""
 
 #. module: sale
@@ -428,11 +428,6 @@ msgstr ""
 #. module: sale
 #: model_terms:ir.ui.view,arch_db:sale.sale_order_portal_template
 msgid "Accept &amp; Pay"
-msgstr ""
-
-#. module: sale
-#: model_terms:ir.ui.view,arch_db:sale.mail_notification_paynow_online
-msgid "Accept and sign online"
 msgstr ""
 
 #. module: sale
@@ -1642,12 +1637,6 @@ msgid "Invoicing"
 msgstr ""
 
 #. module: sale
-#: model_terms:ir.ui.view,arch_db:sale.sale_order_portal_content
-msgid "Invoicing Address"
-msgstr ""
-
-#. module: sale
-#: model:ir.model.fields,field_description:sale.field_product_product__invoice_policy
 #: model:ir.model.fields,field_description:sale.field_product_template__invoice_policy
 #: model:ir.model.fields,field_description:sale.field_res_config_settings__default_invoice_policy
 msgid "Invoicing Policy"
@@ -2278,11 +2267,6 @@ msgstr ""
 #. module: sale
 #: model_terms:ir.ui.view,arch_db:sale.sale_order_portal_template
 msgid "Pay now"
-msgstr ""
-
-#. module: sale
-#: model_terms:ir.ui.view,arch_db:sale.mail_notification_paynow_online
-msgid "Pay online"
 msgstr ""
 
 #. module: sale
@@ -3202,11 +3186,6 @@ msgstr ""
 #. module: sale
 #: model_terms:ir.ui.view,arch_db:sale.res_config_settings_view_form
 msgid "Show standard terms &amp; conditions on orders"
-msgstr ""
-
-#. module: sale
-#: model_terms:ir.ui.view,arch_db:sale.mail_notification_paynow_online
-msgid "Sign and pay online"
 msgstr ""
 
 #. module: sale
