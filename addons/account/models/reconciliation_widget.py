@@ -559,10 +559,9 @@ class AccountReconciliation(models.AbstractModel):
         excluded_ids.extend(to_check_excluded)
 
         domain_reconciliation = [
-            '&', '&', '&',
+            '&', '&',
             ('statement_line_id', '=', False),
             ('account_id', 'in', aml_accounts),
-            ('payment_id', '<>', False),
             ('balance', '!=', 0.0),
         ]
 
