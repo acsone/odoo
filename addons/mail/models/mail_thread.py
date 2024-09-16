@@ -1882,10 +1882,6 @@ class MailThread(models.AbstractModel):
         if not subtype_id:
             subtype_id = self.env['ir.model.data'].xmlid_to_res_id('mail.mt_note')
 
-        # automatically subscribe recipients if asked to
-        if self._context.get('mail_post_autofollow') and partner_ids:
-            self.message_subscribe(list(partner_ids))
-
         # parent management, depending on ``_mail_flat_thread``
         # ``_mail_flat_thread`` True: no free message. If no parent, find the first
         # posted message and attach new message to it. If parent, get back to the first
@@ -1893,6 +1889,7 @@ class MailThread(models.AbstractModel):
         # ``_mail_flat_thread`` False: free message = new thread (think of mailing lists).
         # If parent get up one level to try to flatten threads without completely
         # removing hierarchy.
+
         MailMessage_sudo = self.env['mail.message'].sudo()
         if self._mail_flat_thread and not parent_id:
             parent_message = MailMessage_sudo.search([('res_id', '=', self.id), ('model', '=', self._name), ('message_type', '!=', 'user_notification')], order="id ASC", limit=1)

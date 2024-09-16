@@ -2768,10 +2768,6 @@ class AccountMove(models.Model):
         })
 
         for move in to_post:
-            move.message_subscribe([p.id for p in [move.partner_id] if p not in move.sudo().message_partner_ids])
-
-
-        for move in to_post:
             if move.is_sale_document() \
                     and move.journal_id.sale_activity_type_id \
                     and (move.journal_id.sale_activity_user_id or move.invoice_user_id).id not in (self.env.ref('base.user_root').id, False):
