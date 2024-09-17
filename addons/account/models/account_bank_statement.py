@@ -401,7 +401,7 @@ class AccountBankStatementLine(models.Model):
         from_clause = "FROM account_move_line aml JOIN account_account acc ON acc.id = aml.account_id "
         account_clause = ''
         if self.journal_id.default_credit_account_id and self.journal_id.default_debit_account_id:
-            account_clause = "(aml.statement_id IS NULL AND aml.account_id IN %(account_payable_receivable)s AND aml.payment_id IS NOT NULL) OR"
+            account_clause = "(aml.statement_id IS NULL AND aml.account_id IN %(account_payable_receivable)s) OR"
         where_clause = """WHERE aml.company_id = %(company_id)s
                           AND (
                                     """ + account_clause + """
@@ -623,11 +623,12 @@ class AccountBankStatementLine(models.Model):
             total -= aml_currency._convert(balance, currency, aml_rec.company_id, aml_rec.date)
             aml_rec.with_context(check_move_validity=False).write({'statement_line_id': self.id})
             counterpart_moves = (counterpart_moves | aml_rec.move_id)
-            if aml_rec.journal_id.post_at_bank_rec and aml_rec.payment_id and aml_rec.move_id.state == 'draft':
+            if aml_rec.journal_id.post_at_bank_rec and aml_rec.move_id.state == 'draft':
                 # In case the journal is set to only post payments when performing bank
                 # reconciliation, we modify its date and post it.
                 aml_rec.move_id.date = self.date
-                aml_rec.payment_id.payment_date = self.date
+                if aml_rec.payment_id:
+                    aml_rec.payment_id.payment_date = self.date
                 aml_rec.move_id.post()
                 # We check the paid status of the invoices reconciled with this payment
                 for invoice in aml_rec.payment_id.reconciled_invoice_ids:
