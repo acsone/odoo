@@ -92,12 +92,15 @@ class Warehouse(models.Model):
     def _compute_show_resupply(self):
         for warehouse in self:
             warehouse.show_resupply = warehouse.user_has_groups("stock.group_stock_multi_warehouses") and warehouse.warehouse_count
-
+    
+    def _prepare_loc_values(self, vals):
+        return {'name': _(vals.get('code')), 'usage': 'view',
+                    'location_id': self.env.ref('stock.stock_location_locations').id}
+    
     @api.model
     def create(self, vals):
         # create view location for warehouse then create all locations
-        loc_vals = {'name': _(vals.get('code')), 'usage': 'view',
-                    'location_id': self.env.ref('stock.stock_location_locations').id}
+        loc_vals = self._prepare_loc_values(vals)
         if vals.get('company_id'):
             loc_vals['company_id'] = vals.get('company_id')
         vals['view_location_id'] = self.env['stock.location'].create(loc_vals).id
