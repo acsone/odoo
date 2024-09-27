@@ -209,7 +209,13 @@ var EditMenuDialog = widget.Dialog.extend({
     },
     start: function () {
         var r = this._super.apply(this, arguments);
-        this.$('.oe_menu_editor').nestedSortable({
+        this.$('.oe_menu_editor').nestedSortable(
+            this._get_menu_editor_nested_sortable_params()
+        );
+        return r;
+    },
+    _get_menu_editor_nested_sortable_params: function () {
+        return {
             listType: 'ul',
             handle: 'div',
             items: 'li',
@@ -221,8 +227,7 @@ var EditMenuDialog = widget.Dialog.extend({
             tolerance: 'pointer',
             attribute: 'data-menu-id',
             expression: '()(.+)', // nestedSortable takes the second match of an expression (*sigh*)
-        });
-        return r;
+        }
     },
     flatenize: function (node, dict) {
         dict = dict || {};
