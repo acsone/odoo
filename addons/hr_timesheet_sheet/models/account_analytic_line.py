@@ -46,7 +46,7 @@ class AccountAnalyticLine(models.Model):
 
     @api.multi
     def write(self, values):
-        self._check_state()
+        self._check_state(values=values)
         return super(AccountAnalyticLine, self).write(values)
 
     @api.multi
@@ -54,8 +54,18 @@ class AccountAnalyticLine(models.Model):
         self._check_state()
         return super(AccountAnalyticLine, self).unlink()
 
-    def _check_state(self):
+    @api.multi
+    def _check_state(self, values=None):
+        if values:
+            allowed_update_fields = set(self._get_check_state_allowed_fields())
+            if allowed_update_fields.issuperset(values.keys()):
+                return True
+
         for line in self:
             if line.sheet_id and line.sheet_id.state not in ('draft', 'new'):
                 raise UserError(_('You cannot modify an entry in a confirmed timesheet.'))
         return True
+
+    @api.model
+    def _get_check_state_allowed_fields(self):
+        return []
