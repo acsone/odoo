@@ -357,6 +357,9 @@ GROUP BY fol.id%s%s""" % (
     # --------------------------------------------------
     # Private tools methods to generate new subscription
     # --------------------------------------------------
+    def _check_followers_to_insert(self, res_model, res_ids, partner_ids):
+        """Hook to check if the follower should be inserted or not. """
+        return partner_ids
 
     def _insert_followers(self, res_model, res_ids,
                           partner_ids, subtypes=None,
@@ -371,6 +374,7 @@ GROUP BY fol.id%s%s""" % (
         :param existing_policy: see ``_add_followers``;
         """
         sudo_self = self.sudo().with_context(default_partner_id=False)
+        partner_ids = self._check_followers_to_insert(res_model, res_ids, partner_ids)
         if not subtypes:  # no subtypes -> default computation, no force, skip existing
             new, upd = self._add_default_followers(
                 res_model, res_ids, partner_ids,
