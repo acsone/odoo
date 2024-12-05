@@ -1403,33 +1403,7 @@ var PDFViewerApplication = {
       }
 
       pdfDocument.getJavaScript().then(function (javaScript) {
-        if (!javaScript) {
-          return;
-        }
-
-        javaScript.some(function (js) {
-          if (!js) {
-            return false;
-          }
-
-          console.warn('Warning: JavaScript is not supported');
-
-          _this5.fallback(_pdfjsLib.UNSUPPORTED_FEATURES.javaScript);
-
-          return true;
-        });
-        var regex = /\bprint\s*\(/;
-
-        for (var i = 0, ii = javaScript.length; i < ii; i++) {
-          var js = javaScript[i];
-
-          if (js && regex.test(js)) {
-            setTimeout(function () {
-              window.print();
-            });
-            return;
-          }
-        }
+        return;
       });
     });
     Promise.all([onePageRendered, _ui_utils.animationStarted]).then(function () {
