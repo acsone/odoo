@@ -799,7 +799,7 @@ class ResourceCalendar(models.Model):
         if days > 0:
             found = set()
             delta = timedelta(days=14)
-            for n in range(100):
+            for n in range(1000):
                 dt = day_dt + delta * n
                 for start, stop, meta in get_intervals(dt, dt + delta)[False]:
                     found.add(start.date())
