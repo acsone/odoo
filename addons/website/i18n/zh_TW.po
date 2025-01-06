@@ -7,8 +7,8 @@
 # 敬雲 林 <chingyun@yuanchih-consult.com>, 2022
 # Martin Trigaux, 2023
 # Pak Wai Ho, 2023
-# Wil Odoo, 2024
 # Tony Ng, 2024
+# Wil Odoo, 2024
 # 
 msgid ""
 msgstr ""
@@ -16,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-06 13:31+0000\n"
 "PO-Revision-Date: 2022-09-22 05:56+0000\n"
-"Last-Translator: Tony Ng, 2024\n"
+"Last-Translator: Wil Odoo, 2024\n"
 "Language-Team: Chinese (Taiwan) (https://app.transifex.com/odoo/teams/41243/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2115,7 +2115,7 @@ msgstr "背景"
 #: code:addons/website/static/src/js/tours/configurator_tour.js:0
 #, python-format
 msgid "Background Shape"
-msgstr ""
+msgstr "背景形狀"
 
 #. module: website
 #. odoo-javascript
@@ -7133,7 +7133,7 @@ msgstr "數字（整數）"
 #: model:ir.model.fields,field_description:website.field_res_config_settings__website_language_count
 #: model:ir.model.fields,field_description:website.field_website__language_count
 msgid "Number of languages"
-msgstr "語系數量"
+msgstr "語言數目"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -8619,7 +8619,7 @@ msgstr "利用網店及電子商務功能，提高銷售額"
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.website_visitor_view_form
 msgid "Send Email"
-msgstr "發送電子信件"
+msgstr "傳送電郵"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.template_footer_contact
@@ -9827,6 +9827,7 @@ msgstr "此檢視架構已修改"
 #. module: website
 #. odoo-javascript
 #: code:addons/website/static/src/systray_items/website_switcher.xml:0
+#: code:addons/website/static/src/systray_items/website_switcher.js:0
 #, python-format
 msgid "This website does not have a domain configured."
 msgstr "此網站未設置網域名稱。"
@@ -11290,7 +11291,7 @@ msgstr "你的動態小片段將在此處顯示。系統現時顯示此訊息，
 #: code:addons/website/static/src/js/form_editor_registry.js:0
 #, python-format
 msgid "Your Email"
-msgstr "您的電子信件"
+msgstr "你的電郵"
 
 #. module: website
 #. odoo-javascript

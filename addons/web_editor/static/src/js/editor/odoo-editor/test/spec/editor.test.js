@@ -157,6 +157,14 @@ describe('Editor', () => {
                 });
             });
         });
+        describe('Sanitize ZWS', () => {
+            it('should remove zws while preserving the selection', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: '<p><font data-oe-zws-empty-inline="" style="color: rgb(255, 0, 0);">&ZeroWidthSpace;a[]</font></p>',
+                    contentAfter: '<p><font style="color: rgb(255, 0, 0);">a[]</font></p>',
+                })
+            })
+        })
     });
     describe('deleteForward', () => {
         describe('Selection collapsed', () => {
@@ -3439,6 +3447,57 @@ X[]
                                     </div>`,
                 });
             });
+            it('should delete columns when all selected', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: `<div class="container o_text_columns">[<div class="row"><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p></div></div>]</div>`,
+                    stepFunction: deleteBackward,
+                    contentAfter: `[]<br>`,
+                });
+            });
+            it('should delete columns when all selected along with text from an outer node', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: `<p>a[b</p><div class="container o_text_columns"><div class="row"><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p></div></div>]</div>`,
+                    stepFunction: deleteBackward,
+                    contentAfter: `<p>a[]</p>`,
+                });
+            });
+            it('should delete all columns when all selected within a text', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: `<p>a[b</p><div class="container o_text_columns"><div class="row"><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p></div></div></div><p>a]b</p>`,
+                    stepFunction: deleteBackward,
+                    contentAfter: `<p>a[]b</p>`,
+                });
+            });
+            it('should adjust selection and delete columns', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: `<div class="container o_text_columns"><div class="row"><div class="col-4">[<p><br></p></div><div class="col-4"><p><br></p></div><div class="col-4"><p><br></p>]</div></div></div>`,
+                    stepFunction: deleteBackward,
+                    contentAfter: `[]<br>`,
+                });
+            });
+            describe('Across multiple list types', () => {
+                it ('should merge a list item from the first list into the second list', async () => {
+                    await testEditor(BasicEditor, {
+                        contentBefore: `<ul><li>ab</li><li>[cd</li></ul><ol><li>ef]</li><li>gh</li></ol>`,
+                        stepFunction: deleteBackward,
+                        contentAfter: `<ul><li>ab</li></ul><ol><li>[]<br></li><li>gh</li></ol>`,
+                    });
+                });
+                it ('should not merge a list item from the first list into the second list', async () => {
+                    await testEditor(BasicEditor, {
+                        contentBefore: `<ul><li>ab</li><li>c[d</li></ul><ol><li>e]f</li><li>gh</li></ol>`,
+                        stepFunction: deleteBackward,
+                        contentAfter: `<ul><li>ab</li><li>c[]f</li></ul><ol><li>gh</li></ol>`,
+                    });
+                });
+                it ('should not merge second list item into the first list item', async () => {
+                    await testEditor(BasicEditor, {
+                        contentBefore: `<ul><li>ab</li><li>[cd</li></ul><ol><li>e]f</li><li>gh</li></ol>`,
+                        stepFunction: deleteBackward,
+                        contentAfter: `<ul><li>ab</li></ul><ol><li>[]f</li><li>gh</li></ol>`,
+                    });
+                });
+            });
         });
     });
 
@@ -3884,6 +3943,11 @@ X[]
                         stepFunction: pressEnter,
                         contentAfter: '<div><a>ab</a><br><br>[]</div>',
                     });
+                    await testEditor(BasicEditor, {
+                        contentBefore: '<div><a style="display: block;">ab[]</a></div>',
+                        stepFunction: pressEnter,
+                        contentAfter: '<div><a style="display: block;">ab</a>[]<br></div>'
+                    })
                     await testEditor(BasicEditor, {
                         contentBefore: '<div><a>ab[]</a>cd</div>',
                         stepFunction: pressEnter,
@@ -7669,6 +7733,19 @@ X[]
                         await simulateMouseClick(editor, firstTable, true);
                     },
                     contentAfter: '<table></table><p>[]<br></p><table></table>'
+                });
+            });
+            it('should reset selection on mousedown on empty editable', async () => {
+                await testEditor(BasicEditor, {
+                    contentBefore: '<p>[<br>]</p>',
+                    stepFunction: async editor => {
+                        const paragraph = editor.editable.querySelector('p');
+                        await triggerEvent(paragraph, 'mousedown');
+                        await nextTick();
+                        await triggerEvent(paragraph, 'mouseup');
+                        triggerEvent(paragraph, 'click');
+                    },
+                    contentAfter: '<p>[]<br></p>'
                 });
             });
         });

@@ -1161,9 +1161,11 @@ const Wysiwyg = Widget.extend({
                 }
                 this.linkTools.noFocusUrl = options.noFocusUrl;
                 const _onClick = ev => {
+                    const selection = this.odooEditor.document.getSelection();
+                    const isFocusOnInput = closestElement(selection.anchorNode, '.o_url_input');
                     if (
                         !ev.target.closest('#create-link') &&
-                        (!ev.target.closest('.oe-toolbar') || !ev.target.closest('we-customizeblock-option')) &&
+                        (!ev.target.closest('.oe-toolbar') || (!ev.target.closest('we-customizeblock-option') && isFocusOnInput)) &&
                         !ev.target.closest('.ui-autocomplete') &&
                         (!this.linkTools || ![ev.target, ...wysiwygUtils.ancestors(ev.target)].includes(this.linkTools.$link[0]))
                     ) {
@@ -1279,9 +1281,13 @@ const Wysiwyg = Widget.extend({
                     }
                 } else {
                     const commonBlock = selection.rangeCount && closestBlock(selection.getRangeAt(0).commonAncestorContainer);
-                    [anchorNode, focusNode] = commonBlock && link.contains(commonBlock) ? [commonBlock, commonBlock] : [link, link];
+                    if (commonBlock && link.contains(commonBlock)) {
+                        [anchorNode, focusNode] = [commonBlock, commonBlock];
+                    } else if (!this.$editable[0].contains(selection.anchorNode)) {
+                        [anchorNode, focusNode] = [link, link];
+                    }
                 }
-                if (!focusOffset) {
+                if (!focusOffset && focusNode) {
                     focusOffset = focusNode.childNodes.length || focusNode.length;
                 }
             }
@@ -2436,10 +2442,16 @@ const Wysiwyg = Widget.extend({
         }
     },
     _onSelectionChange() {
-        if (this.odooEditor.autohideToolbar && this.linkPopover) {
+        if (this.linkPopover && this.isSelectionInEditable()) {
             const selectionInLink = getInSelection(this.odooEditor.document, 'a') === this.linkPopover.target;
             const isVisible = this.linkPopover.el.offsetParent;
-            if (isVisible && !selectionInLink) {
+            if (
+                isVisible &&
+                (
+                    (this.options.autohideToolbar && !this.odooEditor.document.getSelection().isCollapsed) ||
+                    !selectionInLink
+                )
+            ) {
                 this.linkPopover.hide();
             }
         }
@@ -2450,7 +2462,9 @@ const Wysiwyg = Widget.extend({
         }
         const closestDialog = e.target.closest('.o_dialog, .o_web_editor_dialog');
         if (
-            e.target.closest('.oe-toolbar,.oe-powerbox-wrapper,.o_we_crop_widget') ||
+            // TODO the autocomplete part is a website thing, move that as a
+            // website customization.
+            e.target.closest('.oe-toolbar,.oe-powerbox-wrapper,.o_we_crop_widget,.ui-autocomplete') ||
             (closestDialog && closestDialog.querySelector('.o_select_media_dialog, .o_link_dialog'))) {
             this._shouldDelayBlur = true;
         } else {
