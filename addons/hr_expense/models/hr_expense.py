@@ -292,8 +292,15 @@ class HrExpense(models.Model):
     @api.depends('product_id', 'attachment_number', 'currency_rate')
     def _compute_unit_amount(self):
         for expense in self:
-            if expense.product_id and expense.product_has_cost and not expense.attachment_number or (expense.attachment_number and not expense.unit_amount):
-                expense.unit_amount = expense.product_id.price_compute('standard_price', currency=expense.currency_id)[expense.product_id.id]
+            if expense.state != 'draft':
+                continue
+            product_id = expense.product_id
+            if product_id and expense.product_has_cost and (not expense.attachment_number or (expense.attachment_number and not expense.unit_amount)):
+                expense.unit_amount = product_id.price_compute(
+                    'standard_price',
+                    uom=expense.product_uom_id,
+                    company=expense.company_id,
+                )[product_id.id]
             else:  # Even if we don't add a product, the unit_amount is still used for the move.line balance computation
                 expense.unit_amount = expense.company_currency_id.round(expense.total_amount_company / (expense.quantity or 1))
 
