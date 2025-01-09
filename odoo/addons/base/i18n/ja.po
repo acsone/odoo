@@ -2050,6 +2050,9 @@ msgid ""
 "        ZATCA E-Invoicing, support for PoS\n"
 "    "
 msgstr ""
+"\n"
+"        ZATCA 電子請求PoS用サポート\n"
+"    "
 
 #. module: base
 #: model:ir.module.module,summary:base.module_purchase_product_matrix
@@ -16056,7 +16059,7 @@ msgstr "会社名"
 #: model:ir.model.fields,field_description:base.field_res_partner__commercial_company_name
 #: model:ir.model.fields,field_description:base.field_res_users__commercial_company_name
 msgid "Company Name Entity"
-msgstr "会社名エントリー"
+msgstr "会社名エンティティ"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_partner_form
@@ -30839,7 +30842,7 @@ msgstr "サウジアラビア - 電子請求"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sa_edi_pos
 msgid "Saudi Arabia - E-invoicing (Simplified)"
-msgstr ""
+msgstr "サウジアラビア - 電子請求 (簡易版)"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sa_pos

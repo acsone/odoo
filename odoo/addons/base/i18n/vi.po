@@ -9,7 +9,7 @@
 # Nancy Momoland <thanh.np2502@gmail.com>, 2024
 # Martin Trigaux, 2024
 # Wil Odoo, 2024
-# Thi Huong Nguyen, 2024
+# Thi Huong Nguyen, 2025
 # 
 msgid ""
 msgstr ""
@@ -17,7 +17,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-06 13:33+0000\n"
 "PO-Revision-Date: 2022-09-22 05:44+0000\n"
-"Last-Translator: Thi Huong Nguyen, 2024\n"
+"Last-Translator: Thi Huong Nguyen, 2025\n"
 "Language-Team: Vietnamese (https://app.transifex.com/odoo/teams/41243/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1349,7 +1349,7 @@ msgstr ""
 "        * 2 (dua) digit pertama adalah Tahun Penerbitan\n"
 "        * 8 (delapan) digit berikutnya adalah Nomor Urut\n"
 "\n"
-"        Để có thể xuất hóa đơn khách hàng thành e-Faktur,\n"
+"        Để có thể xuất hóa đơn bán hàng thành e-Faktur,\n"
 "        bạn cần nhập các dãy số mà chính phủ đã chỉ định\n"
 "        cho bạn trong Kế toán > Khách hàng > e-Faktur\n"
 "\n"
@@ -2031,7 +2031,7 @@ msgid ""
 msgstr ""
 "\n"
 "        Phân hệ này gửi thông tin thuế (chủ yếu là VAT) của \n"
-"        hóa đơn nhà cung cấp và hóa đơn khách hàng tới SII. Nó được gọi là\n"
+"        hóa đơn mua hàng và hóa đơn bán hàng tới SII. Nó được gọi là\n"
 "        Procedimiento G417 - IVA. Llevanza de libros registro. Đây là\n"
 "        yêu cầu bắt buộc đối với mọi công ty có doanh thu trên 6 triệu €\n"
 "        và những công ty khác đã có thể sử dụng. Hóa đơn được gửi tự động\n"
@@ -2114,6 +2114,9 @@ msgid ""
 "        ZATCA E-Invoicing, support for PoS\n"
 "    "
 msgstr ""
+"\n"
+"        Hoá đơn điện tử ZATCA, hỗ trợ PoS\n"
+"    "
 
 #. module: base
 #: model:ir.module.module,summary:base.module_purchase_product_matrix
@@ -2603,7 +2606,7 @@ msgstr ""
 "    * peppol-bis-invoice-3 doc (kho lưu trữ github: https://github.com/OpenPEPPOL/peppol-bis-invoice-3/tree/master/rules/examples bao gồm các ví dụ)\n"
 "    * Odoo, các tệp này vượt qua tất cả các bản kiểm thử xác thực (sử dụng trình xác thực ecosio hoặc FNFE)\n"
 "    \n"
-"    Chúng tôi kiểm tra xem các ví dụ bên ngoài có được nhập chính xác không (khớp đơn vị tiền tệ, tổng số tiền và tổng thuế).\n"
+"    Chúng tôi kiểm tra xem các ví dụ ngoài có được nhập chính xác không (khớp đơn vị tiền tệ, tổng số tiền và tổng thuế).\n"
 "   Chúng tôi cũng kiểm tra xem việc tạo xml từ odoo với các tham số đã cho tạo ra xml giống hệt như xml dự kiến, \n"
 "    hợp lệ.\n"
 "    "
@@ -2927,7 +2930,7 @@ msgstr ""
 "    Chọn nút radio **Chuyển khoản Tín dụng ABA**.\n"
 "\n"
 "    Nếu nhà cung cấp có nhiều tài khoản ngân hàng, bạn có thể cần chọn\n"
-"    đúng **Tài khoản Ngân hàng của Người nhận**. Hoặc nếu thanh toán hóa đơn nhà cung cấp, có thể\n"
+"    đúng **Tài khoản Ngân hàng của Người nhận**. Hoặc nếu thanh toán hóa đơn mua hàng, có thể\n"
 "    cần đúng tài khoản ngân hàng được liên kết với hóa đơn đó.\n"
 "    Nhập số tiền thanh toán,...\n"
 "\n"
@@ -3820,7 +3823,7 @@ msgid ""
 msgstr ""
 "\n"
 "Cho phép hoạt động thuê ngoài dịch vụ. Phân hệ này cho phép một đơn vị bán dịch vụ được cung cấp\n"
-"bởi các nhà cung cấp bên ngoài và sẽ tự động tạo đơn mua hàng cho người bán dịch vụ đó.\n"
+"bởi các nhà cung cấp ngoài và sẽ tự động tạo đơn mua hàng cho người bán dịch vụ đó.\n"
 "    "
 
 #. module: base
@@ -5365,7 +5368,7 @@ msgstr ""
 "- Liên hệ trực tiếp với SII (Servicio de Impuestos Internos) để gửi hóa đơn và các chứng từ thuế khác liên quan đến bán hàng.\n"
 "- Liên hệ với Khách hàng để gửi DTE bán hàng.\n"
 "- Liên hệ với Nhà cung cấp để chấp nhận DTE từ họ.\n"
-"- Liên hệ trực tiếp với SII để thông báo về việc chấp nhận hoặc từ chối hóa đơn nhà cung cấp hoặc các DTE khác.\n"
+"- Liên hệ trực tiếp với SII để thông báo về việc chấp nhận hoặc từ chối hóa đơn mua hàng hoặc các DTE khác.\n"
 "\n"
 "Để xem mã vạch trên hóa đơn, bạn cần có thư viện pdf417gen.\n"
 "\n"
@@ -5441,7 +5444,7 @@ msgstr ""
 "Bạn cũng có thể gửi trực tiếp cho Digiflow nếu bạn đã mua tài khoản từ họ\n"
 "và thậm chí gửi tới SUNAT trong trường hợp có điều bất ngờ xảy ra.\n"
 "\n"
-"Chúng tôi hỗ trợ gửi và hủy hóa đơn khách hàng.\n"
+"Chúng tôi hỗ trợ gửi và hủy hóa đơn bán hàng.\n"
 "    "
 
 #. module: base
@@ -5950,7 +5953,7 @@ msgstr ""
 "Tính năng\n"
 "----------\n"
 "\n"
-"Ở một số quốc gia Mỹ Latinh, bao gồm Argentina và Chile, một số giao dịch kế toán như hóa đơn và hóa đơn nhà cung cấp được phân loại theo loại chứng từ do cơ quan tài chính của chính phủ xác định (Ở Argentina là AFIP, Chile là SII).\n"
+"Ở một số quốc gia Mỹ Latinh, bao gồm Argentina và Chile, một số giao dịch kế toán như hóa đơn và hóa đơn mua hàng được phân loại theo loại chứng từ do cơ quan tài chính của chính phủ xác định (Ở Argentina là AFIP, Chile là SII).\n"
 "\n"
 "Theo dự kiến, phân hệ này sẽ được mở rộng bằng bản địa hóa để quản lý các loại chứng từ này và là thông tin cần thiết cần được hiển thị trong các báo cáo được in và cần được xác định dễ dàng, trong bộ hóa đơn cũng như di chuyển tài khoản.\n"
 "\n"
@@ -6707,7 +6710,7 @@ msgstr ""
 "====================\n"
 "Hệ thống Lập hóa đơn cụ thể và dễ sử dụng trong Odoo cho phép bạn nắm bắt hoạt động kế toán của mình, ngay cả khi bạn không phải là kế toán viên. Bạn có thể liên hệ lại với các nhà cung cấp và khách hàng một cách dễ dàng.\n"
 "\n"
-"Bạn có thể sử dụng hệ thống kế toán đơn giản này trong trường hợp bạn làm việc với một kế toán viên (bên ngoài) để quản lý sổ sách của mình và bạn vẫn muốn theo dõi các khoản thanh toán. Phân hệ này cũng cung cấp cho bạn một phương thức ghi nhận các khoản thanh toán dễ dàng mà không cần phải mã hóa toàn bộ sao kê tài khoản.\n"
+"Bạn có thể sử dụng hệ thống kế toán đơn giản này trong trường hợp bạn làm việc với một kế toán viên (ngoài) để quản lý sổ sách của mình và bạn vẫn muốn theo dõi các khoản thanh toán. Phân hệ này cũng cung cấp cho bạn một phương thức ghi nhận các khoản thanh toán dễ dàng mà không cần phải mã hóa toàn bộ sao kê tài khoản.\n"
 "    "
 
 #. module: base
@@ -11987,7 +11990,7 @@ msgid ""
 "- Other: Other address for the company (e.g. subsidiary, ...)"
 msgstr ""
 "- Liên hệ: Sử dụng mục này để sắp xếp thông tin liên hệ của nhân viên của một công ty nhất định (ví dụ: Giám đốc Điều hành, Giám đốc Tài chính, ...).\n"
-"- Địa chỉ hóa đơn : Địa chỉ ưu tiên cho tất cả các hóa đơn. Được chọn theo mặc định khi bạn lập hóa đơn cho một đơn đặt hàng thuộc về công ty này.\n"
+"- Địa chỉ lập hóa đơn : Địa chỉ ưu tiên cho tất cả các hóa đơn. Được chọn theo mặc định khi bạn lập hóa đơn cho một đơn đặt hàng thuộc về công ty này.\n"
 "- Địa chỉ giao hàng : Địa chỉ ưu tiên cho tất cả lần giao hàng. Được chọn theo mặc định khi bạn giao một đơn đặt hàng thuộc về công ty này.\n"
 "- Riêng tư: Địa chỉ riêng tư chỉ được hiển thị bởi người dùng được ủy quyền và chứa dữ liệu nhạy cảm (địa chỉ nhà riêng của nhân viên,...).\n"
 "- Khác: Địa chỉ khác của công ty (ví dụ: công ty con,...)"
@@ -14361,7 +14364,7 @@ msgstr "Cho phép khách hàng của trang web chọn điểm nhận hàng"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_sale_amazon
 msgid "Amazon Connector"
-msgstr "Kết nối Amazon"
+msgstr "Liên kết Amazon"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_sale_amazon_taxcloud
@@ -14376,8 +14379,8 @@ msgid ""
 "Ambiguous specification for field '%(field)s', only provide one of name, "
 "external id or database id"
 msgstr ""
-"Trường '%(field)s' có thông số không rõ ràng, chỉ cung cấp một tên, id bên "
-"ngoài hoặc id cơ sở dữ liệu"
+"Trường '%(field)s' có thông số không rõ ràng, chỉ cung cấp một tên, id ngoài"
+" hoặc id cơ sở dữ liệu"
 
 #. module: base
 #: model:res.country,name:base.as
@@ -15864,7 +15867,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_sale_amazon_taxcloud
 msgid "Bridge module between Amazon Connector and TaxCloud"
-msgstr "Phân hệ cầu nối giữa Kết nối Amazon và TaxCloud"
+msgstr "Phân hệ cầu nối giữa Liên kết Amazon và TaxCloud"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_sale_timesheet_margin
@@ -20160,18 +20163,18 @@ msgstr "Mở rộng để gửi tài liệu follow-up qua đường bưu điện
 #: model:ir.model.fields,field_description:base.field_ir_ui_view__xml_id
 #: model_terms:ir.ui.view,arch_db:base.view_window_action_form
 msgid "External ID"
-msgstr "ID Bên ngoài"
+msgstr "ID ngoài"
 
 #. module: base
 #: model:ir.model.constraint,message:base.constraint_ir_model_data_name_nospaces
 msgid "External IDs cannot contain spaces"
-msgstr "ID bên ngoài không thể chứa dấu cách"
+msgstr "ID ngoài không thể chứa dấu cách"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_model_data__name
 #: model_terms:ir.ui.view,arch_db:base.view_model_data_search
 msgid "External Identifier"
-msgstr "Mã định danh Bên ngoài"
+msgstr "Mã định danh ngoài"
 
 #. module: base
 #: model:ir.actions.act_window,name:base.action_model_data
@@ -20180,7 +20183,7 @@ msgstr "Mã định danh Bên ngoài"
 #: model_terms:ir.ui.view,arch_db:base.view_model_data_list
 #: model_terms:ir.ui.view,arch_db:base.view_model_data_search
 msgid "External Identifiers"
-msgstr "Các Mã định danh Bên ngoài"
+msgstr "Mã định danh ngoài"
 
 #. module: base
 #: model:ir.model.fields,help:base.field_ir_model_data__name
@@ -20188,8 +20191,8 @@ msgid ""
 "External Key/Identifier that can be used for data integration with third-"
 "party systems"
 msgstr ""
-"Khóa/Mã định danh bên ngoài có thể được sử dụng để tích hợp dữ liệu với các "
-"hệ thống của bên thứ ba"
+"Khóa/Mã định danh ngoài có thể được sử dụng để tích hợp dữ liệu với các hệ "
+"thống của bên thứ ba"
 
 #. module: base
 #: model:ir.model.fields,help:base.field_res_users__share
@@ -23427,7 +23430,7 @@ msgstr "Tỷ lệ Nghịch đảo"
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__res_partner__type__invoice
 msgid "Invoice Address"
-msgstr "Địa chỉ xuất hoá đơn"
+msgstr "Địa chỉ lập hoá đơn"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_account
@@ -23502,7 +23505,7 @@ msgstr "Ngày khóa không thể đảo ngược"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_base_partner_merge_automatic_wizard__group_by_is_company
 msgid "Is Company"
-msgstr "Là công ty"
+msgstr "Công ty"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_company__is_company_details_empty
@@ -24266,7 +24269,7 @@ msgid ""
 "your vendor bills"
 msgstr ""
 "Hãy để hệ thống cố gắng chọn đúng tài khoản, thuế và/hoặc sản phẩm cho hóa "
-"đơn nhà cung cấp của bạn"
+"đơn mua hàng của bạn"
 
 #. module: base
 #: model:ir.module.module,description:base.module_hr_referral
@@ -24652,7 +24655,7 @@ msgstr "Madagascar"
 #. module: base
 #: model:res.partner.title,name:base.res_partner_title_madam
 msgid "Madam"
-msgstr "Cô"
+msgstr "Bà"
 
 #. module: base
 #. odoo-python
@@ -25592,7 +25595,7 @@ msgstr "Thông tin khác"
 #: model:res.partner.title,name:base.res_partner_title_miss
 #: model:res.partner.title,shortcut:base.res_partner_title_miss
 msgid "Miss"
-msgstr "Miss"
+msgstr "Cô"
 
 #. module: base
 #. odoo-python
@@ -26491,7 +26494,7 @@ msgstr "Chưa xong"
 #: code:addons/base/models/ir_model.py:0
 #, python-format
 msgid "Not enough access rights on the external ID:"
-msgstr "Không đủ quyền truy cập vào ID bên ngoài:"
+msgstr "Không đủ quyền truy cập vào ID ngoài:"
 
 #. module: base
 #. odoo-python
@@ -28004,7 +28007,7 @@ msgstr ""
 "các đơn đặt hàng giao sau, hoàn tiền, tiếp nhận sản phẩm và kiểm soát chất lượng. Chọn phương pháp \n"
 "kiểm soát phù hợp với nhu cầu của bạn.\n"
 "\n"
-"Không mất công kiểm soát hóa đơn nhà cung cấp. Chọn phương pháp phù hợp với \n"
+"Không mất công kiểm soát hóa đơn mua hàng. Chọn phương pháp phù hợp với \n"
 "nhu cầu của bạn: tạo trước hóa đơn nháp dựa trên đơn mua hàng, khi tiếp nhận \n"
 "sản phẩm, tạo hóa đơn thủ công và nhập thông tin từ đơn mua hàng,...\n"
 "\n"
@@ -30216,7 +30219,7 @@ msgstr "Độ chính xác chữ số"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_predictive_bills
 msgid "Predictive vendor bill data"
-msgstr "Dữ liệu hóa đơn nhà cung cấp dự đoán"
+msgstr "Dữ liệu hóa đơn mua hàng dự đoán"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_users_form
@@ -30909,7 +30912,7 @@ msgstr "Ma trận mua hàng"
 #. module: base
 #: model:ir.module.module,summary:base.module_purchase_stock
 msgid "Purchase Orders, Receipts, Vendor Bills for Stock"
-msgstr "Đơn đặt hàng, biên lai, hóa đơn nhà cung cấp cho kho"
+msgstr "Đơn đặt hàng, biên lai, hóa đơn mua hàng cho kho"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_purchase_requisition_stock
@@ -32253,7 +32256,7 @@ msgstr "Ả Rập Xê Út - Hoá đơn điện tử"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sa_edi_pos
 msgid "Saudi Arabia - E-invoicing (Simplified)"
-msgstr ""
+msgstr "Ả Rập Xê Út - Hoá đơn điện tử (Đã đơn giản hoá)"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sa_pos
@@ -33219,7 +33222,7 @@ msgstr "Mạng xã hội YouTube"
 #. module: base
 #: model:ir.module.module,summary:base.module_social_media
 msgid "Social media connectors for company settings."
-msgstr "Kết nối Mạng xã hội cho thiết lập công ty."
+msgstr "Liên kết Mạng xã hội cho thiết lập công ty."
 
 #. module: base
 #: model:res.country,name:base.sb
@@ -35016,10 +35019,10 @@ msgid ""
 "__import__.%(record_id)s."
 msgstr ""
 "Bản ghi %(xml_id)s có tiền tố phân hệ %(module_name)s. Đây là phần trước dấu"
-" '.' trong id bên ngoài. Vì tiền tố này liên quan đến một phân hệ hiện có, "
-"nên bản ghi sẽ bị xóa khi phân hệ được nâng cấp. Không sử dụng tiền tố và "
-"dấu chấm hoặc sử dụng một tiền tố không phải là một phân hệ hiện có. Ví dụ, "
-"__import__, dẫn đến id bên ngoài __import__.%(record_id)s."
+" '.' trong id ngoài. Vì tiền tố này liên quan đến một phân hệ hiện có, nên "
+"bản ghi sẽ bị xóa khi phân hệ được nâng cấp. Không sử dụng tiền tố và dấu "
+"chấm hoặc sử dụng một tiền tố không phải là một phân hệ hiện có. Ví dụ, "
+"__import__, dẫn đến id ngoài __import__.%(record_id)s."
 
 #. module: base
 #: model:ir.model.fields,help:base.field_res_company__company_registry
@@ -35427,7 +35430,7 @@ msgid ""
 "for the FEDEX connector."
 msgstr ""
 "Phân hệ này cho phép người dùng thương mại điện tử chọn giao hàng đến các "
-"điểm Nhận hàng cho kết nối FEDEX."
+"điểm Nhận hàng cho liên kết FEDEX."
 
 #. module: base
 #: model:ir.module.module,description:base.module_website_hr_recruitment
@@ -35729,7 +35732,7 @@ msgstr ""
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_lang__thousands_sep
 msgid "Thousands Separator"
-msgstr "Dấu phân cách phần Nghìn"
+msgstr "Dấu phân cách hàng nghìn"
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__res_lang__week_start__4
@@ -35854,7 +35857,7 @@ msgstr "Đến"
 #: model:ir.model.fields.selection,name:base.selection__res_users_deletion__state__todo
 #: model_terms:ir.ui.view,arch_db:base.config_wizard_step_view_search
 msgid "To Do"
-msgstr "Cần làm"
+msgstr "Việc cần làm"
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_module_module__state__to_install
@@ -35895,7 +35898,7 @@ msgstr "Để trả về một tác vụ, chỉ định: <code>action = {...}</c
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.ir_actions_todo_tree
 msgid "Todo"
-msgstr "Cần làm"
+msgstr "Việc cần làm"
 
 #. module: base
 #: model:res.country,name:base.tg
@@ -38582,7 +38585,7 @@ msgstr "vd: https://www.odoo.com"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_sale_ebay
 msgid "eBay Connector"
-msgstr "kết nối eBay"
+msgstr "Liên kết eBay"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_website_sale
@@ -38640,7 +38643,7 @@ msgstr "các chi phí"
 #: code:addons/base/models/ir_fields.py:0
 #, python-format
 msgid "external id"
-msgstr "external id"
+msgstr "ID ngoài"
 
 #. module: base
 #. odoo-python

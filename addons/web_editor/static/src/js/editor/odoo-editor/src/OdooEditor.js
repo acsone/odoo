@@ -1887,6 +1887,33 @@ export class OdooEditor extends EventTarget {
                 restore(); // Make sure to make <br>s visible if needed.
             }
         }
+
+        // we get the `columnsContainer` (.o_text_columns) in case the user added columns and is deleting them 
+        const columnsContainers = [];
+        const fullRange = this.document.getSelection().getRangeAt(0);
+        const selectionCommonAncestor = fullRange.commonAncestorContainer;
+        if (selectionCommonAncestor.nodeType === Node.ELEMENT_NODE) {
+            const rows = selectionCommonAncestor.classList.contains("row")
+                ? [selectionCommonAncestor]
+                : selectionCommonAncestor.getElementsByClassName("row");
+            for (const row of rows) {
+                if (
+                    row &&
+                    row.parentElement &&
+                    row.parentElement.classList.contains("o_text_columns")
+                ) {
+                    const firstColumnNode = firstLeaf(row);
+                    const lastColumnNode = lastLeaf(row);
+                    if (
+                        fullRange.isPointInRange(firstColumnNode, 0) &&
+                        fullRange.isPointInRange(lastColumnNode, 0)
+                    ) {
+                        columnsContainers.push(row.parentElement);
+                    }
+                }
+            }
+        }
+
         if (!this.editable.childElementCount) {
             // Ensure the editable has content.
             const p = document.createElement('p');
@@ -1930,7 +1957,17 @@ export class OdooEditor extends EventTarget {
         const endBlock = closestBlock(end);
         const [firstLeafOfStartBlock, lastLeafOfEndBlock] = [firstLeaf(startBlock), lastLeaf(endBlock)];
         const startLink = closestElement(range.startContainer, 'a');
-        if (sel && !sel.isCollapsed && !range.startOffset && !range.startContainer.previousSibling && !startLink) {
+        const rangeStartSameAsColumnsStart =
+            columnsContainers.length &&
+            firstLeaf(range.startContainer) === firstLeaf(columnsContainers[0]);
+        if (
+            sel &&
+            !sel.isCollapsed &&
+            !range.startOffset &&
+            !range.startContainer.previousSibling &&
+            !startLink &&
+            !rangeStartSameAsColumnsStart // if the start is same as columns start we don't add `zws`
+        ) {
             // Insert a zero-width space before the selection if the selection
             // is non-collapsed and at the beginning of its parent, so said
             // parent will have content after extraction. This ensures that the
@@ -1969,11 +2006,56 @@ export class OdooEditor extends EventTarget {
             ...boundariesOut(end).slice(2, 4),
             { allowReenter: false, label: 'deleteRange' });
 
+        // handle the case when we select the columns (all) and only the columns
+        // we adjust the selection to cover the whole columnsContainers
+        if (columnsContainers.length) {
+            const firstColumnContainer = columnsContainers[0];
+            const lastColumnContainer = columnsContainers[columnsContainers.length - 1];
+            const startsWithColumn = firstLeaf(range.startContainer) === firstLeaf(firstColumnContainer);
+            const endsWithColumn = lastLeaf(range.endContainer) === lastLeaf(lastColumnContainer);
+            if (startsWithColumn) {
+                range.setStart(firstColumnContainer, 0);
+            }
+            if (endsWithColumn) {
+                range.setEnd(lastColumnContainer, lastColumnContainer.childNodes.length);
+            }
+        }
+
         // Let the DOM split and delete the range.
         const contents = range.extractContents();
 
-        setSelection(start, nodeSize(start));
+        // if our selection is at exactly the start and end of `columnsContainer`
+        // all its content will be removed but the parent will remain so we remove it manually
+        for (const columnsContainer of columnsContainers) {
+            if (!columnsContainer.hasChildNodes()) {
+                columnsContainer.remove();
+            }
+        }
+
         const startLi = closestElement(start, 'li');
+        const endLi = closestElement(end, 'li');
+        let areBlocksAlwaysVisible = true;
+        if (
+            startLi &&
+            endLi &&
+            (!startLi.textContent || isZWS(startLi)) &&
+            getListMode(startLi.parentElement) !== getListMode(endLi.parentElement)
+        ) {
+            const isNested = closestElement(startLi, '.oe-nested')
+            const nodeToRemove = isNested ? isNested : startLi.parentNode;
+            endLi.parentElement.prepend(startLi);
+            isEmptyBlock(nodeToRemove) && nodeToRemove.remove();
+            if (endLi.textContent && start.parentElement) {
+                start = start.parentElement;
+                start.removeChild(start.firstChild);
+                areBlocksAlwaysVisible = false;
+                setSelection(endLi, 0);
+            } else {
+                setSelection(startLi, nodeSize(startLi));
+            }
+        } else {
+            setSelection(start, nodeSize(start));
+        }
         // Uncheck a list item with empty text in multi-list selection.
         if (startLi && startLi.classList.contains('o_checked') &&
             ['\u200B', ''].includes(startLi.textContent) && closestElement(end, 'li') !== startLi) {
@@ -1998,7 +2080,7 @@ export class OdooEditor extends EventTarget {
         // Same with the start container
         while (
             start &&
-            isRemovableInvisible(start) &&
+            isRemovableInvisible(start, areBlocksAlwaysVisible) &&
             !(endIsStart && start.contains(range.startContainer))
         ) {
             const parent = start.parentNode;
@@ -2010,10 +2092,12 @@ export class OdooEditor extends EventTarget {
             fillEmpty(closestBlock(start));
         }
         fillEmpty(closestBlock(range.endContainer));
-        let joinWith = range.endContainer;
-        const rightLeaf = rightLeafOnlyNotBlockPath(joinWith).next().value;
-        if (rightLeaf && rightLeaf.nodeValue === ' ') {
-            joinWith = rightLeaf;
+        let joinWith = areBlocksAlwaysVisible && range.endContainer;
+        if (joinWith) {
+            const rightLeaf = rightLeafOnlyNotBlockPath(joinWith).next().value;
+            if (rightLeaf && rightLeaf.nodeValue === ' ') {
+                joinWith = rightLeaf;
+            }
         }
         // Rejoin blocks that extractContents may have split in two.
         while (
@@ -3132,7 +3216,10 @@ export class OdooEditor extends EventTarget {
         // Hide toolbar if it overflows the scroll container.
         const distToScrollContainer = Math.min(toolbarTop - scrollContainerRect.top,
                                                 scrollContainerRect.bottom - toolbarBottom);
-        this.toolbar.classList.toggle('d-none', distToScrollContainer < OFFSET / 2);
+        const isToolbarOverflow = distToScrollContainer < OFFSET / 2;
+        if (isToolbarOverflow) {
+            this.toolbar.style.top = `${(Math.max(selRect.top, scrollContainerRect.top) + OFFSET)}px`
+        }
     }
 
     // PASTING / DROPPING
@@ -4377,6 +4464,16 @@ export class OdooEditor extends EventTarget {
 
         // Ignore any changes that might have happened before this point.
         this.observer.takeRecords();
+
+        // Reset selection when editable is empty.
+        const selection = this.document.getSelection();
+        if (!selection.isCollapsed) {
+            const range = selection.getRangeAt(0);
+            const rangeContentChildNodes = range.cloneContents().childNodes;
+            if (rangeContentChildNodes.length === 1 && rangeContentChildNodes[0].nodeName === 'BR') {
+                setSelection(selection.anchorNode, 0, selection.anchorNode, 0);
+            }
+        }
 
         const node = ev.target;
         // handle checkbox lists
