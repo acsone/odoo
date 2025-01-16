@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<odoo noupdate="1">
     <record id="tax_eu_19_purchase_skr04" model="account.tax.template">
         <field name="sequence">20</field>
         <field name="chart_template_id" ref="l10n_chart_de_skr04"/>
