@@ -390,7 +390,7 @@
                     <t t-elif="['date', 'datetime'].includes(src.type)">
                         <t>Search <b t-esc="src.description"/> at: <b class="fst-italic text-primary" t-esc="state.inputValue"/></t>
                     </t>
-                    <t t-else="">Search <b t-esc="src.description"/> for: <b class="fst-italic text-primary" t-esc="state.inputValue"/></t>
+                    <t t-else="">Search <b t-esc="src.description"/> pour: <b class="fst-italic text-primary" t-esc="state.inputValue"/></t>
                 </a>
             </li>
         </ul>
