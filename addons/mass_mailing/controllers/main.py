@@ -122,10 +122,9 @@ class MassMailController(http.Controller):
     @http.route('/mail/track/<int:mail_id>/<string:token>/blank.gif', type='http', auth='public')
     def track_mail_open(self, mail_id, token, **post):
         """ Email tracking. """
-        if not consteq(token, tools.hmac(request.env(su=True), 'mass_mailing-mail_mail-open', mail_id)):
-            raise BadRequest()
+        if consteq(token, tools.hmac(request.env(su=True), 'mass_mailing-mail_mail-open', mail_id)):
+            request.env['mailing.trace'].sudo().set_opened(domain=[('mail_mail_id_int', 'in', [mail_id])])
 
-        request.env['mailing.trace'].sudo().set_opened(domain=[('mail_mail_id_int', 'in', [mail_id])])
         response = Response()
         response.mimetype = 'image/gif'
         response.data = base64.b64decode(b'R0lGODlhAQABAIAAANvf7wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==')
