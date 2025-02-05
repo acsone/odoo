@@ -50,6 +50,8 @@ class Web_Editor(http.Controller):
                 font = "/web/static/src/fonts/tiktok_only.woff"
             elif int(icon) == 58907:
                 font = "/web/static/src/fonts/twitter_x_only.woff"
+            elif int(icon) == 58993:
+                font = "/web/static/src/fonts/bluesky_only.ttf"
         # Make sure we have at least size=1
         size = max(1, min(size, 512))
         # Initialize font

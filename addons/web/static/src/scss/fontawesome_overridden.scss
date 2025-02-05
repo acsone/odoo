@@ -30,6 +30,22 @@
     }
 }
 
+// This is a patch of the font awesome library to add the BlueSky icon.
+@font-face {
+    font-family: 'FontAwesome-bluesky-only';
+    src: url('../../src/fonts/bluesky_only.tff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+.fa.fa-bluesky {
+    font-family: 'FontAwesome-bluesky-only' !important;
+
+    &:before {
+        content: '\e671';
+    }
+}
+
 // This is rtl language specific fix
 // It will override the font awesome symbols and flip them 180 degree
 .o_rtl {
