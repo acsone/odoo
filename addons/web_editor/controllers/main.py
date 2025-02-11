@@ -44,6 +44,14 @@ class Web_Editor(http.Controller):
 
             :returns PNG image converted from given font
         """
+        # If the icon is the tiktok or new twitter X logo, then use the corresponding custom font.
+        if icon.isdigit():
+            if int(icon) == 57467:
+                font = "/web/static/src/fonts/tiktok_only.woff"
+            elif int(icon) == 58907:
+                font = "/web/static/src/fonts/twitter_x_only.woff"
+            elif int(icon) == 58993:
+                font = "/web/static/src/fonts/bluesky_only.ttf"
         # Make sure we have at least size=1
         size = max(1, min(size, 512))
         # Initialize font
