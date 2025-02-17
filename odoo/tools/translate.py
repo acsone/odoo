@@ -1127,8 +1127,9 @@ def trans_load_data(cr, fileobj, fileformat, lang, lang_name=None, verbose=True,
             if not env.context.get('create_empty_translation', False) and not dic['value']:
                 return
 
-            if dic['type'] == 'code' and module_name:
-                dic['module'] = module_name
+            # removing this as in https://github.com/odoo/odoo/pull/38859/commits/62d3675869048af9b6d11236659f31081470a749
+            # if dic['type'] == 'code' and module_name:
+            #     dic['module'] = module_name
 
             irt_cursor.push(dic)
 
