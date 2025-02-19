@@ -1310,7 +1310,7 @@ export const formatSelection = (editor, formatName, {applyStyle, formatProps} = 
     }
 }
 export const isLinkEligibleForZwnbsp = (editable, link) => {
-    return link.isContentEditable && editable.contains(link) && !(
+    return link.parentElement.isContentEditable && link.isContentEditable && editable.contains(link) && !(
         [link, ...link.querySelectorAll('*')].some(el => el.nodeName === 'IMG' || isBlock(el)) ||
         link.matches('nav a, a.nav-link')
     );
@@ -1886,6 +1886,19 @@ export function isVisible(node, areBlocksAlwaysVisible = true) {
         return true;
     }
     return [...node.childNodes].some(n => isVisible(n));
+}
+
+/**
+ * Returns whether an element is a button
+ *
+ * @param {Node} node
+ * @returns {boolean}
+ */
+export function isButton(node) {
+    if (!node || node.nodeType !== Node.ELEMENT_NODE) {
+        return false;
+    }
+    return node.nodeName === "BUTTON" || node.classList.contains("btn");
 }
 
 export function isVisibleTextNode(testedNode) {
