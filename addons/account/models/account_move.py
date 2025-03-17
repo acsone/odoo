@@ -902,6 +902,7 @@ class AccountMove(models.Model):
                     JOIN account_move counterpart_move ON counterpart_move.id = counterpart_line.move_id
                     LEFT JOIN account_payment pay ON pay.id = counterpart_move.payment_id
                     WHERE source_line.move_id IN %s AND counterpart_line.move_id != source_line.move_id
+                    AND part.company_id = source_line.company_id
                     GROUP BY source_line_id, source_move_id, source_line_account_type
                 ''')
 
