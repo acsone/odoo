@@ -635,6 +635,9 @@ msgid ""
 "            Egyptian Tax Authority Invoice Integration\n"
 "        "
 msgstr ""
+"\n"
+"            埃及稅務局發票整合功能\n"
+"        "
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_ke_edi_tremol
@@ -8331,6 +8334,18 @@ msgid ""
 "- Withholding Tax Report\n"
 "- Fiscal Positions\n"
 msgstr ""
+"\n"
+"沙特阿拉伯會計模組\n"
+"===========================================================\n"
+"沙特阿拉伯會計基礎賬目總表及本地化\n"
+"\n"
+"啟動：\n"
+"\n"
+"- 賬目總表\n"
+"- 稅項\n"
+"- 增值稅申報表\n"
+"- 預扣稅報告\n"
+"- 財務規則\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_sa_pos
@@ -12544,7 +12559,7 @@ msgstr "Avatax 賬戶 - 電子商務"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_bank_statement_import
 msgid "Account Bank Statement Import"
-msgstr "會計銀行對帳單匯入"
+msgstr "賬戶銀行結單匯入"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_accountant_batch_payment
@@ -18507,7 +18522,7 @@ msgstr "Egypt - Accounting"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_eg_edi_eta
 msgid "Egypt E-Invoicing"
-msgstr ""
+msgstr "埃及電子發票"
 
 #. module: base
 #: model:ir.model.fields,help:base.field_res_partner__partner_share
@@ -21758,12 +21773,12 @@ msgstr "匯入Amazon訂單並同步交貨"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_bank_statement_import_camt
 msgid "Import CAMT Bank Statement"
-msgstr "匯入CAMT銀行對帳單"
+msgstr "匯入 CAMT 銀行結單"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_bank_statement_import_csv
 msgid "Import CSV Bank Statement"
-msgstr "匯入CSV銀行對帳單"
+msgstr "匯入 CSV 銀行結單"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_account_winbooks_import
@@ -21773,12 +21788,12 @@ msgstr "從 Winbooks 匯入資料"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_bank_statement_import_ofx
 msgid "Import OFX Bank Statement"
-msgstr "匯入OFX銀行對帳單"
+msgstr "匯入 OFX 銀行結單"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_bank_statement_import_qif
 msgid "Import QIF Bank Statement"
-msgstr "匯入QIF銀行對帳單"
+msgstr "匯入 QIF 銀行結單"
 
 #. module: base
 #. odoo-python
@@ -26502,7 +26517,7 @@ msgstr ""
 "答複申請人，在潛在客戶自動化營銷中重複使用電子郵件模板\n"
 "活動.\n"
 "\n"
-"對您的電子郵件的答復會自動出現在每個文件的歷史記錄中\n"
+"對你的電子郵件的答復會自動出現在每個文件的歷史記錄中\n"
 "使用社群網路模組.\n"
 "\n"
 "清理您的潛在客戶資料庫\n"
@@ -31430,12 +31445,12 @@ msgstr "沙特阿拉伯 - 電子發票（簡化）"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sa_hr_payroll
 msgid "Saudi Arabia - Payroll"
-msgstr ""
+msgstr "沙特阿拉伯 - 薪酬管理"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sa_hr_payroll_account
 msgid "Saudi Arabia - Payroll with Accounting"
-msgstr ""
+msgstr "沙特阿拉伯 - 薪酬管理及會計"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_sa_pos
@@ -35254,7 +35269,7 @@ msgid ""
 "- 'Create Next Activity': create an activity (Discuss)\n"
 "- 'Send SMS Text Message': send SMS, log them on documents (SMS)"
 msgstr ""
-"伺服器操作類型。可使用以下的值：\n"
+"伺服器操作類型。 可使用以下的值：\n"
 "- 執行 Python 程式碼：將會執行的 Python 程式碼段落\n"
 "- 建立新記錄：使用新的值去建立新記錄\n"
 "- 更新記錄：更新某項記錄的值\n"
@@ -35518,12 +35533,12 @@ msgstr "United Arab Emirates - Accounting"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ae_hr_payroll
 msgid "United Arab Emirates - Payroll"
-msgstr ""
+msgstr "阿聯酋 - 薪酬管理"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ae_hr_payroll_account
 msgid "United Arab Emirates - Payroll with Accounting"
-msgstr ""
+msgstr "阿聯酋 - 薪酬管理及會計"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ae_pos
