@@ -206,13 +206,6 @@ export class AnalyticDistribution extends Component {
 
     analyticAccountDomain(groupId=null) {
         let domain = [['id', 'not in', this.existingAnalyticAccountIDs]];
-        if (this.props.record.data.company_id){
-            domain.push(
-                '|',
-                ['company_id', '=', this.props.record.data.company_id[0]],
-                ['company_id', '=', false]
-            );
-        }
 
         if (groupId) {
             domain.push(['root_plan_id', '=', groupId]);
