@@ -238,6 +238,7 @@ class Partner(models.Model):
     user_id: ResUsers = fields.Many2one(
         'res.users', string='Salesperson',
         compute='_compute_user_id',
+        company_dependent=True,
         precompute=True,  # avoid queries post-create
         readonly=False, store=True,
         help='The internal user in charge of this contact.')
@@ -388,6 +389,7 @@ class Partner(models.Model):
         for partner in self:
             partner.tz_offset = datetime.datetime.now(pytz.timezone(partner.tz or 'GMT')).strftime('%z')
 
+    @api.depends_context("company")
     @api.depends('parent_id')
     def _compute_user_id(self):
         """ Synchronize sales rep with parent if partner is a person """
