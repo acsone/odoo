@@ -903,8 +903,8 @@ class TestSinglePicking(TestStockCommon):
         # No backorder should be created and the move corresponding to the missing product should be cancelled
         backorder = self.env['stock.picking'].search([('backorder_id', '=', delivery_order.id)])
         self.assertFalse(backorder)
-        self.assertEquals(delivery_order.state, 'done')
-        self.assertEquals(delivery_order.move_lines[1].state, 'cancel')
+        self.assertEqual(delivery_order.state, 'done')
+        self.assertEqual(delivery_order.move_lines[1].state, 'cancel')
 
     def test_extra_move_1(self):
         """ Check the good behavior of creating an extra move in a delivery order. This usecase
@@ -1909,6 +1909,55 @@ class TestSinglePicking(TestStockCommon):
         self.assertEqual(receipt.location_dest_id.id, stock_location.id)
         self.assertEqual(receipt.move_line_ids.location_dest_id.id, shelf_location.id)
 
+    def test_cancel_plan_transfer(self):
+        """ Test canceling plan transfer """
+        # Create picking with stock move.
+        picking = self.env['stock.picking'].create({
+            'location_id': self.pack_location,
+            'location_dest_id': self.customer_location,
+            'picking_type_id': self.picking_type_out,
+            'move_lines': [(0, 0, {
+                'name': self.productA.name,
+                'product_id': self.productA.id,
+                'product_uom_qty': 10,
+                'product_uom': self.productA.uom_id.id,
+                'location_id': self.pack_location,
+                'location_dest_id': self.customer_location,
+            })]
+        })
+        # Confirm the outgoing picking, state should be changed.
+        picking.action_confirm()
+        self.assertEqual(picking.state, 'confirmed', "Picking should be in a confirmed state.")
+
+        # Picking in a confirmed state and try to cancel it.
+        picking.action_cancel()
+        self.assertEqual(picking.state, 'cancel', "Picking should be in a cancel state.")
+
+    def test_immediate_transfer(self):
+        """ Test picking should be in ready state if immediate transfer and SML is created via view +
+            Test picking cancelation with immediate transfer and done quantity"""
+        # create picking with stock move line
+        picking = self.env['stock.picking'].create({
+            'location_id': self.pack_location,
+            'location_dest_id': self.customer_location,
+            'picking_type_id': self.picking_type_out,
+            'immediate_transfer': True,
+            'move_line_ids': [(0, 0, {
+                'product_id': self.productA.id,
+                'qty_done': 10,
+                'product_uom_id': self.productA.uom_id.id,
+                'location_id': self.pack_location,
+                'location_dest_id': self.customer_location,
+            })]
+        })
+
+        self.assertEqual(picking.state, 'assigned', "Picking should not be in a draft state.")
+        self.assertEqual(len(picking.move_lines), 1, "Picking should have stock move.")
+        picking.action_cancel()
+        self.assertEqual(picking.move_lines.state, 'cancel', "Stock move should be in a cancel state.")
+        self.assertEqual(picking.state, 'cancel', "Picking should be in a cancel state.")
+
+
 class TestStockUOM(TestStockCommon):
     def setUp(self):
         super(TestStockUOM, self).setUp()
@@ -2415,16 +2464,16 @@ class TestRoutes(TestStockCommon):
 
         # 3 pickings should be created.
         picking_ids = self.env['stock.picking'].search([('group_id', '=', pg.id)])
-        self.assertEquals(len(picking_ids), 3)
+        self.assertEqual(len(picking_ids), 3)
         for picking in picking_ids:
             # Only the picking from Stock to Pack should be MTS
             if picking.location_id == warehouse.lot_stock_id:
-                self.assertEquals(picking.move_lines.procure_method, 'make_to_stock')
+                self.assertEqual(picking.move_lines.procure_method, 'make_to_stock')
             else:
-                self.assertEquals(picking.move_lines.procure_method, 'make_to_order')
+                self.assertEqual(picking.move_lines.procure_method, 'make_to_order')
 
-            self.assertEquals(len(picking.move_lines), 1)
-            self.assertEquals(picking.move_lines.product_uom_qty, 5, 'The quantity of the move should be the same as on the SO')
+            self.assertEqual(len(picking.move_lines), 1)
+            self.assertEqual(picking.move_lines.product_uom_qty, 5, 'The quantity of the move should be the same as on the SO')
         self.assertEqual(qty_available, 4, 'The 4 products should still be available')
 
     def test_mtso_mts(self):
@@ -2467,11 +2516,11 @@ class TestRoutes(TestStockCommon):
 
         # A picking should be created with its move having MTS as procure method.
         picking_ids = self.env['stock.picking'].search([('group_id', '=', pg.id)])
-        self.assertEquals(len(picking_ids), 1)
+        self.assertEqual(len(picking_ids), 1)
         picking = picking_ids
-        self.assertEquals(picking.move_lines.procure_method, 'make_to_stock')
-        self.assertEquals(len(picking.move_lines), 1)
-        self.assertEquals(picking.move_lines.product_uom_qty, 4)
+        self.assertEqual(picking.move_lines.procure_method, 'make_to_stock')
+        self.assertEqual(len(picking.move_lines), 1)
+        self.assertEqual(picking.move_lines.product_uom_qty, 4)
 
     def test_mtso_multi_pg(self):
         """ Run 3 procurements for 2 products at the same times when there are 4 in stock then
@@ -2545,23 +2594,23 @@ class TestRoutes(TestStockCommon):
 
         # The 2 first procurements should have create only 1 picking since enough quantities
         # are left in the delivery location
-        self.assertEquals(len(pickings_pg1), 1)
-        self.assertEquals(len(pickings_pg2), 1)
-        self.assertEquals(pickings_pg1.move_lines.procure_method, 'make_to_stock')
-        self.assertEquals(pickings_pg2.move_lines.procure_method, 'make_to_stock')
+        self.assertEqual(len(pickings_pg1), 1)
+        self.assertEqual(len(pickings_pg2), 1)
+        self.assertEqual(pickings_pg1.move_lines.procure_method, 'make_to_stock')
+        self.assertEqual(pickings_pg2.move_lines.procure_method, 'make_to_stock')
 
         # The last one should have 3 pickings as there's nothing left in the delivery location
-        self.assertEquals(len(pickings_pg3), 3)
+        self.assertEqual(len(pickings_pg3), 3)
         for picking in pickings_pg3:
             # Only the picking from Stock to Pack should be MTS
             if picking.location_id == warehouse.lot_stock_id:
-                self.assertEquals(picking.move_lines.procure_method, 'make_to_stock')
+                self.assertEqual(picking.move_lines.procure_method, 'make_to_stock')
             else:
-                self.assertEquals(picking.move_lines.procure_method, 'make_to_order')
+                self.assertEqual(picking.move_lines.procure_method, 'make_to_order')
 
             # All the moves should be should have the same quantity as it is on each procurements
-            self.assertEquals(len(picking.move_lines), 1)
-            self.assertEquals(picking.move_lines.product_uom_qty, 2)
+            self.assertEqual(len(picking.move_lines), 1)
+            self.assertEqual(picking.move_lines.product_uom_qty, 2)
 
     def test_mtso_mto_adjust_01(self):
         """ Run '_adjust_procure_method' for products A & B:

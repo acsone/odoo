@@ -173,9 +173,8 @@ class StockPicking(models.Model):
         self.carrier_price = res['exact_price'] * (1.0 + (self.carrier_id.margin / 100.0))
         if res['tracking_number']:
             self.carrier_tracking_ref = res['tracking_number']
-        order_currency = self.sale_id.currency_id or self.company_id.currency_id
-        msg = _("Shipment sent to carrier %s for shipping with tracking number %s<br/>Cost: %.2f %s") % (self.carrier_id.name, self.carrier_tracking_ref, self.carrier_price, order_currency.name)
-        self.message_post(body=msg)
+        msg = _("Shipment sent: %s") % (self.carrier_id.name,)
+        self.message_post(body=msg, message_type='notification')
         self._add_delivery_cost_to_so()
 
     def _check_carrier_details_compliance(self):

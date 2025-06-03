@@ -93,7 +93,7 @@ class TestWebsitePriceList(TransactionCase):
         }
         for country, result in country_list.items():
             pls = self.get_pl(show, current_pl, country)
-            self.assertEquals(len(set(pls.mapped('name')) & set(result)), len(pls), 'Test failed for %s (%s %s vs %s %s)'
+            self.assertEqual(len(set(pls.mapped('name')) & set(result)), len(pls), 'Test failed for %s (%s %s vs %s %s)'
                               % (country, len(pls), pls.mapped('name'), len(result), result))
 
     def test_get_pricelist_available_not_show(self):
@@ -110,7 +110,7 @@ class TestWebsitePriceList(TransactionCase):
 
         for country, result in country_list.items():
             pls = self.get_pl(show, current_pl, country)
-            self.assertEquals(len(set(pls.mapped('name')) & set(result)), len(pls), 'Test failed for %s (%s %s vs %s %s)'
+            self.assertEqual(len(set(pls.mapped('name')) & set(result)), len(pls), 'Test failed for %s (%s %s vs %s %s)'
                               % (country, len(pls), pls.mapped('name'), len(result), result))
 
     def test_get_pricelist_available_promocode(self):
@@ -147,7 +147,7 @@ class TestWebsitePriceList(TransactionCase):
         }
         for country, result in country_list.items():
             pls = self.get_pl(show, current_pl, country)
-            self.assertEquals(len(set(pls.mapped('name')) & set(result)), len(pls), 'Test failed for %s (%s %s vs %s %s)'
+            self.assertEqual(len(set(pls.mapped('name')) & set(result)), len(pls), 'Test failed for %s (%s %s vs %s %s)'
                               % (country, len(pls), pls.mapped('name'), len(result), result))
 
     def test_pricelist_combination(self):

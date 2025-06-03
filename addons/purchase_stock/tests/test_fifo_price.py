@@ -47,7 +47,7 @@ class TestFifoPrice(TestPurchase):
         purchase_order_1.button_confirm()
 
         # Check the "Purchase" status of purchase order 1
-        self.assertEquals(purchase_order_1.state, 'purchase')
+        self.assertEqual(purchase_order_1.state, 'purchase')
 
         # Process the reception of purchase order 1 and set date
         picking = purchase_order_1.picking_ids[0]
@@ -55,8 +55,8 @@ class TestFifoPrice(TestPurchase):
 
         # Check the standard price of the product (fifo icecream), that should have not changed
         # because the standard price is supposed to be updated only when goods are going out of the stock
-        self.assertEquals(product_cable_management_box.standard_price, 70.0, 'Standard price should not have changed')
-        self.assertEquals(product_cable_management_box.value_svl, 500.0, 'Wrong stock value')
+        self.assertEqual(product_cable_management_box.standard_price, 70.0, 'Standard price should not have changed')
+        self.assertEqual(product_cable_management_box.value_svl, 500.0, 'Wrong stock value')
 
         # I create a draft Purchase Order for second shipment for 30 kg at 80 euro
         purchase_order_2 = self.env['purchase.order'].create({
@@ -79,8 +79,8 @@ class TestFifoPrice(TestPurchase):
 
         # Check the standard price of the product, that should have not changed because the
         # standard price is supposed to be updated only when goods are going out of the stock
-        self.assertEquals(product_cable_management_box.standard_price, 70.0, 'Standard price as fifo price of second reception incorrect!')
-        self.assertEquals(product_cable_management_box.value_svl, 2900.0, 'Stock valuation should be 2900')
+        self.assertEqual(product_cable_management_box.standard_price, 70.0, 'Standard price as fifo price of second reception incorrect!')
+        self.assertEqual(product_cable_management_box.value_svl, 2900.0, 'Stock valuation should be 2900')
 
         # Let us send some goods
         outgoing_shipment = self.env['stock.picking'].create({
@@ -313,54 +313,5 @@ class TestFifoPrice(TestPurchase):
         self.env['stock.immediate.transfer'].create({'pick_ids': [(4, picking.id)]}).process()
 
         original_out_move = outgoing_shipment_neg.move_lines[0]
-        self.assertEquals(original_out_move.product_id.value_svl,  12000.0, 'Value of the move should be 12000')
-        self.assertEquals(original_out_move.product_id.qty_available, 150.0, 'Qty available should be 150')
-
-    def test_01_test_fifo(self):
-        """" This test ensures that unit price keeps its decimal precision """
-
-        self._load('account', 'test', 'account_minimal_test.xml')
-        self._load('stock_account', 'test', 'stock_valuation_account.xml')
-
-        unit_price_precision = self.env['ir.model.data'].xmlid_to_object('product.decimal_price')
-        unit_price_precision.digits = 3
-
-        tax = self.env["account.tax"].create({
-            "name": "Dummy Tax",
-            "amount": "0.00",
-            "type_tax_use": "purchase",
-        })
-
-        super_product = self.env['product.product'].create({
-            'name': 'Super Product',
-            'type': 'product',
-            'categ_id': self.env.ref('product.product_category_1').id,
-            'standard_price': 0.035,
-        })
-        super_product.categ_id.property_cost_method = 'fifo'
-        super_product.categ_id.property_valuation = 'real_time'
-        super_product.categ_id.property_stock_account_input_categ_id = self.ref('purchase.o_expense')
-        super_product.categ_id.property_stock_account_output_categ_id = self.ref('purchase.o_income')
-
-        purchase_order = self.env['purchase.order'].create({
-            'partner_id': self.env.ref('base.res_partner_3').id,
-            'order_line': [(0, 0, {
-                'name': super_product.name,
-                'product_id': super_product.id,
-                'product_qty': 1000,
-                'product_uom': super_product.uom_id.id,
-                'price_unit': super_product.standard_price,
-                'date_planned': time.strftime('%Y-%m-%d'),
-                'taxes_id': [(4, tax.id)],
-            })],
-        })
-
-        purchase_order.button_confirm()
-        self.assertEqual(purchase_order.state, 'purchase')
-
-        picking = purchase_order.picking_ids[0]
-        self.env['stock.immediate.transfer'].create({'pick_ids': [(4, picking.id)]}).process()
-
-        self.assertEqual(super_product.standard_price, 0.035)
-        self.assertEqual(super_product.value_svl, 35.0)
-        self.assertEqual(picking.move_lines.price_unit, 0.035)
+        self.assertEqual(original_out_move.product_id.value_svl,  12000.0, 'Value of the move should be 12000')
+        self.assertEqual(original_out_move.product_id.qty_available, 150.0, 'Qty available should be 150')

@@ -7,7 +7,7 @@ import base64
 import io
 
 from odoo import api, fields, models, _
-from odoo.exceptions import AccessDenied, UserError
+from odoo.exceptions import Warning, AccessDenied
 from odoo.tools import float_is_zero, pycompat
 from odoo.tools.misc import get_lang
 from stdnum.fr import siren

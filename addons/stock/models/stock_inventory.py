@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.osv import expression
 from odoo.tools import float_compare, float_is_zero
 from odoo.addons.base.models.ir_model import MODULE_UNINSTALL_FLAG
@@ -85,7 +85,7 @@ class Inventory(models.Model):
         if not self.exists():
             return
         self.ensure_one()
-        if not self.user_has_groups('stock.group_stock_manager'):
+        if not self.user_has_groups('stock.group_stock_manager') and not self.env.su:
             raise UserError(_("Only a stock manager can validate an inventory adjustment."))
         if self.state != 'confirm':
             raise UserError(_(
@@ -214,7 +214,7 @@ class Inventory(models.Model):
             locations = self.env['stock.location'].search([('id', 'child_of', self.location_ids.ids)])
         else:
             locations = self.env['stock.location'].search([('company_id', '=', self.company_id.id), ('usage', 'in', ['internal', 'transit'])])
-        domain = ' sq.location_id in %s AND sq.quantity != 0 AND pp.active'
+        domain = ' sq.location_id in %s AND sq.quantity != 0 AND pp.active AND pt.type = \'product\''
         args = (tuple(locations.ids),)
 
         vals = []
@@ -234,6 +234,8 @@ class Inventory(models.Model):
             FROM stock_quant sq
             LEFT JOIN product_product pp
             ON pp.id = sq.product_id
+            JOIN product_template pt
+            ON pt.id = pp.product_tmpl_id
             WHERE %s
             GROUP BY sq.product_id, sq.location_id, sq.lot_id, sq.package_id, sq.owner_id """ % domain, args)
 
@@ -249,7 +251,11 @@ class Inventory(models.Model):
             if self.prefill_counted_quantity == 'zero':
                 product_data['product_qty'] = 0
             if product_data['product_id']:
-                product_ids.add(product_data['product_id'])
+                try:
+                    product_data['product_uom_id'] = Product.browse(product_data['product_id']).uom_id.id
+                    quant_products |= Product.browse(product_data['product_id'])
+                except AccessError:
+                    continue
             vals.append(product_data)
         product_id_to_product = dict(zip(product_ids, self.env['product.product'].browse(product_ids)))
         for val in vals:

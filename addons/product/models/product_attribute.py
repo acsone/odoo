@@ -29,7 +29,7 @@ class ProductAttribute(models.Model):
         Note: the variants creation mode cannot be changed once the attribute is used on at least one product.""",
         required=True)
     is_used_on_products = fields.Boolean('Used on Products', compute='_compute_is_used_on_products')
-    product_tmpl_ids = fields.Many2many('product.template', string="Related Products", compute='_compute_products', store=True)
+    product_tmpl_ids = fields.Many2many('product.template', string="Related Products", compute='_compute_products', store=True, column1="attribute_id", column2="product_id")
 
     @api.depends('product_tmpl_ids')
     def _compute_is_used_on_products(self):
@@ -249,9 +249,6 @@ class ProductTemplateAttributeLine(models.Model):
         if not values.get('active', True):
             values['value_ids'] = [(5, 0, 0)]
         res = super(ProductTemplateAttributeLine, self).write(values)
-        if 'active' in values:
-            self.flush()
-            self.env['product.template'].invalidate_cache(fnames=['attribute_line_ids'])
         # If coming from `create`, no need to update the values and the variants
         # before all lines are created.
         if self.env.context.get('update_product_template_attribute_values', True):

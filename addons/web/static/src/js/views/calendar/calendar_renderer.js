@@ -430,7 +430,7 @@ return AbstractRenderer.extend({
                     // Detect if the event occurs in just one day
                     // note: add & remove 1 min to avoid issues with 00:00
                     var isSameDayEvent = start.clone().add(1, 'minute').isSame(end.clone().subtract(1, 'minute'), 'day');
-                    if (!event.record.allday && isSameDayEvent) {
+                    if (!event.record.all_day && isSameDayEvent) {
                         element.addClass('o_cw_nobg');
                     }
                 }

@@ -1398,8 +1398,7 @@ class AccountMove(models.Model):
         foreign_currency = self.currency_id if self.currency_id != self.company_id.currency_id else False
 
         reconciled_vals = []
-        pay_term_line_ids = self.line_ids.filtered(lambda line: line.account_id.user_type_id.type in ('receivable', 'payable'))
-        partials = pay_term_line_ids.mapped('matched_debit_ids') + pay_term_line_ids.mapped('matched_credit_ids')
+        partials = self.line_ids.mapped('matched_debit_ids') + self.line_ids.mapped('matched_credit_ids')
         for partial in partials:
             counterpart_lines = partial.debit_move_id + partial.credit_move_id
             # In case we are in an onchange, line_ids is a NewId, not an integer. By using line_ids.ids we get the correct integer value.
@@ -4546,6 +4545,33 @@ class AccountPartialReconcile(models.Model):
         }
 
     @api.model
+    def _prepare_exchange_diff_line_to_reconcile(self, aml, move):
+        return {
+            'name': _('Currency exchange rate difference'),
+            'debit': aml.amount_residual < 0 and -aml.amount_residual or 0.0,
+            'credit': aml.amount_residual > 0 and aml.amount_residual or 0.0,
+            'account_id': aml.account_id.id,
+            'move_id': move.id,
+            'currency_id': aml.currency_id.id,
+            'amount_currency': aml.amount_residual_currency and -aml.amount_residual_currency or 0.0,
+            'partner_id': aml.partner_id.id,
+        }
+
+    @api.model
+    def _prepare_exchange_diff_move_line(self, aml, move):
+        exchange_journal = move.company_id.currency_exchange_journal_id
+        return {
+            'name': _('Currency exchange rate difference'),
+            'debit': aml.amount_residual > 0 and aml.amount_residual or 0.0,
+            'credit': aml.amount_residual < 0 and -aml.amount_residual or 0.0,
+            'account_id': aml.amount_residual > 0 and exchange_journal.default_debit_account_id.id or exchange_journal.default_credit_account_id.id,
+            'move_id': move.id,
+            'currency_id': aml.currency_id.id,
+            'amount_currency': aml.amount_residual_currency and aml.amount_residual_currency or 0.0,
+            'partner_id': aml.partner_id.id,
+        }
+
+    @api.model
     def create_exchange_rate_entry(self, aml_to_fix, move):
         """
         Automatically create a journal items to book the exchange rate
@@ -4567,28 +4593,11 @@ class AccountPartialReconcile(models.Model):
         created_lines = self.env['account.move.line']
         for aml in aml_to_fix:
             #create the line that will compensate all the aml_to_fix
-            line_to_rec = aml_model.with_context(check_move_validity=False).create({
-                'name': _('Currency exchange rate difference'),
-                'debit': aml.amount_residual < 0 and -aml.amount_residual or 0.0,
-                'credit': aml.amount_residual > 0 and aml.amount_residual or 0.0,
-                'account_id': aml.account_id.id,
-                'move_id': move.id,
-                'currency_id': aml.currency_id.id,
-                'amount_currency': aml.amount_residual_currency and -aml.amount_residual_currency or 0.0,
-                'partner_id': aml.partner_id.id,
-            })
+            line_to_rec_vals = self._prepare_exchange_diff_line_to_reconcile(aml, move)
+            line_to_rec = aml_model.with_context(check_move_validity=False).create(line_to_rec_vals)
             #create the counterpart on exchange gain/loss account
-            exchange_journal = move.company_id.currency_exchange_journal_id
-            aml_model.with_context(check_move_validity=False).create({
-                'name': _('Currency exchange rate difference'),
-                'debit': aml.amount_residual > 0 and aml.amount_residual or 0.0,
-                'credit': aml.amount_residual < 0 and -aml.amount_residual or 0.0,
-                'account_id': aml.amount_residual > 0 and exchange_journal.default_debit_account_id.id or exchange_journal.default_credit_account_id.id,
-                'move_id': move.id,
-                'currency_id': aml.currency_id.id,
-                'amount_currency': aml.amount_residual_currency and aml.amount_residual_currency or 0.0,
-                'partner_id': aml.partner_id.id,
-            })
+            line_vals = self._prepare_exchange_diff_move_line(aml, move)
+            aml_model.with_context(check_move_validity=False).create(line_vals)
 
             #reconcile all aml_to_fix
             partial_rec |= self.create(

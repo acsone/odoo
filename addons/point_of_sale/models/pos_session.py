@@ -299,7 +299,7 @@ class PosSession(models.Model):
                 self.sudo()._create_account_move()
             else:
                 raise e
-        if self.move_id.line_ids:
+        if self.move_id.sudo().line_ids:
             self.move_id.post() if not sudo else self.move_id.sudo().post()
             # Set the uninvoiced orders' state to 'done'
             self.env['pos.order'].search([('session_id', '=', self.id), ('state', '=', 'paid')]).write({'state': 'done'})
@@ -308,7 +308,7 @@ class PosSession(models.Model):
             # made thru cash in/out when sesion is in cash_control.
             if self.config_id.cash_control:
                 self.cash_register_id.button_confirm_bank()
-            self.move_id.unlink() if not sudo else self.move_id.sudo().unlink()
+            self.move_id.sudo().unlink()
         self.write({'state': 'closed'})
         return {
             'type': 'ir.actions.client',

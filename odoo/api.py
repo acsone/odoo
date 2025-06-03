@@ -18,8 +18,7 @@ import logging
 from collections import defaultdict
 from collections.abc import Mapping
 from contextlib import contextmanager
-from copy import deepcopy
-from inspect import getargspec
+from inspect import signature
 from pprint import pformat
 from weakref import WeakSet
 
@@ -275,7 +274,7 @@ def downgrade(method, value, self, args, kwargs):
     if not spec:
         return value
     _, convert, _ = spec
-    if convert and len(getargspec(convert).args) > 1:
+    if convert and len(signature(convert).parameters) > 1:
         return convert(self, value, *args, **kwargs)
     elif convert:
         return convert(value)

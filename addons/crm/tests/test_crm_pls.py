@@ -80,8 +80,8 @@ class TestCRMPLS(TransactionCase):
         # As the cron is computing and writing in SQL queries, we need to invalidate the cache
         leads.invalidate_cache()
 
-        self.assertEquals(tools.float_compare(leads[3].automated_probability, 33.49, 2), 0)
-        self.assertEquals(tools.float_compare(leads[7].automated_probability, 7.74, 2), 0)
+        self.assertEqual(tools.float_compare(leads[3].automated_probability, 33.49, 2), 0)
+        self.assertEqual(tools.float_compare(leads[7].automated_probability, 7.74, 2), 0)
 
     def test_settings_pls_start_date(self):
         # We test here that settings never crash due to ill-configured config param 'crm.pls_start_date'

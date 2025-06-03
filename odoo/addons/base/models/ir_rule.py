@@ -132,6 +132,20 @@ class IrRule(models.Model):
         self._cr.execute(query, (model_name, self._uid))
         return self.browse(row[0] for row in self._cr.fetchall())
 
+    def _domain_force_get(self):
+        # browse user and rules as SUPERUSER_ID to avoid access errors!
+        eval_context = self._eval_context()
+        res = {}
+        for rule in self.sudo():
+            res.setdefault(rule.id, [])
+            if rule.domain_force:
+                # evaluate the domain for the current user
+                dom = safe_eval(rule.domain_force,
+                                eval_context) if rule.domain_force else []
+                dom = expression.normalize_domain(dom)
+                res[rule.id] = dom
+        return res
+   
     @api.model
     @tools.conditional(
         'xml' not in config['dev_mode'],

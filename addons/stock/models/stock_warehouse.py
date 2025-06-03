@@ -93,21 +93,27 @@ class Warehouse(models.Model):
         for warehouse in self:
             warehouse.show_resupply = warehouse.user_has_groups("stock.group_stock_multi_warehouses") and warehouse.warehouse_count
 
+    def _create_and_get_stock_location_id(self, values):
+        return self.env['stock.location'].create(values).id
+
+    def _prepare_loc_values(self, vals):
+        return {'name': _(vals.get('code')), 'usage': 'view',
+                    'location_id': self.env.ref('stock.stock_location_locations').id}
+
     @api.model
     def create(self, vals):
         # create view location for warehouse then create all locations
-        loc_vals = {'name': _(vals.get('code')), 'usage': 'view',
-                    'location_id': self.env.ref('stock.stock_location_locations').id}
+        loc_vals = self._prepare_loc_values(vals)
         if vals.get('company_id'):
             loc_vals['company_id'] = vals.get('company_id')
-        vals['view_location_id'] = self.env['stock.location'].create(loc_vals).id
+        vals['view_location_id'] = self._create_and_get_stock_location_id(loc_vals)
         sub_locations = self._get_locations_values(vals)
 
         for field_name, values in sub_locations.items():
             values['location_id'] = vals['view_location_id']
             if vals.get('company_id'):
                 values['company_id'] = vals.get('company_id')
-            vals[field_name] = self.env['stock.location'].with_context(active_test=False).create(values).id
+            vals[field_name] = self._create_and_get_stock_location_id(values)
 
         # actually create WH
         warehouse = super(Warehouse, self).create(vals)
@@ -295,9 +301,9 @@ class Warehouse(models.Model):
                 warehouse_data[picking_type] = PickingType.create(values).id
 
         if 'out_type_id' in warehouse_data:
-            PickingType.browse(warehouse_data['out_type_id']).write({'return_picking_type_id': warehouse_data.get('in_type_id', False)})
+            PickingType.browse(warehouse_data['out_type_id']).sudo().write({'return_picking_type_id': warehouse_data.get('in_type_id', False)})
         if 'in_type_id' in warehouse_data:
-            PickingType.browse(warehouse_data['in_type_id']).write({'return_picking_type_id': warehouse_data.get('out_type_id', False)})
+            PickingType.browse(warehouse_data['in_type_id']).sudo().write({'return_picking_type_id': warehouse_data.get('out_type_id', False)})
         return warehouse_data
 
     def _create_or_update_global_routes_rules(self):

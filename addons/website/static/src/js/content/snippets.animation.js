@@ -702,14 +702,13 @@ registry.mediaVideo = publicWidget.Widget.extend(MobileYoutubeAutoplayMixin, {
         // TODO: this code should be refactored to make more sense and be better
         // integrated with Odoo (this refactoring should be done in master).
 
-        const proms = [this._super.apply(this, arguments)];
-        let iframeEl = this.$target[0].querySelector(':scope > iframe');
-
-        // The following code is only there to ensure compatibility with
-        // videos added before bug fixes or new Odoo versions where the
-        // <iframe/> element is properly saved.
-        if (!iframeEl) {
-            iframeEl = this._generateIframe();
+        var def = this._super.apply(this, arguments);
+        if (this.$target.children('iframe').length) {
+            // There already is an <iframe/>, do nothing. This is the normal
+            // case. The whole code that follows is only there to ensure
+            // compatibility with videos added before bug fixes or new Odoo
+            // versions where the <iframe/> element is properly saved.
+            return def;
         }
 
         if (!iframeEl) {
@@ -751,21 +750,21 @@ registry.mediaVideo = publicWidget.Widget.extend(MobileYoutubeAutoplayMixin, {
         var m = src.match(/^(?:https?:)?\/\/([^/?#]+)/);
         if (!m) {
             // Unsupported protocol or wrong URL format, don't inject iframe
-            return;
+            return def;
         }
         var domain = m[1].replace(/^www\./, '');
         var supportedDomains = ['youtu.be', 'youtube.com', 'youtube-nocookie.com', 'instagram.com', 'vine.co', 'player.vimeo.com', 'vimeo.com', 'dailymotion.com', 'player.youku.com', 'youku.com'];
         if (!_.contains(supportedDomains, domain)) {
             // Unsupported domain, don't inject iframe
-            return;
+            return def;
         }
-        const iframeEl = $('<iframe/>', {
+        this.$target.append($('<iframe/>', {
             src: src,
             frameborder: '0',
             allowfullscreen: 'allowfullscreen',
-        })[0];
-        this.$target.append(iframeEl);
-        return iframeEl;
+        }));
+
+        return def;
     },
 });
 

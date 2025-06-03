@@ -83,8 +83,8 @@ QUnit.module('basic_fields', {
                     qux: false,
                     selection: 'done',
                 },
-                {id: 3, bar: true, foo: "gnap", int_field: 80, qux: -3.89859, m2o: 1, m2m: []},
-                {id: 5, bar: false, foo: "blop", int_field: -4, qux: 9.1, m2o: 1, m2m: [1], currency_id: 1, monetary: 99.9}],
+                {id: 3, bar: true, foo: "gnap", int_field: 80, qux: -3.89859},
+                {id: 5, bar: false, foo: "blop", int_field: -4, qux: 9.1, currency_id: 1, monetary: 99.9}],
                 onchanges: {},
             },
             team: {
