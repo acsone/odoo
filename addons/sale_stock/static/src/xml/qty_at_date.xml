@@ -15,12 +15,12 @@
             <tbody>
                 <t t-if="!data.is_mto">
                     <tr>
-                        <td><strong>Forecasted Stock</strong><br /><small>On <span t-esc="data.delivery_date"/></small></td>
+                        <td><strong>Available</strong><br /><small>On <span t-esc="data.delivery_date"/></small></td>
                         <td><t t-esc='data.virtual_available_at_date'/>
                         <t t-esc='data.product_uom.data.display_name'/></td>
                     </tr>
                     <tr>
-                        <td><strong>Available</strong><br /><small>All planned operations included</small></td>
+                        <td><strong>Actual</strong><br /><small>All planned operations included</small></td>
                         <td><t t-esc='data.free_qty_today'/>
                         <t t-esc='data.product_uom.data.display_name'/></td>
                     </tr>
