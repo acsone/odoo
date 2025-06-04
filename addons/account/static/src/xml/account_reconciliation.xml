@@ -226,7 +226,12 @@
                     <td class="o_td_field"></td>
                 </tr>
                 <tr class="create_analytic_account_id" t-if="group_acc">
-                    <td class="o_td_label"><label class="o_form_label">Analytic Acc.</label></td>
+                    <td class="o_td_label"><label class="o_form_label">Activité</label></td>
+                    <td class="o_td_field"></td>
+                </tr>
+                <!--TODO silog-->
+                <tr class="create_cost_center_id" t-if="group_acc">
+                    <td class="o_td_label"><label class="o_form_label">Centre de coût</label></td>
                     <td class="o_td_field"></td>
                 </tr>
                 <tr class="create_analytic_tag_ids" t-if="group_tags">
@@ -257,8 +262,13 @@
                     <td class="o_td_label"><label class="o_form_label">Writeoff Date</label></td>
                     <td class="o_td_field"></td>
                 </tr>
-                <tr class="create_to_check">
-                    <td class="o_td_label"><label class="o_form_label">To Check</label></td>
+                <!--TODO silog-->
+                <tr class="create_spending_authorization_base_id" t-if="group_acc">
+                    <td class="o_td_label"><label class="o_form_label">Visa</label></td>
+                    <td class="o_td_field"></td>
+                </tr>
+                <tr class="create_payment_budget_article_id" t-if="group_acc">
+                    <td class="o_td_label"><label class="o_form_label">Clé d'imputation de Liquidation</label></td>
                     <td class="o_td_field"></td>
                 </tr>
             </tbody>

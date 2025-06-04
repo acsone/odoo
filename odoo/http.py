@@ -29,15 +29,17 @@ from datetime import datetime
 import passlib.utils
 import psycopg2
 import json
-import werkzeug.contrib.sessions
 import werkzeug.datastructures
 import werkzeug.exceptions
 import werkzeug.local
 import werkzeug.routing
 import werkzeug.wrappers
-import werkzeug.wsgi
 from werkzeug import urls
 from werkzeug.wsgi import wrap_file
+try:
+    from werkzeug.middleware.shared_data import SharedDataMiddleware
+except ImportError:
+    from werkzeug.wsgi import SharedDataMiddleware
 
 try:
     import psutil
@@ -52,8 +54,10 @@ from .sql_db import flush_env
 from .tools.func import lazy_property
 from .tools import ustr, consteq, frozendict, pycompat, unique, date_utils
 from .tools.mimetypes import guess_mimetype
-
+from .tools._vendor import sessions
+from .tools._vendor.useragents import UserAgent
 from .modules.module import module_manifest
+
 
 _logger = logging.getLogger(__name__)
 rpc_request = logging.getLogger(__name__ + '.rpc.request')
@@ -167,7 +171,7 @@ def local_redirect(path, query=None, keep_hash=False, code=303):
     if not query:
         query = {}
     if query:
-        url += '?' + werkzeug.url_encode(query)
+        url += '?' + urls.url_encode(query)
     return werkzeug.utils.redirect(url, code)
 
 def redirect_with_hash(url, code=303):
@@ -375,13 +379,12 @@ class WebRequest(object):
         """
         return self.session.db if not self.disable_db else None
 
-    def csrf_token(self, time_limit=3600):
+    def csrf_token(self, time_limit=None):
         """ Generates and returns a CSRF token for the current session
 
-        :param time_limit: the CSRF token should only be valid for the
-                           specified duration (in second), by default 1h,
+        :param time_limit: the CSRF token validity period (in seconds), or
                            ``None`` for the token to be valid as long as the
-                           current user's session is.
+                           current user session is (the default)
         :type time_limit: int | None
         :returns: ASCII token string
         """
@@ -395,18 +398,22 @@ class WebRequest(object):
 
     def validate_csrf(self, csrf):
         if not csrf:
+            _logger.warning("validate_csrf: no CSRF")
             return False
 
         try:
             hm, _, max_ts = str(csrf).rpartition('o')
         except UnicodeEncodeError:
+            _logger.warning("validate_csrf: UnicodeEncodeError")
             return False
 
         if max_ts:
             try:
                 if int(max_ts) < int(time.time()):
+                    _logger.warning("validate_csrf: max_ts (%s) < time.time() (%s)", int(max_ts), int(time.time()))
                     return False
             except ValueError:
+                _logger.warning("validate_csrf: ValueError")
                 return False
 
         token = self.session.sid
@@ -506,9 +513,14 @@ def route(route=None, **kw):
         @functools.wraps(f)
         def response_wrap(*args, **kw):
             # if controller cannot be called with extra args (utm, debug, ...), call endpoint ignoring them
-            spec = inspect.getargspec(f)
-            if not spec.keywords:
-                ignored = ['<%s=%s>' % (k, kw.pop(k)) for k in list(kw) if k not in spec.args]
+            params = inspect.signature(f).parameters.values()
+            is_kwargs = lambda p: p.kind == inspect.Parameter.VAR_KEYWORD
+            if not any(is_kwargs(p) for p in params):  # missing **kw
+                is_keyword_compatible = lambda p: p.kind in (
+                    inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                    inspect.Parameter.KEYWORD_ONLY)
+                fargs = {p.name for p in params if is_keyword_compatible(p)}
+                ignored = ['<%s=%s>' % (k, kw.pop(k)) for k in list(kw) if k not in fargs]
                 if ignored:
                     _logger.info("<function %s.%s> called ignoring args %s" % (f.__module__, f.__name__, ', '.join(ignored)))
 
@@ -526,7 +538,7 @@ def route(route=None, **kw):
                 response.set_default()
                 return response
 
-            _logger.warn("<function %s.%s> returns an invalid response type for an http request" % (f.__module__, f.__name__))
+            _logger.warning("<function %s.%s> returns an invalid response type for an http request" % (f.__module__, f.__name__))
             return response
         response_wrap.routing = routing
         response_wrap.original_func = f
@@ -777,10 +789,10 @@ class HttpRequest(WebRequest):
             token = self.params.pop('csrf_token', None)
             if not self.validate_csrf(token):
                 if token is not None:
-                    _logger.warn("CSRF validation failed on path '%s'",
+                    _logger.warning("CSRF validation failed on path '%s'",
                                  request.httprequest.path)
                 else:
-                    _logger.warn("""No CSRF validation token provided for path '%s'
+                    _logger.warning("""No CSRF validation token provided for path '%s'
 
 Odoo URLs are CSRF-protected by default (when accessed with unsafe
 HTTP methods). See
@@ -875,12 +887,12 @@ class ControllerType(type):
                 parent_routing_type = getattr(parent[0], k).original_func.routing_type if parent else routing_type or 'http'
                 if routing_type is not None and routing_type is not parent_routing_type:
                     routing_type = parent_routing_type
-                    _logger.warn("Subclass re-defines <function %s.%s.%s> with different type than original."
+                    _logger.warning("Subclass re-defines <function %s.%s.%s> with different type than original."
                                     " Will use original type: %r" % (cls.__module__, cls.__name__, k, parent_routing_type))
                 v.original_func.routing_type = routing_type or parent_routing_type
 
-                spec = inspect.getargspec(v.original_func)
-                first_arg = spec.args[1] if len(spec.args) >= 2 else None
+                sign = inspect.signature(v.original_func)
+                first_arg = list(sign.parameters)[1] if len(sign.parameters) >= 2 else None
                 if first_arg in ["req", "request"]:
                     v._first_arg_is_req = True
 
@@ -989,7 +1001,7 @@ class AuthenticationError(Exception):
 class SessionExpiredException(Exception):
     pass
 
-class OpenERPSession(werkzeug.contrib.sessions.Session):
+class OpenERPSession(sessions.Session):
     def __init__(self, *args, **kwargs):
         self.inited = False
         self.modified = False
@@ -1179,12 +1191,12 @@ class OpenERPSession(werkzeug.contrib.sessions.Session):
 
 def session_gc(session_store):
     if random.random() < 0.001:
-        # we keep session one week
-        last_week = time.time() - 60*60*24*7
+        # we keep session 8h
+        exp_time = time.time() - 60*60*8
         for fname in os.listdir(session_store.path):
             path = os.path.join(session_store.path, fname)
             try:
-                if os.path.getmtime(path) < last_week:
+                if os.path.getmtime(path) < exp_time:
                     os.unlink(path)
             except OSError:
                 pass
@@ -1294,7 +1306,7 @@ class Root(object):
         # Setup http sessions
         path = odoo.tools.config.session_dir
         _logger.debug('HTTP sessions stored in: %s', path)
-        return werkzeug.contrib.sessions.FilesystemSessionStore(
+        return sessions.FilesystemSessionStore(
             path, session_class=OpenERPSession, renew_missing=True)
 
     @lazy_property
@@ -1302,7 +1314,9 @@ class Root(object):
         _logger.info("Generating nondb routing")
         routing_map = werkzeug.routing.Map(strict_slashes=False, converters=None)
         for url, endpoint, routing in odoo.http._generate_routing_rules([''] + odoo.conf.server_wide_modules, True):
-            routing_map.add(werkzeug.routing.Rule(url, endpoint=endpoint, methods=routing['methods']))
+            rule = werkzeug.routing.Rule(url, endpoint=endpoint, methods=routing['methods'])
+            rule.merge_slashes = False
+            routing_map.add(rule)
         return routing_map
 
     def __call__(self, environ, start_response):
@@ -1337,7 +1351,7 @@ class Root(object):
 
         if statics:
             _logger.info("HTTP Configuring static files")
-        app = werkzeug.wsgi.SharedDataMiddleware(self.dispatch, statics, cache_timeout=STATIC_CACHE)
+        app = SharedDataMiddleware(self.dispatch, statics, cache_timeout=STATIC_CACHE)
         self.dispatch = DisableCacheMiddleware(app)
 
     def setup_session(self, httprequest):
@@ -1362,7 +1376,7 @@ class Root(object):
         # Check if session.db is legit
         if db:
             if db not in db_filter([db], httprequest=httprequest):
-                _logger.warn("Logged into database '%s', but dbfilter "
+                _logger.warning("Logged into database '%s', but dbfilter "
                              "rejects it; logging session out.", db)
                 httprequest.session.logout()
                 db = None
@@ -1453,6 +1467,7 @@ class Root(object):
         """
         try:
             httprequest = werkzeug.wrappers.Request(environ)
+            httprequest.user_agent_class = UserAgent  # use vendored userAgent since it will be removed in 2.1
             httprequest.parameter_storage_class = werkzeug.datastructures.ImmutableOrderedMultiDict
 
             current_thread = threading.current_thread()

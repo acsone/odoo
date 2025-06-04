@@ -9,5 +9,4 @@ Correct address formating when both partner_autocomplete and base_address_extend
     'version': '1.0',
     'depends': ['partner_autocomplete', 'base_address_extended'],
     'auto_install': False,
-    'license': 'LGPL-3',
 }

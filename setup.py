@@ -24,6 +24,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'babel >= 1.0',
+        'chardet',
         'decorator',
         'docutils',
         'gevent',
@@ -43,13 +44,13 @@ setup(
         'pypdf2',
         'pyserial',
         'python-dateutil',
+        'python-stdnum',
         'pytz',
         'pyusb >= 1.0.0b1',
         'qrcode',
         'reportlab',  # windows binary pypi.python.org/pypi/reportlab
         'requests',
         'zeep',
-        'vatnumber',
         'vobject',
         'werkzeug',
         'xlsxwriter',

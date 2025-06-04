@@ -67,7 +67,7 @@ class OAuthLogin(Home):
                 state=json.dumps(state),
                 # nonce=base64.urlsafe_b64encode(os.urandom(16)),
             )
-            provider['auth_link'] = "%s?%s" % (provider['auth_endpoint'], werkzeug.url_encode(params))
+            provider['auth_link'] = "%s?%s" % (provider['auth_endpoint'], werkzeug.urls.url_encode(params))
         return providers
 
     def get_state(self, provider):
@@ -77,7 +77,7 @@ class OAuthLogin(Home):
         state = dict(
             d=request.session.db,
             p=provider['id'],
-            r=werkzeug.url_quote_plus(redirect),
+            r=werkzeug.urls.url_quote_plus(redirect),
         )
         token = request.params.get('token')
         if token:
@@ -135,7 +135,7 @@ class OAuthController(http.Controller):
                 cr.commit()
                 action = state.get('a')
                 menu = state.get('m')
-                redirect = werkzeug.url_unquote_plus(state['r']) if state.get('r') else False
+                redirect = werkzeug.urls.url_unquote_plus(state['r']) if state.get('r') else False
                 url = '/web'
                 if redirect:
                     url = redirect

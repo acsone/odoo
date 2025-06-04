@@ -831,11 +831,9 @@ msgstr ""
 #: code:addons/delivery/models/stock_picking.py:0
 #, python-format
 msgid ""
-"Shipment sent to carrier %s for shipping with tracking number %s<br/>Cost: "
-"%.2f %s"
+"Shipment sent: %s"
 msgstr ""
-"Colisage envoyé au transporteur %s pour expédition avec le numéro de suivi "
-"%s<br/>Coût : %.2f %s"
+"Colis envoyé: %s"
 
 #. module: delivery
 #: model:ir.model.fields,field_description:delivery.field_stock_picking__carrier_price
