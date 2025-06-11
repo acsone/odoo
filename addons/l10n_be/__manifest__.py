@@ -48,7 +48,7 @@ Wizards provided by this module:
         'data/menuitem_data.xml',
     ],
     'demo': [
-        'demo/demo_company.xml',
+        # 'demo/demo_company.xml',
     ],
     'license': 'LGPL-3',
 }

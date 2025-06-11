@@ -34,7 +34,7 @@ for more informations, see https://www.facturae.gob.es/face/Paginas/FACE.aspx
         'wizard/account_move_reversal_view.xml',
     ],
     'demo': [
-        'demo/l10n_es_edi_facturae_demo.xml',
+        # 'demo/l10n_es_edi_facturae_demo.xml',
     ],
     'post_init_hook': '_l10n_es_edi_facturae_post_init_hook',
     'installable': True,
