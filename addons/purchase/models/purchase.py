@@ -355,7 +355,6 @@ class PurchaseOrder(models.Model):
         if self.env.context.get('mark_rfq_as_sent'):
             self.filtered(lambda o: o.state == 'draft').write({'state': 'sent'})
         return super(PurchaseOrder, self.with_context(
-            mail_post_autofollow=self.env.context.get('mail_post_autofollow', True),
             lang=self.partner_id.lang,
         )).message_post(**kwargs)
 
