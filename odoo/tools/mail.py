@@ -485,7 +485,7 @@ def email_split_tuples(text):
     """ Return a list of (name, email) addresse tuples found in ``text``"""
     if not text:
         return []
-    return [(addr[0], addr[1]) for addr in getaddresses([text])
+    return [(addr[0], addr[1]) for addr in getaddresses([text], strict=False)
                 # getaddresses() returns '' when email parsing fails, and
                 # sometimes returns emails without at least '@'. The '@'
                 # is strictly required in RFC2822's `addr-spec`.
@@ -530,7 +530,7 @@ def email_domain_extract(email):
     if not email:
         return
 
-    email_split = getaddresses([email])
+    email_split = getaddresses([email], strict=False)
     if not email_split or not email_split[0]:
         return
 
@@ -613,11 +613,11 @@ def encapsulate_email(old_email, new_email):
     * New From: notifications@odoo.com
     * Output: "Admin" <notifications@odoo.com>
     """
-    old_email_split = getaddresses([old_email])
+    old_email_split = getaddresses([old_email], strict=False)
     if not old_email_split or not old_email_split[0]:
         return old_email
 
-    new_email_split = getaddresses([new_email])
+    new_email_split = getaddresses([new_email], strict=False)
     if not new_email_split or not new_email_split[0]:
         return
 

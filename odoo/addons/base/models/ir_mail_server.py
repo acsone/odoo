@@ -128,7 +128,7 @@ def encode_rfc2822_address_header(header_text):
                               'from mail header:\n%s') % (addr, header_text))
             return ""
 
-    addresses = getaddresses([pycompat.to_text(ustr(header_text))])
+    addresses = getaddresses([pycompat.to_text(ustr(header_text))], strict=False)
     return COMMASPACE.join(a for a in (encode_addr(addr) for addr in addresses) if a)
 
 
