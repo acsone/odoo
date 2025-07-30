@@ -4,6 +4,7 @@ import base64
 import hashlib
 import io
 import os
+from unittest.mock import patch
 
 from PIL import Image
 
@@ -261,6 +262,28 @@ class TestIrAttachment(TransactionCaseWithUserDemo):
         self.env.cr.rollback()
         self.Attachment._gc_file_store_unsafe()
         self.assertFalse(os.path.isfile(store_path), 'file removed')
+
+    def test_14_invalid_mimetype_with_correct_file_extension_no_post_processing(self):
+        # test with fake svg with png mimetype
+        unique_blob = b'<svg xmlns="http://www.w3.org/2000/svg"></svg>'
+        a1 = self.Attachment.create({'name': 'a1', 'raw': unique_blob, 'mimetype': 'image/png'})
+        self.assertEqual(a1.raw, unique_blob)
+        self.assertEqual(a1.mimetype, 'image/png')
+
+    def test_15_read_bin_size_doesnt_read_datas(self):
+        self.env.invalidate_all()
+        IrAttachment = self.registry['ir.attachment']
+        main_partner = self.env.ref('base.main_partner')
+        with patch.object(
+            IrAttachment,
+            '_file_read',
+            side_effect=IrAttachment._file_read,
+            autospec=True,
+        ) as patch_file_read:
+            self.env['res.partner'].with_context(bin_size=True).search_read(
+                [('id', 'in', main_partner.ids)], ['image_128']
+            )
+            self.assertEqual(patch_file_read.call_count, 0)
 
 
 class TestPermissions(TransactionCaseWithUserDemo):
