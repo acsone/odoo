@@ -117,7 +117,7 @@ class MyFilterMessages(Transform):
     default_priority = 870
 
     def apply(self):
-        for node in self.document.traverse(nodes.system_message):
+        for node in self.document.findall(nodes.system_message):
             _logger.warning("docutils' system message present: %s", str(node))
             node.parent.remove(node)
 
