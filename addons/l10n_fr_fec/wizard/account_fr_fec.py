@@ -106,6 +106,12 @@ class AccountFrFec(models.TransientModel):
         else:
             return company.vat
 
+    def _set_fiscalyear_lock_date(self):
+        """ Add a hook to be overriden in sudo mode if rights are missing"""
+        fiscalyear_lock_date = self.env.company.fiscalyear_lock_date
+        if not self.test_file and (not fiscalyear_lock_date or fiscalyear_lock_date < self.date_to):
+            self.env.company.write({'fiscalyear_lock_date': self.date_to})
+
     def _translation_account_query(self):
         if self.pool['account.account'].name.translate:
             lang = self.env.user.lang or get_lang(self.env).code
@@ -468,9 +474,8 @@ class AccountFrFec(models.TransientModel):
             })
 
         # Set fiscal year lock date to the end date (not in test)
-        fiscalyear_lock_date = self.env.company.fiscalyear_lock_date
-        if not self.test_file and (not fiscalyear_lock_date or fiscalyear_lock_date < self.date_to):
-            self.env.company.write({'fiscalyear_lock_date': self.date_to})
+        self._set_fiscalyear_lock_date()
+
         return {
             'name': 'FEC',
             'type': 'ir.actions.act_url',
