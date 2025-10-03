@@ -146,13 +146,22 @@ class FleetVehicle(models.Model):
             record.name = (record.model_id.brand_id.name or '') + '/' + (record.model_id.name or '') + '/' + (record.license_plate or _('No Plate'))
 
     def _get_odometer(self):
-        FleetVehicalOdometer = self.env['fleet.vehicle.odometer']
-        for record in self:
-            vehicle_odometer = FleetVehicalOdometer.search([('vehicle_id', '=', record.id)], limit=1, order='value desc')
-            if vehicle_odometer:
-                record.odometer = vehicle_odometer.value
-            else:
-                record.odometer = 0
+        self.env.cr.execute("""
+        SELECT DISTINCT ON (vehicle_id)
+            vehicle_id,
+            value
+        FROM
+            fleet_vehicle_odometer
+        WHERE
+            vehicle_id IN %(vehicle_ids)s
+        ORDER BY
+            vehicle_id, value DESC
+        """,{
+            "vehicle_ids": tuple(self.ids),
+        })
+        odometers = {vehicle_id:value for vehicle_id,value in self.env.cr.fetchall()}
+        for rec in self:
+            rec.odometer = odometers.get(rec.id,0)
 
     def _set_odometer(self):
         for record in self:
