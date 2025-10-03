@@ -1441,11 +1441,14 @@ class HrExpenseSheet(models.Model):
             if not self.env.user in current_managers and not self.user_has_groups('hr_expense.group_hr_expense_user') and self.employee_id.expense_manager_id != self.env.user:
                 raise UserError(_("You can only approve your department expenses"))
 
+    def _get_line_expenses_duplicates(self):
+        return self.expense_line_ids.duplicate_expense_ids.filtered(lambda exp: exp.state in ['approved', 'done'])
+        
     def approve_expense_sheets(self):
         self._check_can_approve()
 
         self._validate_analytic_distribution()
-        duplicates = self.expense_line_ids.duplicate_expense_ids.filtered(lambda exp: exp.state in ['approved', 'done'])
+        duplicates = self._get_line_expenses_duplicates()
         if duplicates:
             action = self.env["ir.actions.act_window"]._for_xml_id('hr_expense.hr_expense_approve_duplicate_action')
             action['context'] = {'default_sheet_ids': self.ids, 'default_expense_ids': duplicates.ids}
