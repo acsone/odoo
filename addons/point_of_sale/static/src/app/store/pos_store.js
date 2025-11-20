@@ -1953,6 +1953,7 @@ export class PosStore extends Reactive {
         return await user.checkAccessRight("product.product", "create");
     }
     orderDetailsProps(order) {
+        const oldPaymentIds = order.payment_ids.map((p) => p.id);
         return {
             resModel: "pos.order",
             resId: order.id,
@@ -1961,10 +1962,7 @@ export class PosStore extends Reactive {
             },
             onRecordSaved: async (record) => {
                 await this.data.read("pos.order", [record.evalContext.id]);
-                await this.data.read(
-                    "pos.payment",
-                    order.payment_ids.map((p) => p.id)
-                );
+                await this.data.read("pos.payment", oldPaymentIds);
                 this.action.doAction({
                     type: "ir.actions.act_window_close",
                 });
