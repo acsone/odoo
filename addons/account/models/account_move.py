@@ -3788,13 +3788,14 @@ class AccountMove(models.Model):
         return action
 
     def action_send_and_print(self):
+        mail_template = self.env.ref(self._get_mail_template())
         return {
             'name': _('Send Invoice'),
             'res_model': 'account.invoice.send',
             'view_mode': 'form',
             'context': {
                 'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
-                'default_template_id': self.env.ref(self._get_mail_template()).id,
+                'default_template_id': mail_template.id if mail_template else False,
                 'mark_invoice_as_sent': True,
                 'active_model': 'account.move',
                 # Setting both active_id and active_ids is required, mimicking how direct call to
@@ -3811,7 +3812,9 @@ class AccountMove(models.Model):
             message loaded by default
         """
         self.ensure_one()
-        template = self.env.ref(self._get_mail_template(), raise_if_not_found=False)
+        mail_template = self._get_mail_template()
+        if mail_template:
+            template = self.env.ref(mail_template, raise_if_not_found=False)
         lang = False
         if template:
             lang = template._render_lang(self.ids)[self.id]
