@@ -732,10 +732,14 @@ class Partner(models.Model):
             del vals['is_company']
         result = result and super(Partner, self).write(vals)
         for partner in self:
-            if any(u._is_internal() for u in partner.user_ids if u != self.env.user):
+            if any(u._is_internal() and not partner._bypass_check_user_partner_update(vals) for u in partner.user_ids if u != self.env.user):
                 self.env['res.users'].check_access_rights('write')
             partner._fields_sync(vals)
         return result
+
+    def _bypass_check_user_partner_update(self, vals):
+        self.ensure_one()
+        return False
 
     @api.model_create_multi
     def create(self, vals_list):
