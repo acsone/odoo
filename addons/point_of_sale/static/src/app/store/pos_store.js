@@ -1942,7 +1942,7 @@ export class PosStore extends Reactive {
         );
     }
     async allowProductCreation() {
-        return await user.hasGroup("base.group_system");
+        return await user.checkAccessRight("product.product", "create");
     }
     orderDetailsProps(order) {
         return {
