@@ -900,7 +900,8 @@ class Survey(models.Model):
 
         return leaderboard
 
-
+    def _get_mail_template_user_input_invite(self):
+        return self.env.ref('survey.mail_template_user_input_invite', raise_if_not_found=False)
     # ------------------------------------------------------------
     # ACTIONS
     # ------------------------------------------------------------
@@ -921,7 +922,7 @@ class Survey(models.Model):
         if not self.active:
             raise exceptions.UserError(_("You cannot send invitations for closed surveys."))
 
-        template = self.env.ref('survey.mail_template_user_input_invite', raise_if_not_found=False)
+        template = self._get_mail_template_user_input_invite()
 
         local_context = dict(
             self.env.context,
