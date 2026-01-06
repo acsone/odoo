@@ -117,7 +117,6 @@ import functools
 import glob
 import hashlib
 import hmac
-import importlib.metadata
 import inspect
 import json
 import logging
@@ -168,8 +167,8 @@ from .service import security, model as service_model
 from .tools import (config, consteq, date_utils, file_path, parse_version,
                     profiler, submap, unique, ustr,)
 from .tools.geoipresolver import GeoIPResolver
-from .tools.facade import Proxy, ProxyAttr, ProxyFunc
 from .tools.func import filter_kwargs, lazy_property
+from .tools.mimetypes import guess_mimetype
 from .tools.misc import pickle
 from .tools._vendor import sessions
 from .tools._vendor.useragents import UserAgent
@@ -257,7 +256,7 @@ ROUTING_KEYS = {
     'alias', 'host', 'methods',
 }
 
-if parse_version(importlib.metadata.version('werkzeug')) >= parse_version('2.0.2'):
+if parse_version(werkzeug.__version__) >= parse_version('2.0.2'):
     # Werkzeug 2.0.2 adds the websocket option. If a websocket request
     # (ws/wss) is trying to access an HTTP route, a WebsocketMismatch
     # exception is raised. On the other hand, Werkzeug 0.16 does not
@@ -285,25 +284,10 @@ STATIC_CACHE_LONG = 60 * 60 * 24 * 365
 class SessionExpiredException(Exception):
     pass
 
-
-def content_disposition(filename, disposition_type='attachment'):
-    """
-    Craft a ``Content-Disposition`` header, see :rfc:`6266`.
-
-    :param filename: The name of the file, should that file be saved on
-        disk by the browser.
-    :param disposition_type: Tell the browser what to do with the file,
-        either ``"attachment"`` to save the file on disk,
-        either ``"inline"`` to display the file.
-    """
-    if disposition_type not in ('attachment', 'inline'):
-        e = f"Invalid disposition_type: {disposition_type!r}"
-        raise ValueError(e)
-    return "{}; filename*=UTF-8''{}".format(
-        disposition_type,
+def content_disposition(filename):
+    return "attachment; filename*=UTF-8''{}".format(
         url_quote(filename, safe='', unsafe='()<>@,;:"/[]?={}\\*\'%') # RFC6266
     )
-
 
 def db_list(force=False, host=None):
     """
@@ -536,21 +520,8 @@ class Stream:
     @classmethod
     def from_binary_field(cls, record, field_name):
         """ Create a :class:`~Stream`: from a binary field. """
-        data = record[field_name] or b''
-
-        # Image fields enforce base64 encoding. Binary fields don't
-        # enforce anything: raw bytes are fine, expected even.
-        # People nonetheless write base64 encoded bytes inside binary
-        # fields, and expect automatic decoding when read, crazy!
-        with contextlib.suppress(ValueError):
-            data = base64.b64decode(
-                # Some libs add linefeed every X (where X < 79) char in
-                # the base64, for email mime. validate=True would raise
-                # an error for those linefeeds so stip them.
-                data.replace(b'\r', b'').replace(b'\n', b''),
-                validate=True,
-            )
-
+        data_b64 = record[field_name]
+        data = base64.b64decode(data_b64) if data_b64 else b''
         return cls(
             type='data',
             data=data,
@@ -891,8 +862,6 @@ class FilesystemSessionStore(sessions.FilesystemSessionStore):
     """ Place where to load and save session objects. """
     def get_session_filename(self, sid):
         # scatter sessions across 256 directories
-        if not self.is_valid_key(sid):
-            raise ValueError(f'Invalid session id {sid!r}')
         sha_dir = sid[:2]
         dirname = os.path.join(self.path, sha_dir)
         session_path = os.path.join(dirname, sid)
@@ -938,7 +907,7 @@ class FilesystemSessionStore(sessions.FilesystemSessionStore):
 
 class Session(collections.abc.MutableMapping):
     """ Structure containing data persisted across requests. """
-    __slots__ = ('can_save', '_Session__data', 'is_dirty', 'is_new',
+    __slots__ = ('can_save', '_Session__data', 'is_dirty', 'is_explicit', 'is_new',
                  'should_rotate', 'sid')
 
     def __init__(self, data, sid, new=False):
@@ -946,6 +915,7 @@ class Session(collections.abc.MutableMapping):
         self.__data = {}
         self.update(data)
         self.is_dirty = False
+        self.is_explicit = False
         self.is_new = new
         self.should_rotate = False
         self.sid = sid
@@ -1100,9 +1070,7 @@ class HTTPRequest:
     def __init__(self, environ):
         httprequest = werkzeug.wrappers.Request(environ)
         httprequest.user_agent_class = UserAgent  # use vendored userAgent since it will be removed in 2.1
-        httprequest.parameter_storage_class = werkzeug.datastructures.ImmutableMultiDict
-        httprequest.max_form_memory_size = 10 * 1024 * 1024  # 10 MB
-        self._session_id__ = httprequest.cookies.get('session_id')
+        httprequest.parameter_storage_class = werkzeug.datastructures.ImmutableOrderedMultiDict
 
         self.__wrapped = httprequest
         self.__environ = self.__wrapped.environ
@@ -1130,7 +1098,7 @@ for attr in HTTPREQUEST_ATTRIBUTES:
     setattr(HTTPRequest, attr, property(*make_request_wrap_methods(attr)))
 
 
-class _Response(werkzeug.wrappers.Response):
+class Response(werkzeug.wrappers.Response):
     """
     Outgoing HTTP response with body, status, headers and qweb support.
     In addition to the :class:`werkzeug.wrappers.Response` parameters,
@@ -1220,166 +1188,6 @@ class _Response(werkzeug.wrappers.Response):
         super().set_cookie(key, value=value, max_age=max_age, expires=expires, path=path, domain=domain, secure=secure, httponly=httponly, samesite=samesite)
 
 
-class Headers(Proxy):
-    _wrapped__ = werkzeug.datastructures.Headers
-
-    __getitem__ = ProxyFunc()
-    __repr__ = ProxyFunc(str)
-    __setitem__ = ProxyFunc(None)
-    __str__ = ProxyFunc(str)
-    __contains__ = ProxyFunc(bool)
-    add = ProxyFunc(None)
-    add_header = ProxyFunc(None)
-    clear = ProxyFunc(None)
-    copy = ProxyFunc(lambda v: Headers(v))  # noqa: PLW0108
-    extend = ProxyFunc(None)
-    get = ProxyFunc()
-    get_all = ProxyFunc()
-    getlist = ProxyFunc()
-    items = ProxyFunc()
-    keys = ProxyFunc()
-    pop = ProxyFunc()
-    popitem = ProxyFunc()
-    remove = ProxyFunc(None)
-    set = ProxyFunc(None)
-    setdefault = ProxyFunc()
-    to_wsgi_list = ProxyFunc()
-    values = ProxyFunc()
-    if hasattr(werkzeug.datastructures.Headers, "setlist"):
-        # werkzeug >= 1.0
-        setlist = ProxyFunc(None)
-        setlistdefault = ProxyFunc()
-        update = ProxyFunc(None)
-
-
-class ResponseCacheControl(Proxy):
-    _wrapped__ = werkzeug.datastructures.ResponseCacheControl
-
-    __getitem__ = ProxyFunc()
-    __setitem__ = ProxyFunc(None)
-    immutable = ProxyAttr(bool)
-    max_age = ProxyAttr(int)
-    must_revalidate = ProxyAttr(bool)
-    no_cache = ProxyAttr(bool)
-    no_store = ProxyAttr(bool)
-    no_transform = ProxyAttr(bool)
-    public = ProxyAttr(bool)
-    private = ProxyAttr(bool)
-    proxy_revalidate = ProxyAttr(bool)
-    s_maxage = ProxyAttr(int)
-    pop = ProxyFunc()
-
-
-class ResponseStream(Proxy):
-    _wrapped__ = werkzeug.wrappers.ResponseStream
-
-    write = ProxyFunc(int)
-    writelines = ProxyFunc(None)
-    tell = ProxyFunc(int)
-
-
-class Response(Proxy):
-    _wrapped__ = _Response
-
-    # werkzeug.wrappers.Response attributes
-    __call__ = ProxyFunc()
-    add_etag = ProxyFunc(None)
-    age = ProxyAttr()
-    autocorrect_location_header = ProxyAttr(bool)
-    cache_control = ProxyAttr(ResponseCacheControl)
-    call_on_close = ProxyFunc()
-    charset = ProxyAttr(str)
-    content_encoding = ProxyAttr(str)
-    content_length = ProxyAttr(int)
-    content_location = ProxyAttr(str)
-    content_md5 = ProxyAttr(str)
-    content_type = ProxyAttr(str)
-    data = ProxyAttr()
-    default_mimetype = ProxyAttr(str)
-    default_status = ProxyAttr(int)
-    delete_cookie = ProxyFunc(None)
-    direct_passthrough = ProxyAttr(bool)
-    expires = ProxyAttr()
-    force_type = ProxyFunc(lambda v: Response(v))  # noqa: PLW0108
-    freeze = ProxyFunc(None)
-    get_data = ProxyFunc()
-    get_etag = ProxyFunc()
-    headers = ProxyAttr(Headers)
-    is_json = ProxyAttr(bool)
-    is_sequence = ProxyAttr(bool)
-    is_streamed = ProxyAttr(bool)
-    iter_encoded = ProxyFunc()
-    json = ProxyAttr()
-    last_modified = ProxyAttr()
-    location = ProxyAttr(str)
-    make_conditional = ProxyFunc(lambda v: Response(v))  # noqa: PLW0108
-    make_sequence = ProxyFunc(None)
-    max_cookie_size = ProxyAttr(int)
-    mimetype = ProxyAttr(str)
-    response = ProxyAttr()
-    retry_after = ProxyAttr()
-    set_cookie = ProxyFunc(None)
-    set_data = ProxyFunc(None)
-    set_etag = ProxyFunc(None)
-    status = ProxyAttr(str)
-    status_code = ProxyAttr(int)
-    stream = ProxyAttr(ResponseStream)
-    if hasattr(_Response, "get_json"):
-        # werkzeug >= 2.3.0
-        get_json = ProxyFunc()
-
-    # odoo.http._response attributes
-    load = ProxyFunc()
-    set_default = ProxyFunc(None)
-    qcontext = ProxyAttr()
-    template = ProxyAttr(str)
-    is_qweb = ProxyAttr(bool)
-    render = ProxyFunc()
-    flatten = ProxyFunc(None)
-
-    def __init__(self, *args, **kwargs):
-        response = None
-        if len(args) == 1:
-            arg = args[0]
-            if isinstance(arg, Response):
-                response = arg._wrapped__
-            elif isinstance(arg, _Response):
-                response = arg
-            elif isinstance(arg, werkzeug.wrappers.Response):
-                response = _Response.load(arg)
-        if response is None:
-            response = _Response(*args, **kwargs)
-
-        super().__init__(response)
-        if 'set_cookie' in response.__dict__:
-            self.__dict__['set_cookie'] = response.__dict__['set_cookie']
-
-
-__wz_get_response = HTTPException.get_response
-
-
-def get_response(self, environ=None, scope=None):
-    if scope is None:  # compatible with werkzeug 0.16.x
-        return Response(__wz_get_response(self, environ))
-    else:
-        return Response(__wz_get_response(self, environ, scope))  # werkzeug 2.0.2
-
-
-HTTPException.get_response = get_response
-
-
-werkzeug_abort = werkzeug.exceptions.abort
-
-
-def abort(status, *args, **kwargs):
-    if isinstance(status, Response):
-        status = status._wrapped__
-    werkzeug_abort(status, *args, **kwargs)
-
-
-werkzeug.exceptions.abort = abort
-
-
 class FutureResponse:
     """
     werkzeug.Response mock class that only serves as placeholder for
@@ -1424,12 +1232,25 @@ class Request:
         self._post_init = None
 
     def _get_session_and_dbname(self):
-        sid = self.httprequest._session_id__
-        if not sid or not root.session_store.is_valid_key(sid):
+        # The session is explicit when it comes from the query-string or
+        # the header. It is implicit when it comes from the cookie or
+        # that is does not exist yet. The explicit session should be
+        # used in this request only, it should not be saved on the
+        # response cookie.
+        sid = (self.httprequest.args.get('session_id')
+            or self.httprequest.headers.get("X-Openerp-Session-Id"))
+        if sid:
+            is_explicit = True
+        else:
+            sid = self.httprequest.cookies.get('session_id')
+            is_explicit = False
+
+        if sid is None:
             session = root.session_store.new()
         else:
             session = root.session_store.get(sid)
             session.sid = sid  # in case the session was not persisted
+        session.is_explicit = is_explicit
 
         for key, val in get_default_session().items():
             session.setdefault(key, val)
@@ -1625,6 +1446,7 @@ class Request:
             **self.httprequest.form,
             **self.httprequest.files
         }
+        params.pop('session_id', None)
         return params
 
     def get_json_data(self):
@@ -1656,7 +1478,7 @@ class Request:
                         profile_session=self.session.profile_session,
                         collectors=self.session.profile_collectors,
                         params=self.session.profile_params,
-                    )._get_cm_proxy()
+                    )
                 except Exception:
                     _logger.exception("Failure during Profiler creation")
                     self.session.profile_session = None
@@ -1763,8 +1585,17 @@ class Request:
             sess['_geoip'] = self.geoip
             root.session_store.save(sess)
 
+        # We must not set the cookie if the session id was specified
+        # using a http header or a GET parameter.
+        # There are two reasons to this:
+        # - When using one of those two means we consider that we are
+        #   overriding the cookie, which means creating a new session on
+        #   top of an already existing session and we don't want to
+        #   create a mess with the 'normal' session (the one using the
+        #   cookie). That is a special feature of the Javascript Session.
+        # - It could allow session fixation attacks.
         cookie_sid = self.httprequest.cookies.get('session_id')
-        if sess.is_dirty or cookie_sid != sess.sid:
+        if not sess.is_explicit and (sess.is_dirty or cookie_sid != sess.sid):
             self.future_response.set_cookie('session_id', sess.sid, max_age=SESSION_LIFETIME, httponly=True)
 
     def _set_request_dispatcher(self, rule):
@@ -2007,7 +1838,7 @@ class HttpDispatcher(Dispatcher):
             was_connected = session.uid is not None
             session.logout(keep_db=True)
             response = self.request.redirect_query('/web/login', {'redirect': self.request.httprequest.full_path})
-            if was_connected:
+            if not session.is_explicit and was_connected:
                 root.session_store.rotate(session, self.request.env)
                 response.set_cookie('session_id', session.sid, max_age=SESSION_LIFETIME, httponly=True)
             return response
@@ -2293,3 +2124,4 @@ class Application:
 
 
 root = Application()
+
