@@ -630,7 +630,7 @@ const defaultOptions = {
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
   debuggerSrc: {
-    value: "./debugger.js",
+    value: "./debugger.mjs",
     kind: OptionKind.VIEWER
   },
   defaultZoomDelay: {
@@ -827,7 +827,7 @@ const defaultOptions = {
     kind: OptionKind.WORKER
   },
   workerSrc: {
-    value: "../build/pdf.worker.js",
+    value: "../build/pdf.worker.mjs",
     kind: OptionKind.WORKER
   }
 };
@@ -837,7 +837,7 @@ const defaultOptions = {
     kind: OptionKind.VIEWER
   };
   defaultOptions.sandboxBundleSrc = {
-    value: "../build/pdf.sandbox.js",
+    value: "../build/pdf.sandbox.mjs",
     kind: OptionKind.VIEWER
   };
   defaultOptions.viewerCssTheme = {
@@ -1476,11 +1476,9 @@ class BasePreferences {
     enableNewAltTextWhenAddingImage: true,
     enablePermissions: false,
     enablePrintAutoRotate: true,
-    // Odoo: don't support scripting (#115302)
-    enableScripting: false,
+    enableScripting: true,
     enableUpdatedAddImage: false,
-    // Odoo: open links in new tabs to keep odoo document (#84594)
-    externalLinkTarget: 2,
+    externalLinkTarget: 0,
     highlightEditorColors: "yellow=#FFFF98,green=#53FFBC,blue=#80EBFF,pink=#FFCBE6,red=#FF4F5F",
     historyUpdateUrl: false,
     ignoreDestinationZoom: false,
@@ -1499,8 +1497,7 @@ class BasePreferences {
     disableStream: false,
     enableHWA: true,
     enableXfa: true,
-    // Odoo
-    viewerCssTheme: document.cookie.includes("color_scheme=dark") ? 2 : 1,
+    viewerCssTheme: 0
   });
   #initializedPromise = null;
   constructor() {
@@ -7444,8 +7441,6 @@ class PDFPrintService {
     this.pageStyleSheet = document.createElement("style");
     this.pageStyleSheet.textContent = `@page { size: ${width}pt ${height}pt;}`;
     body.append(this.pageStyleSheet);
-    // ODOO PATCH PRINT PREVIEW MOBILE
-    this.hasFinishPrint = null;
   }
   destroy() {
     if (activeService !== this) {
@@ -7512,24 +7507,16 @@ class PDFPrintService {
   }
   performPrint() {
     this.throwIfInactive();
-    // ODOO PATCH PRINT PREVIEW MOBILE
-    const hasFinishPrintPromise = new Promise((resolve) => {
-      if ("afterprint" in window) {
-        this.hasFinishPrint = resolve;
-      } else {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        if (!this.active) {
+          resolve();
+          return;
+        }
+        print.call(window);
         setTimeout(resolve, 20);
-      }
+      }, 0);
     });
-    setTimeout(() => {
-      if (!this.active) {
-        // ODOO PATCH PRINT PREVIEW MOBILE
-        this.hasFinishPrint();
-        return;
-      }
-      print.call(window);
-    }, 0);
-    // ODOO PATCH PRINT PREVIEW MOBILE
-    return hasFinishPrintPromise;
   }
   get active() {
     return this === activeService;
@@ -7564,14 +7551,8 @@ window.print = function () {
       return;
     }
     const activeServiceOnEntry = activeService;
-    // ODOO: FIX MOBILE PRINT PREVIEW
-    const timeBeforeRendering = new Date().getTime();
     activeService.renderPages().then(function () {
-      // ODOO: FIX MOBILE PRINT PREVIEW
-      return Promise.all([
-        activeServiceOnEntry.performPrint(),
-        new Promise(resolve => setTimeout(resolve, 1000 + new Date().getTime() - timeBeforeRendering))
-      ]);
+      return activeServiceOnEntry.performPrint();
     }).catch(function () {}).then(function () {
       if (activeServiceOnEntry.active) {
         abort();
@@ -7612,11 +7593,6 @@ window.addEventListener("keydown", function (event) {
 }, true);
 if ("onbeforeprint" in window) {
   const stopPropagationIfNeeded = function (event) {
-    // ODOO PATCH PRINT PREVIEW MOBILE
-    if (activeService?.hasFinishPrint && event.type === "afterprint") {
-      activeService.hasFinishPrint();
-      return;
-    }
     if (event.detail !== "custom") {
       event.stopImmediatePropagation();
     }
@@ -13901,8 +13877,7 @@ const PDFViewerApplication = {
     });
     pagesPromise.then(() => {
       this._unblockDocumentLoadEvent();
-      // Odoo: don't support scripting (#115302)
-      // this._initializeAutoPrint(pdfDocument, openActionPromise);
+      this._initializeAutoPrint(pdfDocument, openActionPromise);
     }, reason => {
       this._documentError("pdfjs-loading-error", {
         message: reason.message

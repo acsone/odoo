@@ -535,8 +535,12 @@ function isLittleEndian() {
   return view32[0] === 1;
 }
 function isEvalSupported() {
-  // Odoo: don't support scripting
-  return false;
+  try {
+    new Function("");
+    return true;
+  } catch {
+    return false;
+  }
 }
 class util_FeatureTest {
   static get isLittleEndian() {
@@ -12024,7 +12028,7 @@ class PDFWorker {
   static {
     if (isNodeJS) {
       this.#isWorkerDisabled = true;
-      GlobalWorkerOptions.workerSrc ||= "./pdf.worker.js";
+      GlobalWorkerOptions.workerSrc ||= "./pdf.worker.mjs";
     }
     this._isSameOrigin = (baseUrl, otherUrl) => {
       let base;
