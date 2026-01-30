@@ -1086,7 +1086,7 @@ msgstr ""
 #. module: website_slides
 #: model:slide.channel.tag,name:website_slides.slide_channel_tag_level_advanced
 msgid "Advanced"
-msgstr ""
+msgstr "एडवांस"
 
 #. module: website_slides
 #: model:ir.actions.act_window,name:website_slides.slide_channel_action_overview
@@ -1199,7 +1199,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_slides.field_slide_answer__text_value
 #: model:ir.model.fields,field_description:website_slides.field_slide_question__answer_ids
 msgid "Answer"
-msgstr ""
+msgstr "जवाब"
 
 #. module: website_slides
 #: model_terms:ir.ui.view,arch_db:website_slides.view_slide_slide_form
@@ -1726,7 +1726,7 @@ msgstr ""
 #. module: website_slides
 #: model_terms:ir.ui.view,arch_db:website_slides.view_slide_channel_form
 msgid "Communication"
-msgstr ""
+msgstr "कम्यूनिकेशन "
 
 #. module: website_slides
 #: model:gamification.badge,name:website_slides.badge_data_karma
@@ -2387,7 +2387,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:website_slides.view_slide_slide_form
 #, python-format
 msgid "Document"
-msgstr ""
+msgstr "दस्तावेज़"
 
 #. module: website_slides
 #: model:ir.model.fields.selection,name:website_slides.selection__slide_slide__slide_type__doc
@@ -2663,12 +2663,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_slides.field_slide_slide__binary_content
 #: model:ir.model.fields.selection,name:website_slides.selection__slide_slide_resource__resource_type__file
 msgid "File"
-msgstr ""
+msgstr "फ़ाइल"
 
 #. module: website_slides
 #: model:ir.model.fields,field_description:website_slides.field_slide_slide_resource__file_name
 msgid "File Name"
-msgstr ""
+msgstr "फ़ाइल का नाम"
 
 #. module: website_slides
 #. odoo-javascript
@@ -2915,7 +2915,7 @@ msgstr "इन्होंने ग्रुप किया"
 #. module: website_slides
 #: model:ir.model.fields,field_description:website_slides.field_slide_channel_tag_group__name
 msgid "Group Name"
-msgstr ""
+msgstr "ग्रुप का नाम"
 
 #. module: website_slides
 #: model:ir.model.fields,help:website_slides.field_slide_channel__upload_group_ids
@@ -3288,7 +3288,7 @@ msgstr ""
 #. module: website_slides
 #: model:ir.model.fields,field_description:website_slides.field_slide_channel_partner__completed
 msgid "Is Completed"
-msgstr ""
+msgstr "पूरा हो गया है"
 
 #. module: website_slides
 #: model:ir.model.fields,field_description:website_slides.field_slide_channel_invite__is_mail_template_editor
@@ -3640,7 +3640,7 @@ msgstr ""
 #. module: website_slides
 #: model_terms:ir.ui.view,arch_db:website_slides.slide_content_detailed
 msgid "Mark Done"
-msgstr ""
+msgstr "'पूरा हो गया' के तौर पर मार्क करें"
 
 #. module: website_slides
 #. odoo-javascript
@@ -4089,7 +4089,7 @@ msgstr ""
 #. module: website_slides
 #: model_terms:ir.ui.view,arch_db:website_slides.mail_notification_channel_invite
 msgid "Odoo"
-msgstr ""
+msgstr "Odoo"
 
 #. module: website_slides
 #: model_terms:slide.slide,html_content:website_slides.slide_slide_demo_1_4
@@ -4164,12 +4164,12 @@ msgstr ""
 #. module: website_slides
 #: model_terms:ir.ui.view,arch_db:website_slides.view_slide_channel_form
 msgid "Options"
-msgstr ""
+msgstr "विकल्प"
 
 #. module: website_slides
 #: model:ir.model.fields.selection,name:website_slides.selection__slide_slide__slide_type__pdf
 msgid "PDF"
-msgstr ""
+msgstr "पीडीएफ"
 
 #. module: website_slides
 #: model:ir.model.fields,field_description:website_slides.field_slide_slide__document_binary_content
@@ -4513,7 +4513,7 @@ msgstr ""
 #. module: website_slides
 #: model:ir.model.fields,field_description:website_slides.field_slide_channel_invite__partner_ids
 msgid "Recipients"
-msgstr ""
+msgstr "रसीद"
 
 #. module: website_slides
 #. odoo-javascript
@@ -4581,7 +4581,7 @@ msgstr ""
 #: code:addons/website_slides/static/src/xml/slide_quiz.xml:0
 #, python-format
 msgid "Reset"
-msgstr ""
+msgstr "रीसेट करें"
 
 #. module: website_slides
 #. odoo-python
@@ -4646,7 +4646,7 @@ msgstr ""
 #: code:addons/website_slides/static/src/js/slides_upload.js:0
 #, python-format
 msgid "Retry"
-msgstr ""
+msgstr "दोबारा कोशिश करें"
 
 #. module: website_slides
 #: model_terms:ir.ui.view,arch_db:website_slides.private_profile
@@ -5566,7 +5566,7 @@ msgstr ""
 #. module: website_slides
 #: model_terms:ir.ui.view,arch_db:website_slides.view_slide_slide_tree
 msgid "Total"
-msgstr ""
+msgstr "कुल"
 
 #. module: website_slides
 #: model_terms:ir.ui.view,arch_db:website_slides.slide_channel_view_tree_report
@@ -5634,7 +5634,7 @@ msgstr "प्रकार"
 #. module: website_slides
 #: model:ir.model.fields,help:website_slides.field_slide_channel__activity_exception_decoration
 msgid "Type of the exception activity on record."
-msgstr ""
+msgstr "रिकॉर्ड में जो अलग तरह की गतिविधि हुई है, वह किस तरह की है."
 
 #. module: website_slides
 #: model:ir.model.fields,help:website_slides.field_slide_slide__url
@@ -5927,7 +5927,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_slides.field_slide_embed__website_name
 #: model:ir.model.fields,field_description:website_slides.field_slide_slide__website_id
 msgid "Website"
-msgstr ""
+msgstr "वेबसाइट"
 
 #. module: website_slides
 #: model:ir.model.fields.selection,name:website_slides.selection__gamification_challenge__challenge_category__slides
@@ -5938,7 +5938,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:website_slides.field_slide_channel__website_message_ids
 #: model:ir.model.fields,field_description:website_slides.field_slide_slide__website_message_ids
 msgid "Website Messages"
-msgstr ""
+msgstr "वेबसाइट मैसेज"
 
 #. module: website_slides
 #: model:ir.model.fields,field_description:website_slides.field_slide_channel__website_url
@@ -5951,7 +5951,7 @@ msgstr ""
 #: model:ir.model.fields,help:website_slides.field_slide_channel__website_message_ids
 #: model:ir.model.fields,help:website_slides.field_slide_slide__website_message_ids
 msgid "Website communication history"
-msgstr ""
+msgstr "वेबसाइट कम्यूनिकेशन हिस्ट्री"
 
 #. module: website_slides
 #: model:ir.model.fields,field_description:website_slides.field_slide_channel__website_meta_description

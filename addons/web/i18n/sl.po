@@ -16,6 +16,7 @@
 # Jasmina Macur <jasmina@hbs.si>, 2024
 # Martin Trigaux, 2024
 # Katja Deržič, 2024
+# Jan Zorko, 2025
 # Aleš Pipan, 2025
 # 
 msgid ""
@@ -1150,7 +1151,7 @@ msgstr ""
 #: code:addons/web/static/src/core/commands/command_palette.xml:0
 #, python-format
 msgid "CTRL"
-msgstr ""
+msgstr "CTRL"
 
 #. module: web
 #. odoo-javascript
@@ -3383,7 +3384,7 @@ msgstr "Nov dogodek"
 #: code:addons/web/static/src/views/fields/properties/properties_field.xml:0
 #, python-format
 msgid "New Property"
-msgstr ""
+msgstr "Nova lastnost"
 
 #. module: web
 #. odoo-javascript
@@ -3407,7 +3408,7 @@ msgstr "Nova predloga"
 #: code:addons/web/static/src/views/fields/relational_utils.js:0
 #, python-format
 msgid "New:"
-msgstr ""
+msgstr "Novo:"
 
 #. module: web
 #. odoo-javascript
@@ -6651,7 +6652,7 @@ msgstr ""
 #: code:addons/web/static/src/core/domain_selector/domain_selector_branch_operator.xml:0
 #, python-format
 msgid "none"
-msgstr ""
+msgstr "noben"
 
 #. module: web
 #. odoo-javascript

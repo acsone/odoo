@@ -18,7 +18,7 @@ from odoo.addons.resource.models.resource import float_to_time, HOURS_PER_DAY
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tools import float_compare, format_date
 from odoo.tools.float_utils import float_round
-from odoo.tools.misc import format_date
+from odoo.tools.misc import clean_context
 from odoo.tools.translate import _
 from odoo.osv import expression
 
@@ -121,8 +121,8 @@ class HolidaysRequest(models.Model):
             new_values.update([('request_date_from', date_from), ('request_date_to', date_to)])
 
             employee = self.env['hr.employee'].browse(values['employee_id']) if values.get('employee_id') else self.env.user.employee_id
-            default_start_time = self._get_start_or_end_from_attendance(7, datetime.now().date(), employee).time()
-            default_end_time = self._get_start_or_end_from_attendance(19, datetime.now().date(), employee).time()
+            default_start_time = self._get_start_or_end_from_attendance(7, values['date_from'].date(), employee).time()
+            default_end_time = self._get_start_or_end_from_attendance(19, values['date_to'].date(), employee).time()
             if values['date_from'].time() == default_start_time and values['date_to'].time() == default_end_time:
                 attendance_from, attendance_to = self._get_attendances(employee, date_from, date_to)
                 new_values['date_from'] = self._get_start_or_end_from_attendance(attendance_from.hour_from, date_from, employee)
@@ -1100,15 +1100,18 @@ class HolidaysRequest(models.Model):
         meeting_holidays = holidays.filtered(lambda l: l.holiday_status_id.create_calendar_meeting)
         meetings = self.env['calendar.event']
         if meeting_holidays:
+            Meeting = self.env['calendar.event']
+            Meeting.check_access_rights('create')
+            Meeting.check_access_rule('create')
             meeting_values_for_user_id = meeting_holidays._prepare_holidays_meeting_values()
             Meeting = self.env['calendar.event']
             for user_id, meeting_values in meeting_values_for_user_id.items():
-                meetings += Meeting.with_user(user_id or self.env.uid).with_context(
+                meetings += Meeting.with_user(user_id or self.env.uid).sudo().with_context(clean_context({**self.env.context, **dict(
                                 allowed_company_ids=[],
                                 no_mail_to_attendees=True,
                                 calendar_no_videocall=True,
                                 active_model=self._name
-                            ).create(meeting_values)
+                            )})).create(meeting_values)
         Holiday = self.env['hr.leave']
         for meeting in meetings:
             Holiday.browse(meeting.res_id).meeting_id = meeting

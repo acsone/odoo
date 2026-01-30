@@ -200,7 +200,7 @@ msgstr ""
 #. module: account_payment
 #: model:ir.model,name:account_payment.model_payment_link_wizard
 msgid "Generate Sales Payment Link"
-msgstr ""
+msgstr "सेल्स पेमेंट लिंक जनरेट करें"
 
 #. module: account_payment
 #: model:ir.actions.act_window,name:account_payment.action_invoice_order_generate_link
@@ -518,7 +518,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:account_payment.field_account_move__transaction_ids
 #: model:ir.model.fields,field_description:account_payment.field_account_payment__transaction_ids
 msgid "Transactions"
-msgstr ""
+msgstr "ट्रांज़ैक्शन"
 
 #. module: account_payment
 #: model:ir.model.fields,field_description:account_payment.field_payment_refund_wizard__support_refund

@@ -254,7 +254,7 @@ msgstr ""
 #: code:addons/website_links/static/src/js/website_links_charts.js:0
 #, python-format
 msgid "Undefined"
-msgstr ""
+msgstr "अभी तक तय नहीं"
 
 #. module: website_links
 #. odoo-python
@@ -335,4 +335,4 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:website_links.graphs
 #, python-format
 msgid "or"
-msgstr ""
+msgstr " "

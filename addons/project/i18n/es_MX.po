@@ -886,8 +886,7 @@ msgstr "Agregue contactos para compartir el proyecto..."
 #. module: project
 #: model:ir.model.fields,help:project.field_project_share_wizard__note
 msgid "Add extra content to display in the email"
-msgstr ""
-"Agregue contenido adicional para que aparezca en el correo electrónico"
+msgstr "Agrega contenido adicional para que aparezca en el correo electrónico"
 
 #. module: project
 #. odoo-javascript
@@ -2183,7 +2182,7 @@ msgstr "Mal"
 #, python-format
 msgid "Do not have access, skip this data for user's digest email"
 msgstr ""
-"No tiene acceso, omita esta información para el correo electrónico de "
+"No tienes acceso, omite esta información para el correo electrónico de "
 "resumen del usuario"
 
 #. module: project
@@ -2651,8 +2650,7 @@ msgstr "Ideas"
 #: model:ir.model.fields,help:project.field_project_task__message_needaction
 #: model:ir.model.fields,help:project.field_project_update__message_needaction
 msgid "If checked, new messages require your attention."
-msgstr ""
-"Si se encuentra seleccionado, hay nuevos mensajes que requieren su atención."
+msgstr "Si está seleccionado, hay nuevos mensajes que requieren tu atención."
 
 #. module: project
 #: model:ir.model.fields,help:project.field_project_milestone__message_has_error
@@ -2664,8 +2662,7 @@ msgstr ""
 #: model:ir.model.fields,help:project.field_project_update__message_has_error
 #: model:ir.model.fields,help:project.field_project_update__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
-msgstr ""
-"Si se encuentra seleccionado, algunos mensajes presentan un error de envío."
+msgstr "Si está seleccionado, algunos mensajes tienen error de envío."
 
 #. module: project
 #: model:ir.model.fields,help:project.field_project_project_stage__fold
@@ -5604,8 +5601,8 @@ msgid ""
 "The name of the email alias, e.g. 'jobs' if you want to catch emails for "
 "<jobs@example.odoo.com>"
 msgstr ""
-"El nombre del seudónimo de correo electrónico. Por ejemplo, \"trabajos\" si "
-"desea recibir correos electrónicos en <trabajos@ejemplo.odoo.com>."
+"El nombre del seudónimo de correo, por ejemplo, \"vacantes\" para recibir "
+"mensajes en <vacantes@ejemplo.odoo.com>."
 
 #. module: project
 #: model:ir.model.fields,help:project.field_project_project__alias_user_id

@@ -776,7 +776,7 @@ msgstr ""
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.view_mail_mass_mailing_form
 msgid "Add to Templates"
-msgstr ""
+msgstr "Dodaj v predloge"
 
 #. module: mass_mailing
 #. odoo-javascript
@@ -1106,7 +1106,7 @@ msgstr "Na črni listi"
 #. module: mass_mailing
 #: model:ir.model.fields.selection,name:mass_mailing.selection__mailing_trace__failure_type__mail_bl
 msgid "Blacklisted Address"
-msgstr ""
+msgstr "Naslov na črni listi"
 
 #. module: mass_mailing
 #: model:ir.ui.menu,name:mass_mailing.mail_blacklist_mm_menu
@@ -1137,7 +1137,7 @@ msgstr ""
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.snippet_options
 msgid "Bold"
-msgstr ""
+msgstr "Krepko"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_product_list
@@ -1852,7 +1852,7 @@ msgstr "Podvojite bloke in stolpce ter dodajte več funkcij."
 #. module: mass_mailing
 #: model:ir.model.fields.selection,name:mass_mailing.selection__mailing_trace__failure_type__mail_dup
 msgid "Duplicated Email"
-msgstr ""
+msgstr "Podvojena e-pošta"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_coupon_code
@@ -2199,17 +2199,17 @@ msgstr "Glave"
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.snippet_options
 msgid "Heading 1"
-msgstr ""
+msgstr "Naslov 1"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.snippet_options
 msgid "Heading 2"
-msgstr ""
+msgstr "Naslov 2"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.snippet_options
 msgid "Heading 3"
-msgstr ""
+msgstr "Naslov 3"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.snippet_options
@@ -2434,7 +2434,7 @@ msgstr "Je email kampanja aktivirana?"
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.snippet_options
 msgid "Italic"
-msgstr ""
+msgstr "Kurzivno"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.email_designer_snippets
@@ -2562,7 +2562,7 @@ msgstr "Sledilnik povezavam"
 #. module: mass_mailing
 #: model:ir.model,name:mass_mailing.model_link_tracker_click
 msgid "Link Tracker Click"
-msgstr ""
+msgstr "Klik sledilnika povezav"
 
 #. module: mass_mailing
 #. odoo-python
@@ -2639,7 +2639,7 @@ msgstr ""
 #. module: mass_mailing
 #: model:ir.model,name:mass_mailing.model_mail_render_mixin
 msgid "Mail Render Mixin"
-msgstr ""
+msgstr "Mešanica za upodabljanje pošte"
 
 #. module: mass_mailing
 #: model:ir.model,name:mass_mailing.model_ir_mail_server
@@ -3674,7 +3674,7 @@ msgstr "Odstrani iz priljubljenih"
 #: model_terms:ir.ui.view,arch_db:mass_mailing.view_mail_mass_mailing_form
 #, python-format
 msgid "Remove from Templates"
-msgstr ""
+msgstr "Odstrani iz predlog"
 
 #. module: mass_mailing
 #: model:ir.model.fields,field_description:mass_mailing.field_mailing_mailing__render_model
@@ -4586,7 +4586,7 @@ msgstr "UTM vir"
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.snippet_options
 msgid "Underline"
-msgstr ""
+msgstr "Podčrtano"
 
 #. module: mass_mailing
 #: model:ir.model.fields.selection,name:mass_mailing.selection__mailing_trace__failure_type__unknown
@@ -4621,7 +4621,7 @@ msgstr "Posodobite svoje naročnine"
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.mailing_contact_import_view_form
 msgid "Upload a file"
-msgstr ""
+msgstr "Naloži datoteko"
 
 #. module: mass_mailing
 #: model_terms:ir.ui.view,arch_db:mass_mailing.s_text_block
