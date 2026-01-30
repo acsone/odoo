@@ -478,33 +478,33 @@ class HrExpense(models.Model):
                     self.sheet_id.write({'employee_id': vals['employee_id']})
                 elif len(employees) > 1:
                     self.sheet_id = False
-        if 'sheet_id' in vals:
-            # The sheet_id has been modified, either by an explicit write on sheet_id of the expense,
-            # or by processing a command on the sheet's expense_line_ids.
-            # We need to delete the attachments on the previous sheet coming from the expenses that were modified,
-            # and copy the attachments of the expenses to the new sheet,
-            # if it's a no-op (writing same sheet_id as the current sheet_id of the expense),
-            # nothing should be done (no unlink then copy of the same attachments)
-            attachments_to_unlink = self.env['ir.attachment']
-            for expense in self:
-                previous_sheet = expense_to_previous_sheet[expense]
-                checksums = set((expense.attachment_ids - previous_sheet.expense_line_ids.attachment_ids).mapped('checksum'))
-                attachments_to_unlink += previous_sheet.attachment_ids.filtered(lambda att: att.checksum in checksums)
-                if vals['sheet_id'] and expense.sheet_id != previous_sheet:
-                    for attachment in expense.attachment_ids.with_context(sync_attachment=False):
-                        attachment.copy({
-                            'res_model': 'hr.expense.sheet',
-                            'res_id': vals['sheet_id'],
-                        })
-            attachments_to_unlink.with_context(sync_attachment=False).unlink()
+        # if 'sheet_id' in vals:
+        #     # The sheet_id has been modified, either by an explicit write on sheet_id of the expense,
+        #     # or by processing a command on the sheet's expense_line_ids.
+        #     # We need to delete the attachments on the previous sheet coming from the expenses that were modified,
+        #     # and copy the attachments of the expenses to the new sheet,
+        #     # if it's a no-op (writing same sheet_id as the current sheet_id of the expense),
+        #     # nothing should be done (no unlink then copy of the same attachments)
+        #     attachments_to_unlink = self.env['ir.attachment']
+        #     for expense in self:
+        #         previous_sheet = expense_to_previous_sheet[expense]
+        #         checksums = set((expense.attachment_ids - previous_sheet.expense_line_ids.attachment_ids).mapped('checksum'))
+        #         attachments_to_unlink += previous_sheet.attachment_ids.filtered(lambda att: att.checksum in checksums)
+        #         if vals['sheet_id'] and expense.sheet_id != previous_sheet:
+        #             for attachment in expense.attachment_ids.with_context(sync_attachment=False):
+        #                 attachment.copy({
+        #                     'res_model': 'hr.expense.sheet',
+        #                     'res_id': vals['sheet_id'],
+        #                 })
+        #     attachments_to_unlink.with_context(sync_attachment=False).unlink()
         return res
 
     def unlink(self):
-        attachments_to_unlink = self.env['ir.attachment']
-        for sheet in self.sheet_id:
-            checksums = set((sheet.expense_line_ids.attachment_ids & self.attachment_ids).mapped('checksum'))
-            attachments_to_unlink += sheet.attachment_ids.filtered(lambda att: att.checksum in checksums)
-        attachments_to_unlink.with_context(sync_attachment=False).unlink()
+        # attachments_to_unlink = self.env['ir.attachment']
+        # for sheet in self.sheet_id:
+        #     checksums = set((sheet.expense_line_ids.attachment_ids & self.attachment_ids).mapped('checksum'))
+        #     attachments_to_unlink += sheet.attachment_ids.filtered(lambda att: att.checksum in checksums)
+        # attachments_to_unlink.with_context(sync_attachment=False).unlink()
         return super().unlink()
 
     @api.model
