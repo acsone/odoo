@@ -66,8 +66,6 @@ class TestUblExportBis3BE(TestUblBis3Common, TestUblCiiBECommon):
 
     def test_invoice_price_unit_more_decimals(self):
         tax_21 = self.percent_tax(21.0)
-        decimal_precision = self.env['decimal.precision'].search([('name', '=', 'Product Price')], limit=1)
-        decimal_precision.digits = 4
         product = self._create_product(lst_price=0.4567, taxes_id=tax_21)
         invoice = self._create_invoice_one_line(
             product_id=product,
@@ -78,6 +76,27 @@ class TestUblExportBis3BE(TestUblBis3Common, TestUblCiiBECommon):
 
         self._generate_invoice_ubl_file(invoice)
         self._assert_invoice_ubl_file(invoice, 'test_invoice_price_unit_more_decimals')
+
+    def test_invoice_BR_CO_10_line_extension_amount_sum_lines(self):
+        """ [BR_CO_10] Sum of Invoice line net amount (BT-106) = Σ Invoice line net amount (BT-131). """
+        tax_21 = self.percent_tax(21.0)
+        product = self._create_product(lst_price=0.4567, taxes_id=tax_21)
+        invoice = self._create_invoice(
+            partner_id=self.partner_be,
+            invoice_line_ids=[
+                self._prepare_invoice_line(product_id=product),
+                self._prepare_invoice_line(product_id=product),
+                self._prepare_invoice_line(product_id=product),
+                self._prepare_invoice_line(product_id=product),
+                self._prepare_invoice_line(product_id=product),
+                self._prepare_invoice_line(product_id=product),
+                self._prepare_invoice_line(product_id=product, price_unit=1000.45),
+            ],
+            post=True,
+        )
+
+        self._generate_invoice_ubl_file(invoice)
+        self._assert_invoice_ubl_file(invoice, 'test_invoice_BR_CO_10_line_extension_amount_sum_lines')
 
     def test_invoice_price_amount_rounding_precision_with_price_included_taxes(self):
         tax_21 = self.percent_tax(21.0, price_include_override='tax_included')
@@ -132,6 +151,39 @@ class TestUblExportBis3BE(TestUblBis3Common, TestUblCiiBECommon):
 
         self._generate_invoice_ubl_file(invoice)
         self._assert_invoice_ubl_file(invoice, 'test_invoice_tax_reverse_charge')
+
+    def test_invoice_BR_S_08_tax_subtotal_taxable_amount(self):
+        """ [BR-S-08] For each different value of VAT category rate (BT-119) where the VAT category code (BT-118) is "Standard rated",
+        the VAT category taxable amount (BT-116) in a VAT breakdown (BG-23) shall equal the sum of Invoice line net amounts (BT-131)
+        plus the sum of document level charge amounts (BT-99) minus the sum of document level allowance amounts (BT-92)
+        where the VAT category code (BT-151, BT-102, BT-95) is "Standard rated" and the VAT rate (BT-152, BT-103, BT-96)
+        equals the VAT category rate (BT-119)
+
+        Note: There is a tolerance of 1 euro for the delta. This test is only producing a difference of 0.01 so,
+        technically, the xml is still valid.
+        """
+        tax_recupel = self.fixed_tax(1.254, name="RECUPEL", include_base_amount=True)
+        tax_auvibel = self.fixed_tax(1.254, name="AUVIBEL", include_base_amount=True)
+        tax_21 = self.percent_tax(21.0)
+        invoice = self._create_invoice(
+            partner_id=self.partner_be,
+            invoice_line_ids=[
+                self._prepare_invoice_line(
+                    product_id=self.product_a,
+                    price_unit=100.0,
+                    tax_ids=tax_recupel + tax_21,
+                ),
+                self._prepare_invoice_line(
+                    product_id=self.product_a,
+                    price_unit=100.0,
+                    tax_ids=tax_auvibel + tax_21,
+                ),
+            ],
+            post=True,
+        )
+
+        self._generate_invoice_ubl_file(invoice)
+        self._assert_invoice_ubl_file(invoice, 'test_invoice_BR_S_08_tax_subtotal_taxable_amount')
 
     def test_invoice_allowance_charge_fixed_tax_recycling_contribution(self):
         """ Ensure the recycling contribution taxes are turned into allowance/charges at the document line level. """
