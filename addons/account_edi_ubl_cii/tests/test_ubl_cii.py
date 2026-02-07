@@ -136,3 +136,72 @@ class TestAccountEdiUblCii(AccountTestInvoicingCommon):
         xml = self.env['account.edi.xml.ubl_bis3']._export_invoice(new_invoice)[0]
         root = etree.fromstring(xml)
         self.assertEqual(root.findtext('./{*}AccountingCustomerParty/{*}Party/{*}EndpointID'), None)
+
+    def test_import_partner_fields(self):
+        """ We are going to import the e-invoice and check partner is correctly imported."""
+        file_path = "bis3_bill_example.xml"
+        file_path = f"{self.test_module}/tests/test_files/{file_path}"
+        with file_open(file_path, 'rb') as file:
+            xml_attachment = self.env['ir.attachment'].create({
+                'mimetype': 'application/xml',
+                'name': 'test_invoice.xml',
+                'raw': file.read(),
+            })
+
+        bill = self.env['account.journal']\
+                .with_context(default_journal_id=self.company_data["default_journal_purchase"].id)\
+                ._create_document_from_attachment(xml_attachment.id)
+
+        self.assertRecordValues(bill.partner_id, [{
+            'name': "ALD Automotive LU",
+            'phone': False,
+            'email': 'adl@test.com',
+            'vat': 'LU12977109',
+            'street': '270 rte d\'Arlon',
+            'street2': False,
+            'city': 'Strassen',
+            'zip': '8010',
+        }])
+
+    def test_import_bill_without_tax(self):
+        """ Test that no tax is set (even the default one) when importing a bill without tax."""
+        file_path = "bis3_bill_without_tax.xml"
+        file_path = f"{self.test_module}/tests/test_files/{file_path}"
+        with file_open(file_path, 'rb') as file:
+            xml_attachment = self.env['ir.attachment'].create({
+                'mimetype': 'application/xml',
+                'name': 'test_invoice.xml',
+                'raw': file.read(),
+            })
+        purchase_tax = self.env['account.tax'].create({
+            'type_tax_use': 'purchase',
+            'name': 'purchase_tax_10',
+            'amount': 10,
+        })
+        self.company_data['company'].account_purchase_tax_id = purchase_tax
+        bill = self.env['account.journal']\
+                .with_context(default_journal_id=self.company_data['default_journal_purchase'].id)\
+                ._create_document_from_attachment(xml_attachment.id)
+
+        self.assertRecordValues(bill.invoice_line_ids, [{
+            'amount_currency': 100.00,
+            'quantity': 1.0,
+            'tax_ids': self.env['account.tax'],
+        }])
+
+    def test_bank_details_import(self):
+        acc_number = '1234567890'
+        partner_bank = self.env['res.partner.bank'].create({
+            'active': False,
+            'acc_number': acc_number,
+            'partner_id': self.partner_a.id
+        })
+        invoice = self.env['account.move'].create({
+            'partner_id': self.partner_a.id,
+            'move_type': 'in_invoice',
+            'invoice_line_ids': [Command.create({'product_id': self.product_a.id})],
+        })
+        # will not raise sql constraint because the sql is not commited yet
+        self.env['account.edi.common']._import_retrieve_and_fill_partner_bank_details(invoice, [acc_number])
+        self.assertEqual(invoice.partner_bank_id, partner_bank, "Partner bank must be the same")
+        self.assertTrue(partner_bank.active, "Partner bank must be the activated")
