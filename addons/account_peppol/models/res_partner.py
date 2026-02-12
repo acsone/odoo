@@ -90,12 +90,12 @@ class ResPartner(models.Model):
     )
     account_peppol_verification_label = fields.Selection(
         selection=[
-            ('not_verified', 'Not verified yet'),
-            ('not_valid', 'Not valid'),  # does not exist on Peppol at all
-            ('not_valid_format', 'Cannot receive this format'),  # registered on Peppol but cannot receive the selected document type
-            ('valid', 'Valid'),
+            ('not_verified', 'Unchecked'),
+            ('not_valid', 'Partner is not on Peppol'),  # does not exist on Peppol at all
+            ('not_valid_format', 'Partner cannot receive format'),  # registered on Peppol but cannot receive the selected document type
+            ('valid', 'Partner is on Peppol'),
         ],
-        string='Peppol endpoint validity',
+        string='Peppol status',
         compute='_compute_account_peppol_verification_label',
         copy=False,
     )  # field to compute the label to show for partner endpoint
@@ -366,6 +366,10 @@ class ResPartner(models.Model):
         if self.ubl_cii_format == 'nlcius':
             return self.env.ref('account_edi_ubl_cii.edi_nlcius_1', raise_if_not_found=False)
 
+    @api.onchange('ubl_cii_format', 'peppol_endpoint', 'peppol_eas')
+    def _onchange_verify_peppol_status(self):
+        self.button_account_peppol_check_partner_endpoint()
+
     # -------------------------------------------------------------------------
     # COMPUTE METHODS
     # -------------------------------------------------------------------------
@@ -409,6 +413,22 @@ class ResPartner(models.Model):
             else:
                 partner.ubl_cii_format = partner.ubl_cii_format
 
+    def _get_peppol_endpoint_value(self, country_code, field):
+        self.ensure_one()
+        value = field in self._fields and self[field]
+
+        if (
+            country_code == 'BE'
+            and field == 'company_registry'
+            and not value
+            and self.vat
+        ):
+            value = self.vat
+            if value.isalnum():
+                value = value[2:]  # remove the country_code prefix
+
+        return value
+
     @api.depends(lambda self: self._peppol_eas_endpoint_depends() + ['peppol_eas'])
     def _compute_peppol_endpoint(self):
         """ If the EAS changes and a valid endpoint is available, set it. Otherwise, keep the existing value."""
@@ -417,11 +437,9 @@ class ResPartner(models.Model):
             country_code = partner._deduce_country_code()
             if country_code in EAS_MAPPING:
                 field = EAS_MAPPING[country_code].get(partner.peppol_eas)
-                if field \
-                        and field in partner._fields \
-                        and partner[field] \
-                        and not partner._build_error_peppol_endpoint(partner.peppol_eas, partner[field]):
-                    partner.peppol_endpoint = partner[field]
+                value = partner._get_peppol_endpoint_value(country_code, field)
+                if field and value and not partner._build_error_peppol_endpoint(partner.peppol_eas, value):
+                    partner.peppol_endpoint = value
 
     @api.depends(lambda self: self._peppol_eas_endpoint_depends())
     def _compute_peppol_eas(self):
@@ -438,8 +456,9 @@ class ResPartner(models.Model):
                     new_eas = next(iter(EAS_MAPPING[country_code].keys()))
                     # Iterate on the possible EAS until a valid one is found
                     for eas, field in eas_to_field.items():
-                        if field and field in partner._fields and partner[field]:
-                            if not partner._build_error_peppol_endpoint(eas, partner[field]):
+                        if field and field in partner._fields:
+                            value = partner._get_peppol_endpoint_value(country_code, field)
+                            if value and not partner._build_error_peppol_endpoint(eas, value):
                                 new_eas = eas
                                 break
                     partner.peppol_eas = new_eas
