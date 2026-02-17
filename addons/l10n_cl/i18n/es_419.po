@@ -3,13 +3,14 @@
 # * l10n_cl
 #
 # "Dylan Kiss (dyki)" <dyki@odoo.com>, 2025.
+# "Fernanda Alvarez (mfar)" <mfar@odoo.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.5alpha1+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-22 19:01+0000\n"
-"PO-Revision-Date: 2025-11-08 09:32+0000\n"
-"Last-Translator: \"Dylan Kiss (dyki)\" <dyki@odoo.com>\n"
+"PO-Revision-Date: 2026-02-14 09:04+0000\n"
+"Last-Translator: \"Fernanda Alvarez (mfar)\" <mfar@odoo.com>\n"
 "Language-Team: Spanish (Latin America) <https://translate.odoo.com/projects/"
 "odoo-18-l10n/l10n_cl/es_419/>\n"
 "Language: es_419\n"
@@ -17,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.14.3\n"
 
 #. module: l10n_cl
 #: model:ir.model.fields,help:l10n_cl.field_res_partner__l10n_cl_sii_taxpayer_type
@@ -188,10 +189,10 @@ msgid ""
 "identify the kind of document we are working with. (not only related to "
 "account.move, could be for documents of other models like stock.picking)"
 msgstr ""
-"Análogo a account.move.type de Odoo pero con más opciones, permitiendo "
-"identificar el tipo de documento sobre el que estamos trabajando. (no solo "
-"relativo a account.move, podría ser relativo a otros modelos, por ejemplo a "
-"stock.picking)"
+"Análogo a account.move.move_type de Odoo, pero con más opciones que te "
+"permiten identificar el tipo de documento con el que trabajas. (No solo se "
+"relaciona con account.move, también puede aplicar a documentos de otros "
+"modelos como stock.picking)"
 
 #. module: l10n_cl
 #: model:l10n_latam.document.type,report_name:l10n_cl.dc_bl_cemb
@@ -451,7 +452,7 @@ msgstr "Declaración de Ingreso a Zona Franca Primaria"
 #. module: l10n_cl
 #: model:ir.model.fields.selection,name:l10n_cl.selection__l10n_latam_document_type__internal_type__stock_picking
 msgid "Delivery Guide"
-msgstr ""
+msgstr "Guía de despacho"
 
 #. module: l10n_cl
 #: model:res.currency,currency_unit_label:l10n_cl.UF
@@ -479,7 +480,7 @@ msgstr ""
 #. module: l10n_cl
 #: model:ir.model,name:l10n_cl.model_account_tax
 msgid "ETA tax codes mixin"
-msgstr ""
+msgstr "Mixin de códigos fiscales ETA"
 
 #. module: l10n_cl
 #: model:l10n_latam.document.type,name:l10n_cl.dc_nc_f_dte
@@ -1037,7 +1038,7 @@ msgstr "Compras - Monto IVA No Recuperable"
 #. module: l10n_cl
 #: model:account.account.tag,name:l10n_cl.tag_cl_purchase_mnt_iec
 msgid "Purchases - Specific Fuel Tax"
-msgstr ""
+msgstr "Compras - Impuesto específico a los combustibles"
 
 #. module: l10n_cl
 #: model:account.account.tag,name:l10n_cl.tag_cl_purchase_imp_sin_cred
@@ -1371,7 +1372,7 @@ msgstr "Documento origen"
 #. module: l10n_cl
 #: model:account.account.tag,name:l10n_cl.tag_cl_specific_fuel_tax
 msgid "Specific Fuel Tax"
-msgstr ""
+msgstr "Impuesto específico a los combustibles"
 
 #. module: l10n_cl
 #: model:l10n_latam.document.type,name:l10n_cl.dc_res_vn_sf
@@ -1465,7 +1466,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/l10n_cl/models/account_move.py:0
 msgid "The DTE document number (folio) must contain only digits."
-msgstr ""
+msgstr "El número de documento DTE (folio) solo debe contener dígitos."
 
 #. module: l10n_cl
 #: model_terms:ir.ui.view,arch_db:l10n_cl.report_invoice_document

@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-15 18:38+0000\n"
-"PO-Revision-Date: 2026-01-24 18:00+0000\n"
+"POT-Creation-Date: 2026-02-12 18:38+0000\n"
+"PO-Revision-Date: 2026-02-14 18:01+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Slovak <https://translate.odoo.com/projects/odoo-18/account/"
 "sk/>\n"
@@ -8157,7 +8157,7 @@ msgstr "Ako je počítaná celková suma dane na objednávkach a faktúrach"
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.report_invoice_document
 msgid "ICE:"
-msgstr ""
+msgstr "ICE:"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_account__id
@@ -15646,6 +15646,14 @@ msgid "The entry is secured with an inalterable hash."
 msgstr "Záznam je zabezpečený nezmeniteľným hash kódom."
 
 #. module: account
+#. odoo-python
+#: code:addons/account/models/account_move.py:0
+msgid ""
+"The entry is using accounts (%(accounts_codes_names)s) from a different "
+"company."
+msgstr "Záznam používa účty (%(accounts_codes_names)s) z inej spoločnosti."
+
+#. module: account
 #: model:ir.model.fields,help:account.field_product_category__property_account_expense_categ_id
 msgid ""
 "The expense is accounted for when a vendor bill is validated, except in "
@@ -16471,18 +16479,6 @@ msgstr "Tento týždeň"
 #: model:ir.model.fields.selection,name:account.selection__account_report__default_opening_date_filter__this_year
 msgid "This Year"
 msgstr "Tento rok"
-
-#. module: account
-#. odoo-python
-#: code:addons/account/models/account_account.py:0
-msgid ""
-"This account is configured in %(journal_names)s journal(s) (ids %"
-"(journal_ids)s) as payment debit or credit account. This means that this "
-"account's type should be reconcilable."
-msgstr ""
-"Tento účet je nakonfigurovaný v denníkoch %(journal_names)s (ids %"
-"(journal_ids)s) ako debetný alebo kreditný účet. To znamená, že typ tohto "
-"účtu by mal byť párovateľný."
 
 #. module: account
 #. odoo-python
@@ -18422,6 +18418,13 @@ msgstr ""
 
 #. module: account
 #. odoo-python
+#: code:addons/account/models/account_payment.py:0
+msgid ""
+"You cannot change the amount of a payment with multiple liquidity lines."
+msgstr ""
+
+#. module: account
+#. odoo-python
 #: code:addons/account/models/company.py:0
 msgid ""
 "You cannot change the currency of the company since some journal items "
@@ -18804,7 +18807,8 @@ msgstr "Nemôžete zmeniť účet pokiaľ sú otvorené čiastkové párovania."
 #. module: account
 #. odoo-python
 #: code:addons/account/models/account_move.py:0
-msgid "You cannot switch the type of a document which has been posted once."
+msgid ""
+"You cannot switch the type of a document with an existing sequence number."
 msgstr ""
 
 #. module: account
@@ -18922,6 +18926,16 @@ msgstr ""
 "V nastaveniach vašej spoločnosti musíte nakonfigurovať „Denník kurzových "
 "ziskov a strát“, aby sa automaticky spravovalo zaúčtovanie kurzových "
 "rozdielov."
+
+#. module: account
+#. odoo-python
+#: code:addons/account/models/account_journal_dashboard.py:0
+msgid ""
+"You may only use samples in demo mode, try uploading one of your invoices "
+"instead."
+msgstr ""
+"Vzorky môžete použiť iba v demo režime, skúste namiesto toho nahrať jednu zo "
+"svojich faktúr."
 
 #. module: account
 #. odoo-python
@@ -19498,3 +19512,12 @@ msgid ""
 msgstr ""
 "{{ object.company_id.name }} Potvrdenie úhrady (Ref. {{ object.name or 'n/"
 "a' }})"
+
+#~ msgid ""
+#~ "This account is configured in %(journal_names)s journal(s) (ids %"
+#~ "(journal_ids)s) as payment debit or credit account. This means that this "
+#~ "account's type should be reconcilable."
+#~ msgstr ""
+#~ "Tento účet je nakonfigurovaný v denníkoch %(journal_names)s (ids %"
+#~ "(journal_ids)s) ako debetný alebo kreditný účet. To znamená, že typ tohto "
+#~ "účtu by mal byť párovateľný."

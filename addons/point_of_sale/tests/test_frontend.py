@@ -658,6 +658,14 @@ class TestUi(TestPointOfSaleHttpCommon):
         configurable_product = self.env['product.product'].search([('name', '=', 'Configurable Chair'), ('available_in_pos', '=', 'True')], limit=1)
         fabrics_line = configurable_product.attribute_line_ids[2]
         fabrics_line.product_template_value_ids[1].ptav_active = False
+        leather_ptav = fabrics_line.product_template_value_ids[0]
+        metal_ptav = configurable_product.attribute_line_ids[1].product_template_value_ids[0]
+
+        # Create an attribute exclusion for metal, leather chair
+        leather_ptav.exclude_for = [Command.create({
+            'product_tmpl_id': configurable_product.product_tmpl_id.id,
+            'value_ids': [Command.set([metal_ptav.id])],
+        })]
         self.pos_user.write({
             'groups_id': [
                 (4, self.env.ref('stock.group_stock_manager').id),
@@ -679,6 +687,9 @@ class TestUi(TestPointOfSaleHttpCommon):
         '''Consider this test method to contain a test tour with miscellaneous tests/checks that require admin access.
         '''
         self.product_a.available_in_pos = True
+        self.main_pos_config.write({
+            'is_margins_costs_accessible_to_every_user': True,
+        })
         self.assertFalse(self.product_a.is_storable)
         self.main_pos_config.with_user(self.pos_admin).open_ui()
         self.start_tour("/pos/ui?config_id=%d" % self.main_pos_config.id, 'CheckProductInformation', login="pos_admin")
@@ -2306,6 +2317,56 @@ class TestUi(TestPointOfSaleHttpCommon):
         """ Test that adding a new payment line doesn't duplicate it on the receipt """
         self.main_pos_config.with_user(self.pos_admin).open_ui()
         self.start_pos_tour('test_receipt_screen_edit_payment_lines', login="pos_admin")
+
+    def test_not_available_pricelist_not_set_on_order(self):
+        """ Test that when the pricelist is not available, it is not set on the order """
+        not_available_pricelist, available_pricelist = self.env['product.pricelist'].create([{
+            'name': 'Not Available Pricelist',
+        }, {
+            'name': 'Available Pricelist',
+        }])
+
+        self.main_pos_config.write({
+            'available_pricelist_ids': [(4, available_pricelist.id)],
+            'pricelist_id': available_pricelist.id,
+        })
+        self.main_pos_config.with_user(self.pos_user).open_ui()
+        pos_session = self.main_pos_config.current_session_id
+
+        partner = self.env['res.partner'].create({
+            'name': 'AA Customer',
+            'property_product_pricelist': not_available_pricelist.id,
+        })
+
+        order = self.env['pos.order'].create({
+            'company_id': self.env.company.id,
+            'session_id': pos_session.id,
+            'partner_id': partner.id,
+            'config_id': self.main_pos_config.id,
+            'lines': [(0, 0, {
+                'name': 'OL/0001',
+                'product_id': self.wall_shelf.id,
+                'price_unit': 10.00,
+                'discount': 0,
+                'qty': 1,
+                'tax_ids': False,
+                'price_subtotal': 10.00,
+                'price_subtotal_incl': 10.00,
+            })],
+            'pricelist_id': not_available_pricelist.id,
+            'amount_paid': 10.00,
+            'amount_total': 10.00,
+            'amount_tax': 0.0,
+            'amount_return': 0.0,
+            'to_invoice': False,
+            'pos_reference': 'Test/0001',
+        })
+        order.action_pos_order_paid()
+
+        self.start_tour(f"/pos/ui?config_id={self.main_pos_config.id}", 'test_not_available_pricelist_not_set_on_order', login="pos_user")
+
+        created_order = self.env['pos.order'].search([('partner_id', '=', partner.id)], limit=1)
+        self.assertNotEqual(created_order.pricelist_id, not_available_pricelist)
 
 
 # This class just runs the same tests as above but with mobile emulation

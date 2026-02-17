@@ -167,11 +167,6 @@ class AccountMove(models.Model):
         else:
             return super()._get_invoice_reference_odoo_invoice()
 
-    def _get_l10n_hr_fiscal_user_id_domain(self):
-        internal_users = self.env.ref('base.group_user')
-        domain = [('user_ids', 'in', internal_users.users.ids)]
-        return domain
-
     def _post(self, soft=True):
         for move in self:
             if move.country_code == 'HR' and move.is_sale_document():
@@ -211,23 +206,32 @@ class AccountMove(models.Model):
         self.ensure_one()
         if self.is_sale_document():
             response_mer = _mer_api_query_document_process_status_outbox(self.company_id, electronic_id=self.l10n_hr_mer_document_eid)[0]
-            response_fisc = _mer_api_check_fiscalization_status_outbox(self.company_id, electronic_id=self.l10n_hr_mer_document_eid)[0]
+            response_fisc = _mer_api_check_fiscalization_status_outbox(self.company_id, electronic_id=self.l10n_hr_mer_document_eid)
+            if isinstance(response_fisc, list):
+                response_fisc = {} if len(response_fisc) == 0 else response_fisc[0]
         elif self.is_purchase_document():
             response_mer = _mer_api_query_document_process_status_inbox(self.company_id, electronic_id=self.l10n_hr_mer_document_eid)[0]
-            response_fisc = _mer_api_check_fiscalization_status_inbox(self.company_id, electronic_id=self.l10n_hr_mer_document_eid)[0]
+            response_fisc = _mer_api_check_fiscalization_status_inbox(self.company_id, electronic_id=self.l10n_hr_mer_document_eid)
+            if isinstance(response_fisc, list):
+                response_fisc = {} if len(response_fisc) == 0 else response_fisc[0]
         else:
             return
-        self.l10n_hr_edi_addendum_id.write({
+        write_dict = {
             'mer_document_status': str(response_mer.get('StatusId')),
             'business_document_status': str(response_mer.get('DocumentProcessStatusId')),
-            'fiscalization_status': str(response_fisc['messages'][-1].get('status')),
-            'fiscalization_error': str(response_fisc['messages'][-1].get('errorCode') + ' - ' + response_fisc['messages'][-1].get('errorCodeDescription')),
-            'fiscalization_request': str(response_fisc['messages'][-1].get('fiscalizationRequestId')),
-            'business_status_reason': str(response_fisc['messages'][-1].get('businessStatusReason')),
-            'fiscalization_channel_type': str(response_fisc.get('channelType')),
-        })
+        }
+        if response_fisc:
+            write_dict.update({
+                'fiscalization_status': str(response_fisc['messages'][-1].get('status')),
+                'fiscalization_error': str(response_fisc['messages'][-1].get('errorCode') + ' - ' + response_fisc['messages'][-1].get('errorCodeDescription')),
+                'fiscalization_request': str(response_fisc['messages'][-1].get('fiscalizationRequestId')),
+                'business_status_reason': str(response_fisc['messages'][-1].get('businessStatusReason')),
+                'fiscalization_channel_type': str(response_fisc.get('channelType')),
+            })
+        self.l10n_hr_edi_addendum_id.write(write_dict)
 
     def l10n_hr_edi_mer_action_report_paid(self):
+        batch = len(self) != 1
         for move in self:
             if not move.l10n_hr_mer_document_eid:
                 continue
@@ -243,19 +247,25 @@ class AccountMove(models.Model):
                         move.l10n_hr_payment_method_type,
                     )
                 except MojEracunServiceError:
-                    _logger.error("Failed to report payments document: %s", move.l10n_hr_mer_document_eid)
-                    continue
+                    if batch:
+                        _logger.error("Failed to report payments document: %s", move.l10n_hr_mer_document_eid)
+                        continue
+                    else:
+                        raise
                 move.l10n_hr_edi_addendum_id.payment_reported_amount += amount_to_report
                 move.l10n_hr_edi_addendum_id.fiscalization_request = response.get('fiscalizationRequestId')
-                attachment = self.env["ir.attachment"].create(
-                    {
-                        "name": f"mojeracun_{response['electronicId']}_payment.xml",
-                        "raw": response['encodedXml'],
-                        "type": "binary",
-                        "mimetype": "application/xml",
-                    }
-                )
-                attachment.write({'res_model': 'account.move', 'res_id': move.id})
+                if response.get('encodedXml'):
+                    attachment = self.env["ir.attachment"].create(
+                        {
+                            "name": f"mojeracun_{response['electronicId']}_payment.xml",
+                            "raw": response['encodedXml'],
+                            "type": "binary",
+                            "mimetype": "application/xml",
+                        }
+                    )
+                    attachment.write({'res_model': 'account.move', 'res_id': move.id})
+                else:
+                    attachment = False
                 move._message_log(
                     body=self.env._(
                         "%(ts)s: Payments for eRacun document (ElectroicId: %(eid)s) in the amount of %(mnt)s EUR has been reported successfully. (Request ID: %(req_id)s)",
@@ -264,7 +274,7 @@ class AccountMove(models.Model):
                         mnt=amount_to_report,
                         req_id=response['fiscalizationRequestId'],
                     ),
-                    attachment_ids=attachment.ids,
+                    attachment_ids=attachment.ids if attachment else False,
                 )
                 _mer_api_update_document_process_status(
                     move.company_id,

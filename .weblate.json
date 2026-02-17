@@ -2676,6 +2676,12 @@
                 "language_regex": "^(pl)$"
             },
             {
+                "name": "l10n_pl_edi",
+                "filemask": "addons/l10n_pl_edi/i18n/*.po",
+                "new_base": "addons/l10n_pl_edi/i18n/l10n_pl_edi.pot",
+                "language_regex": "^(pl)$"
+            },
+            {
                 "name": "l10n_pl_taxable_supply_date",
                 "filemask": "addons/l10n_pl_taxable_supply_date/i18n/*.po",
                 "new_base": "addons/l10n_pl_taxable_supply_date/i18n/l10n_pl_taxable_supply_date.pot",
@@ -2697,6 +2703,12 @@
                 "name": "l10n_ro",
                 "filemask": "addons/l10n_ro/i18n/*.po",
                 "new_base": "addons/l10n_ro/i18n/l10n_ro.pot",
+                "language_regex": "^(ro)$"
+            },
+            {
+                "name": "l10n_ro_cpv_code",
+                "filemask": "addons/l10n_ro_cpv_code/i18n/*.po",
+                "new_base": "addons/l10n_ro_cpv_code/i18n/l10n_ro_cpv_code.pot",
                 "language_regex": "^(ro)$"
             },
             {
