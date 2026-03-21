@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-22 18:37+0000\n"
-"PO-Revision-Date: 2026-02-21 08:10+0000\n"
+"PO-Revision-Date: 2026-03-21 08:06+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Burmese <https://translate.odoo.com/projects/odoo-17/"
 "spreadsheet/my/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.14.3\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -2767,7 +2767,7 @@ msgstr "စစ်ထုတ်ခြင်းများ"
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Financial"
-msgstr ""
+msgstr "ဘဏ္ဍာရေး"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -4168,7 +4168,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/errors.js:0
 #, python-format
 msgid "Loading..."
-msgstr ""
+msgstr "လုပ်နေသည်...."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -4885,7 +4885,7 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Operator"
-msgstr ""
+msgstr "အော်ပရေတာ"
 
 #. module: spreadsheet
 #. odoo-javascript

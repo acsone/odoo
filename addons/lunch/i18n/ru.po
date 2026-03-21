@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-29 18:37+0000\n"
+"POT-Creation-Date: 2026-03-20 18:36+0000\n"
 "PO-Revision-Date: 2023-10-26 23:09+0000\n"
 "Last-Translator: Ilya Rozhkov, 2024\n"
 "Language-Team: Russian (https://app.transifex.com/odoo/teams/41243/ru/)\n"
@@ -1451,32 +1451,32 @@ msgid "Lunch: Supplier Order"
 msgstr "Обед: Заказ поставщика"
 
 #. module: lunch
-#: model:ir.actions.server,name:lunch.lunch_alert_cron_sa_218
+#: model:ir.actions.server,name:lunch.lunch_alert_cron_sa_219
 msgid "Lunch: alert chat notification (Alert for Office 3)"
 msgstr "Обед: оповещение в чате (оповещение для Office 3)"
 
 #. module: lunch
-#: model:ir.actions.server,name:lunch.lunch_supplier_cron_sa_219
+#: model:ir.actions.server,name:lunch.lunch_supplier_cron_sa_220
 msgid "Lunch: send automatic email to Coin gourmand"
 msgstr "Обед: отправить автоматическое письмо в Coin gourmand"
 
 #. module: lunch
-#: model:ir.actions.server,name:lunch.lunch_supplier_cron_sa_214
+#: model:ir.actions.server,name:lunch.lunch_supplier_cron_sa_215
 msgid "Lunch: send automatic email to Lunch Supplier"
 msgstr "Обед: отправьте автоматическое письмо поставщику обеда"
 
 #. module: lunch
-#: model:ir.actions.server,name:lunch.lunch_supplier_cron_sa_220
+#: model:ir.actions.server,name:lunch.lunch_supplier_cron_sa_221
 msgid "Lunch: send automatic email to Pizza Inn"
 msgstr "Обед: отправить автоматическое письмо в Pizza Inn"
 
 #. module: lunch
-#: model:ir.actions.server,name:lunch.lunch_supplier_cron_sa_222
+#: model:ir.actions.server,name:lunch.lunch_supplier_cron_sa_223
 msgid "Lunch: send automatic email to Sushi Shop"
 msgstr "Обед: отправьте автоматическое письмо в магазин \"Суши"
 
 #. module: lunch
-#: model:ir.actions.server,name:lunch.lunch_supplier_cron_sa_221
+#: model:ir.actions.server,name:lunch.lunch_supplier_cron_sa_222
 msgid "Lunch: send automatic email to The Corner"
 msgstr "Обед: автоматическая отправка электронной почты в The Corner"
 

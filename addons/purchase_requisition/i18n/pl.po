@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-29 18:38+0000\n"
-"PO-Revision-Date: 2026-01-17 08:18+0000\n"
+"PO-Revision-Date: 2026-03-21 08:05+0000\n"
 "Last-Translator: \"Marta (wacm)\" <wacm@odoo.com>\n"
 "Language-Team: Polish <https://translate.odoo.com/projects/odoo-17/"
 "purchase_requisition/pl/>\n"
@@ -21,14 +21,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
-"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || "
-"(n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
-"X-Generator: Weblate 5.14.3\n"
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.report_purchaserequisition_document
 msgid "$50"
-msgstr "50 USD"
+msgstr "$50"
 
 #. module: purchase_requisition
 #: model:ir.actions.report,print_report_name:purchase_requisition.action_report_purchase_requisitions
@@ -123,7 +123,7 @@ msgstr "Aktywne"
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__activity_ids
 msgid "Activities"
-msgstr "Czynności"
+msgstr "Aktywności"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__activity_exception_decoration
@@ -161,17 +161,17 @@ msgstr "Typ wyboru umowy"
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition_type__name
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.view_purchase_requisition_type_form
 msgid "Agreement Type"
-msgstr "Typ Kontraktu"
+msgstr "Typ umowy"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.report_purchaserequisition_document
 msgid "Agreement00004"
-msgstr ""
+msgstr "Umowa00004"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.report_purchaserequisition_document
 msgid "Agreement:"
-msgstr ""
+msgstr "Umowa:"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_order__alternative_po_ids
@@ -319,12 +319,12 @@ msgstr "Firma"
 #: code:addons/purchase_requisition/models/purchase.py:0
 #, python-format
 msgid "Compare Order Lines"
-msgstr "Porównanie linii zamówień"
+msgstr "Porównaj pozycje zamówień"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.purchase_order_form_inherit
 msgid "Compare Product Lines"
-msgstr "Porównanie linii produktów"
+msgstr "Porównaj pozycje produktów"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.view_purchase_requisition_form
@@ -350,7 +350,7 @@ msgstr ""
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition_create_alternative__copy_products
 msgid "Copy Products"
-msgstr "Kopiowanie produktów"
+msgstr "Kopiuj produkty"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.purchase_order_form_inherit
@@ -368,6 +368,13 @@ msgid ""
 "                            By comparing product lines you can also decide "
 "to order some products from one vendor and others from another vendor."
 msgstr ""
+"Utwórz zapytanie ofertowe, dodając alternatywne zapytania ofertowe do "
+"różnych dostawców.\n"
+"                                 Dokonaj wyboru, wybierając najlepszą "
+"kombinację czasu realizacji, OTD i/lub całkowitej kwoty.\n"
+"                                 Porównując pozycje produktów, możesz "
+"również zdecydować się na zamówienie niektórych produktów od jednego "
+"dostawcy, a innych od innego."
 
 #. module: purchase_requisition
 #. odoo-python
@@ -454,24 +461,24 @@ msgstr "Nie twórz linii RfQ automatycznie"
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.view_purchase_requisition_filter
 msgid "Done"
-msgstr "Wykonano"
+msgstr "Gotowe"
 
 #. module: purchase_requisition
 #: model:ir.model.fields.selection,name:purchase_requisition.selection__purchase_requisition__state__draft
 #: model:ir.model.fields.selection,name:purchase_requisition.selection__purchase_requisition__state_blanket_order__draft
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.view_purchase_requisition_filter
 msgid "Draft"
-msgstr "Projekt"
+msgstr "Wersja robocza"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__message_follower_ids
 msgid "Followers"
-msgstr "Obserwatorzy"
+msgstr "Obserwujący"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__message_partner_ids
 msgid "Followers (Partners)"
-msgstr "Obserwatorzy (partnerzy)"
+msgstr "Obserwujący (partnerzy)"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,help:purchase_requisition.field_purchase_requisition__activity_type_icon
@@ -486,16 +493,15 @@ msgid ""
 "benefit\n"
 "            from the negotiated prices."
 msgstr ""
-"W przypadku zamówienia zbiorczego można zarejestrować umowę na określony "
-"okres (np. rok) i zamówić produkty w ramach tej umowy.\n"
-"(np. rok) i zamówić produkty w ramach tej umowy, aby skorzystać z "
-"wynegocjowanych cen.\n"
-"z wynegocjowanych cen."
+"W przypadku zamówienia zbiorczego można zawrzeć umowę na określony okres\n"
+"            (np. rok) i zamawiać produkty w ramach tej umowy i płacić za "
+"nie\n"
+"            wcześniej wynegocjowaną, stałą cenę."
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.view_purchase_requisition_filter
 msgid "Future Activities"
-msgstr "Przyszłe czynności"
+msgstr "Przyszłe aktywności"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.view_purchase_requisition_filter
@@ -576,7 +582,7 @@ msgstr "W negocjacjach"
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__message_is_follower
 msgid "Is Follower"
-msgstr "Jest obserwatorem"
+msgstr "Jest obserwującym"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.purchase_requisition_alternative_warning_form
@@ -591,7 +597,7 @@ msgstr "Zachowaj alternatywy"
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition_line__write_uid
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition_type__write_uid
 msgid "Last Updated by"
-msgstr "Ostatnio aktualizowane przez"
+msgstr "Ostatnio zaktualizowane przez"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_order_group__write_date
@@ -656,29 +662,29 @@ msgstr "Nowa oferta"
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__activity_calendar_event_id
 msgid "Next Activity Calendar Event"
-msgstr "Następna Czynność wydarzenia w kalendarzu"
+msgstr "Następna aktywność wydarzenia w kalendarzu"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__activity_date_deadline
 msgid "Next Activity Deadline"
-msgstr "Termin kolejnej czynności"
+msgstr "Termin kolejnej aktywności"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__activity_summary
 msgid "Next Activity Summary"
-msgstr "Podsumowanie kolejnej czynności"
+msgstr "Podsumowanie kolejnej aktywności"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__activity_type_id
 msgid "Next Activity Type"
-msgstr "Typ następnej czynności"
+msgstr "Typ następnej aktywności"
 
 #. module: purchase_requisition
 #. odoo-python
 #: code:addons/purchase_requisition/models/purchase.py:0
 #, python-format
 msgid "Nothing to clear"
-msgstr "Nic do czyszczenia"
+msgstr "Nic do wyczyszczenia"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__message_needaction_counter
@@ -735,7 +741,7 @@ msgstr "Pochodzenie"
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition_create_alternative__origin_po_id
 msgid "Origin Po"
-msgstr "Pochodzenie Po"
+msgstr "Oryginalne zamówienie"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,help:purchase_requisition.field_purchase_order__alternative_po_ids
@@ -745,12 +751,12 @@ msgstr "Inne potencjalne zamówienia zakupu produktów"
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.report_purchaserequisition_document
 msgid "PO000042"
-msgstr ""
+msgstr "PO000042"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition_alternative_warning__po_ids
 msgid "POs to Confirm"
-msgstr "PO do potwierdzenia"
+msgstr "Zamówienia do potwierdzenia"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.report_purchaserequisition_document
@@ -777,7 +783,7 @@ msgstr "Wariant produktu"
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.report_purchaserequisition_document
 msgid "Product description"
-msgstr ""
+msgstr "Opis produktu"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.report_purchaserequisition_document
@@ -889,7 +895,7 @@ msgstr "Oceny"
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.purchase_requisition_alternative_warning_form
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.view_purchase_requisition_filter
 msgid "Reference"
-msgstr "Odnośnik"
+msgstr "Referencja"
 
 #. module: purchase_requisition
 #: model:ir.actions.act_window,name:purchase_requisition.action_purchase_requisition_to_so
@@ -899,7 +905,7 @@ msgstr "Zapytanie ofertowe"
 #. module: purchase_requisition
 #: model:ir.actions.act_window,name:purchase_requisition.action_purchase_requisition_list
 msgid "Request for Quotations"
-msgstr "Dokonaj zapytania ofertowego"
+msgstr "Zapytanie ofertowe"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.report_purchaserequisition_document
@@ -914,7 +920,7 @@ msgstr "Zlecenie"
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.view_purchase_requisition_form
 msgid "Reset to Draft"
-msgstr "Przywróć do projektu"
+msgstr "Przywróć do wersji roboczej"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__activity_user_id
@@ -991,7 +997,7 @@ msgstr ""
 #: code:addons/purchase_requisition/models/purchase.py:0
 #, python-format
 msgid "Some not cleared"
-msgstr "Niektóre nie zostały wyczyszczone"
+msgstr "Niektóre niewyczyszczone"
 
 #. module: purchase_requisition
 #. odoo-python
@@ -1011,7 +1017,7 @@ msgstr "Dokument źródłowy"
 #. module: purchase_requisition
 #: model_terms:ir.actions.act_window,help:purchase_requisition.action_purchase_requisition
 msgid "Start a new purchase agreement"
-msgstr "Rozpoczęcie nowej umowy zakupu"
+msgstr "Rozpoczęcie nowej umowy kupna"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__state_blanket_order
@@ -1032,10 +1038,10 @@ msgid ""
 "Today: Activity date is today\n"
 "Planned: Future activities."
 msgstr ""
-"Status na podstawie czynności\n"
+"Status na podstawie aktywności\n"
 "Zaległe: Termin już minął\n"
-"Dzisiaj: Data czynności przypada na dzisiaj\n"
-"Zaplanowane: Przyszłe czynności."
+"Dzisiaj: Data aktywności przypada na dzisiaj\n"
+"Zaplanowane: Przyszłe aktywności."
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition_line__supplier_info_ids
@@ -1051,7 +1057,8 @@ msgstr "Cennik dostawcy"
 #: model:ir.model,name:purchase_requisition.model_purchase_order_group
 msgid "Technical model to group PO for call to tenders"
 msgstr ""
-"Model techniczny do grupowania PO na potrzeby zaproszenia do składania ofert"
+"Model techniczny do grupowania zamówień na potrzeby zaproszenia do składania "
+"ofert"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.view_purchase_requisition_form
@@ -1101,7 +1108,7 @@ msgid ""
 "complete this open blanket order, instead of creating a new one."
 msgstr ""
 "Istnieje już otwarte zamówienie zbiorcze dla tego dostawcy. Sugerujemy "
-"wypełnienie tego otwartego zamówienia zbiorczego zamiast tworzenia nowego."
+"dokończenie tego otwartego zamówienia zbiorczego zamiast tworzenia nowego."
 
 #. module: purchase_requisition
 #. odoo-python
@@ -1120,11 +1127,15 @@ msgid ""
 "Imagine the mess if someone confirms these duplicates: double the order, "
 "double the trouble :)"
 msgstr ""
+"Aby zamknąć to zlecenie zakupu, anuluj powiązane zapytania ofertowe.\n"
+"\n"
+"Wyobraź sobie bałagan, gdyby ktoś potwierdził te duplikaty: podwójne "
+"zamówienie, podwójny kłopot :)"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.view_purchase_requisition_filter
 msgid "Today Activities"
-msgstr "Dzisiejsze czynności"
+msgstr "Dzisiejsze aktywności"
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.purchase_order_line_compare_tree
@@ -1134,7 +1145,7 @@ msgstr "Suma"
 #. module: purchase_requisition
 #: model:ir.model.fields,help:purchase_requisition.field_purchase_requisition__activity_exception_decoration
 msgid "Type of the exception activity on record."
-msgstr "Typ wyjątku działania na rekordzie."
+msgstr "Typ wyjątku aktywności na rekordzie."
 
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.report_purchaserequisition_document
@@ -1176,7 +1187,7 @@ msgstr "Dostawca"
 #. module: purchase_requisition
 #: model_terms:ir.ui.view,arch_db:purchase_requisition.report_purchaserequisition_document
 msgid "Vendor Name"
-msgstr ""
+msgstr "Nazwa dostawcy"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition_create_alternative__purchase_warn_msg
@@ -1210,7 +1221,7 @@ msgstr ""
 #: code:addons/purchase_requisition/models/purchase_requisition.py:0
 #, python-format
 msgid "Warning for %s"
-msgstr "Ostrzeżenie do %s"
+msgstr "Ostrzeżenie %s"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,field_description:purchase_requisition.field_purchase_requisition__website_message_ids
@@ -1227,7 +1238,7 @@ msgstr "Historia komunikacji"
 #: code:addons/purchase_requisition/models/purchase.py:0
 #, python-format
 msgid "What about the alternative Requests for Quotations?"
-msgstr ""
+msgstr "A co z alternatywnymi zapytaniami ofertowymi?"
 
 #. module: purchase_requisition
 #: model:ir.model.fields,help:purchase_requisition.field_purchase_order__has_alternatives
@@ -1242,7 +1253,8 @@ msgstr ""
 #: model:ir.model,name:purchase_requisition.model_purchase_requisition_alternative_warning
 msgid "Wizard in case PO still has open alternative requests for quotation"
 msgstr ""
-"Kreator w przypadku, gdy PO nadal ma otwarte alternatywne zapytania ofertowe"
+"Kreator w przypadku, gdy zamówienie nadal ma otwarte alternatywne zapytania "
+"ofertowe"
 
 #. module: purchase_requisition
 #: model:ir.model,name:purchase_requisition.model_purchase_requisition_create_alternative

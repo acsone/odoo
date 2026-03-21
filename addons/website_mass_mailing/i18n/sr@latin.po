@@ -4,13 +4,13 @@
 #
 # Translators:
 # Martin Trigaux <mat@odoo.com>, 2017
-# Weblate <noreply-mt-weblate@weblate.org>, 2025.
+# Weblate <noreply-mt-weblate@weblate.org>, 2025, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.saas~18\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-29 18:38+0000\n"
-"PO-Revision-Date: 2025-11-18 13:56+0000\n"
+"PO-Revision-Date: 2026-03-21 08:05+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Serbian (Latin script) <https://translate.odoo.com/projects/"
 "odoo-17/website_mass_mailing/sr_Latn/>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.12.2\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.newsletter_subscribe_options
@@ -51,6 +51,9 @@ msgid ""
 "span>\n"
 "                                <span class=\"s_website_form_mark\"> *</span>"
 msgstr ""
+"<span class=\"s_website_form_label_content\">Slažem se da primam novosti</"
+"span>\n"
+"                                <span class=\"s_website_form_mark\"> *</span>"
 
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.s_newsletter_block_form_template
@@ -58,6 +61,8 @@ msgid ""
 "<span class=\"s_website_form_label_content\">Subscribe to</span>\n"
 "                                <span class=\"s_website_form_mark\"> *</span>"
 msgstr ""
+"<span class=\"s_website_form_label_content\">Pretplatite se na</span>\n"
+"                                <span class=\"s_website_form_mark\"> *</span>"
 
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.s_newsletter_block_form_template
@@ -76,7 +81,7 @@ msgstr ""
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.s_newsletter_subscribe_popup
 msgid "Always <b>First</b>."
-msgstr ""
+msgstr "Uvek <b>prvi</b>."
 
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.s_newsletter_block_default_template
@@ -93,6 +98,7 @@ msgstr ""
 msgid ""
 "Be the first to find out all the latest news,<br/> products, and trends."
 msgstr ""
+"Budite prvi koji će saznati sve najnovije vesti,<br/> proizvode i trendove."
 
 #. module: website_mass_mailing
 #. odoo-javascript
@@ -123,7 +129,7 @@ msgstr ""
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.newsletter_subscribe_options
 msgid "Email Subscription"
-msgstr ""
+msgstr "Email pretplata"
 
 #. module: website_mass_mailing
 #. odoo-javascript
@@ -142,7 +148,7 @@ msgstr ""
 #: code:addons/website_mass_mailing/controllers/website_form.py:0
 #, python-format
 msgid "Mailing List(s) not found!"
-msgstr ""
+msgstr "Mailing lista(e) nije pronađena!"
 
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.newsletter_subscribe_options_common
@@ -153,12 +159,12 @@ msgstr "Novine"
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.snippets
 msgid "Newsletter Block"
-msgstr ""
+msgstr "Newsletter blok"
 
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.snippets
 msgid "Newsletter Popup"
-msgstr ""
+msgstr "Newsletter Popup"
 
 #. module: website_mass_mailing
 #. odoo-javascript
@@ -168,11 +174,13 @@ msgid ""
 "No mailing list found, do you want to create a new one? This will save all "
 "your changes, are you sure you want to proceed?"
 msgstr ""
+"Nije pronađena mailing lista, da li želite da napravite novu? Ovo će "
+"sačuvati sve vaše izmene, da li ste sigurni da želite da nastavite?"
 
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.newsletter_subscribe_options_common
 msgid "Show reCaptcha Policy"
-msgstr ""
+msgstr "Prikaži reCaptcha Politiku"
 
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.s_newsletter_block_form_template
@@ -185,7 +193,7 @@ msgstr "Pretplati se"
 #: code:addons/website_mass_mailing/static/src/js/mass_mailing_form_editor.js:0
 #, python-format
 msgid "Subscribe to"
-msgstr ""
+msgstr "Pretplatite se na"
 
 #. module: website_mass_mailing
 #. odoo-javascript
@@ -216,7 +224,7 @@ msgstr ""
 #: code:addons/website_mass_mailing/controllers/main.py:0
 #, python-format
 msgid "Thanks for subscribing!"
-msgstr ""
+msgstr "Hvala vam što ste se pretplatili!"
 
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.s_newsletter_block_form_template
@@ -224,13 +232,15 @@ msgid ""
 "We send one weekly newsletter per list and always try to keep it "
 "interesting. You can unsubscribe at any time."
 msgstr ""
+"Šaljemo jedan newsletter nedeljno po listi i uvek se trudimo da ga učinimo "
+"zanimljivim. Možete se odjaviti u bilo kom trenutku."
 
 #. module: website_mass_mailing
 #. odoo-python
 #: code:addons/website_mass_mailing/controllers/website_form.py:0
 #, python-format
 msgid "You cannot subscribe to the following list anymore : %s"
-msgstr ""
+msgstr "Više se ne možete pretplatiti na sledeću listu: %s"
 
 #. module: website_mass_mailing
 #: model_terms:ir.ui.view,arch_db:website_mass_mailing.s_newsletter_block_form_template

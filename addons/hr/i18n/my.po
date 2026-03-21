@@ -3,13 +3,13 @@
 # * hr
 #
 # Oakarmin Iron <oakarminiron@gmail.com>, 2025.
-# Weblate <noreply-mt-weblate@weblate.org>, 2025.
+# Weblate <noreply-mt-weblate@weblate.org>, 2025, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-29 18:36+0000\n"
-"PO-Revision-Date: 2025-12-13 08:04+0000\n"
+"POT-Creation-Date: 2026-03-20 18:35+0000\n"
+"PO-Revision-Date: 2026-03-21 17:00+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Burmese <https://translate.odoo.com/projects/odoo-17/hr/my/>\n"
 "Language: my\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.14.3\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #. module: hr
 #: model:ir.model.fields,field_description:hr.field_res_company__hr_presence_control_email_amount
@@ -292,7 +292,7 @@ msgstr "အက်တစ်"
 #. module: hr
 #: model:ir.model.fields,field_description:hr.field_hr_employee__activity_ids
 msgid "Activities"
-msgstr ""
+msgstr "လှုပ်ရှားမှုများ"
 
 #. module: hr
 #: model:ir.model.fields,field_description:hr.field_hr_employee__activity_exception_decoration
@@ -381,7 +381,7 @@ msgstr "ထပ်တိုး ဘာသာစကားများ"
 #. module: hr
 #: model:hr.department,name:hr.dep_administration
 msgid "Administration"
-msgstr ""
+msgstr "စီမံရေးရာ"
 
 #. module: hr
 #: model_terms:hr.job,website_description:hr.job_ceo
@@ -569,7 +569,7 @@ msgstr ""
 #. module: hr
 #: model_terms:ir.ui.view,arch_db:hr.res_users_view_form_profile
 msgid "Away"
-msgstr ""
+msgstr "အဝေး"
 
 #. module: hr
 #: model:ir.model.fields.selection,name:hr.selection__hr_employee__certificate__bachelor
@@ -752,7 +752,7 @@ msgstr "ကုမ္ပဏီ"
 #. module: hr
 #: model:ir.model.fields,field_description:hr.field_hr_employee__company_country_id
 msgid "Company Country"
-msgstr ""
+msgstr "ကုမ္ပဏီ ၏ နိုင်ငံ"
 
 #. module: hr
 #: model_terms:ir.ui.view,arch_db:hr.print_employee_badge
@@ -1266,6 +1266,12 @@ msgstr ""
 #. module: hr
 #: model:ir.model.fields,field_description:hr.field_res_users__employee_country_id
 msgid "Employee's Country"
+msgstr "ဝန်ထမ်း၏ နိုင်ငံ"
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_res_users__employee_country_code
+#, fuzzy
+msgid "Employee's Country Code"
 msgstr "ဝန်ထမ်း၏ နိုင်ငံ"
 
 #. module: hr
@@ -1853,7 +1859,7 @@ msgstr ""
 #. module: hr
 #: model:hr.department,name:hr.dep_rd_ltp
 msgid "Long Term Projects"
-msgstr ""
+msgstr "ကာလရှည် ပရောဂျက်များ"
 
 #. module: hr
 #: model_terms:hr.job,description:hr.job_hrm
@@ -2524,7 +2530,7 @@ msgstr ""
 #. module: hr
 #: model:hr.department,name:hr.dep_ps
 msgid "Professional Services"
-msgstr ""
+msgstr "ပရော်ဖက်ရှင်နယ် ဝန်ဆောင်မှူများ"
 
 #. module: hr
 #: model:ir.model.fields,field_description:hr.field_hr_employee__employee_properties
@@ -2646,7 +2652,7 @@ msgstr ""
 #. module: hr
 #: model:hr.department,name:hr.dep_rd
 msgid "Research & Development"
-msgstr ""
+msgstr "သုသေသန နှင့် တိုးတက်မှူ"
 
 #. module: hr
 #: model:hr.departure.reason,name:hr.departure_resigned
@@ -2790,7 +2796,7 @@ msgstr ""
 #: model:ir.model.fields,help:hr.field_hr_employee__ssnid
 #: model:ir.model.fields,help:hr.field_res_users__ssnid
 msgid "Social Security Number"
-msgstr ""
+msgstr "လူမှူဖူလုံရေး နံပါတ်"
 
 #. module: hr
 #. odoo-python
@@ -2814,7 +2820,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr.field_hr_employee__spouse_birthdate
 #: model:ir.model.fields,field_description:hr.field_res_users__spouse_birthdate
 msgid "Spouse Birthdate"
-msgstr ""
+msgstr "အိမ်ထောင်ဖက်၏ မွေးရက်"
 
 #. module: hr
 #: model:ir.model.fields,field_description:hr.field_hr_employee__spouse_complete_name
@@ -2934,6 +2940,7 @@ msgstr ""
 
 #. module: hr
 #: model:ir.model.fields,help:hr.field_hr_employee__company_country_code
+#: model:ir.model.fields,help:hr.field_res_users__employee_country_code
 msgid ""
 "The ISO country code in two chars. \n"
 "You can use this field for quick search."

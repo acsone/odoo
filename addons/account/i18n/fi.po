@@ -56,7 +56,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-06 18:37+0000\n"
-"PO-Revision-Date: 2026-03-14 08:12+0000\n"
+"PO-Revision-Date: 2026-03-21 08:05+0000\n"
 "Last-Translator: Saara Hakanen <sahak@odoo.com>\n"
 "Language-Team: Finnish <https://translate.odoo.com/projects/odoo-17/account/"
 "fi/>\n"
@@ -1546,8 +1546,7 @@ msgstr ""
 #, python-format
 msgid "A fiscal position with a foreign VAT already exists in this region."
 msgstr ""
-"Tällä alueella on jo olemassa verotuksellinen asema, johon liittyy "
-"ulkomainen arvonlisävero."
+"Tällä alueella on jo olemassa verokantasääntö ulkomaisella arvonlisäverolla."
 
 #. module: account
 #: model_terms:ir.actions.act_window,help:account.action_move_journal_line
@@ -1669,8 +1668,7 @@ msgstr ""
 #. module: account
 #: model:ir.model.constraint,message:account.constraint_account_fiscal_position_tax_tax_src_dest_uniq
 msgid "A tax fiscal position could be defined only one time on same taxes."
-msgstr ""
-"Verotuksellinen asema voitaisiin määritellä vain kerran samoilla veroilla."
+msgstr "Verokantasäännön voi määrittää vain kerran samoille veroille."
 
 #. module: account
 #. odoo-python
@@ -2790,8 +2788,7 @@ msgstr "Taseen ulkopuolisella tilillä ei voi olla veroja"
 #: model:ir.model.constraint,message:account.constraint_account_fiscal_position_account_account_src_dest_uniq
 msgid ""
 "An account fiscal position could be defined only one time on same accounts."
-msgstr ""
-"Tilin verovelvollisuusasema voidaan määritellä vain kerran samoille tileille."
+msgstr "Tilin verokantasäännön voi määrittää vain kerran samoille tileille."
 
 #. module: account
 #: model_terms:ir.actions.act_window,help:account.action_account_form
@@ -3675,7 +3672,7 @@ msgid ""
 "By unchecking the active field, you may hide a fiscal position without "
 "deleting it."
 msgstr ""
-"Voit piilottaa verovelvollisuusaseman poistamatta sitä, jos jätät aktiivisen "
+"Voit piilottaa verokantasäännön poistamatta sitä, jos jätät aktiivisen "
 "kentän valitsematta."
 
 #. module: account
@@ -4751,7 +4748,7 @@ msgstr "Luo uusi asiakas osoitekirjaasi"
 #. module: account
 #: model_terms:ir.actions.act_window,help:account.action_account_fiscal_position_form
 msgid "Create a new fiscal position"
-msgstr "Luo uusi verovelvollisuusasema"
+msgstr "Luo uusi verokantasääntö"
 
 #. module: account
 #: model_terms:ir.actions.act_window,help:account.action_incoterms_tree
@@ -6925,13 +6922,13 @@ msgstr "Tilikaudet"
 #: model_terms:ir.ui.view,arch_db:account.view_account_position_form
 #: model_terms:ir.ui.view,arch_db:account.view_account_position_tree
 msgid "Fiscal Position"
-msgstr "Veroasema"
+msgstr "Verokantasääntö"
 
 #. module: account
 #: model:ir.actions.act_window,name:account.action_account_fiscal_position_form
 #: model:ir.ui.menu,name:account.menu_action_account_fiscal_position_form
 msgid "Fiscal Positions"
-msgstr "Veroasemat"
+msgstr "Verokantasäännöt"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.setup_financial_year_opening_form
@@ -6946,7 +6943,7 @@ msgstr "Tilikaudet"
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_report_external_value__foreign_vat_fiscal_position_id
 msgid "Fiscal position"
-msgstr "Verokanta"
+msgstr "Verokantasääntö"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_bank_statement_line__fiscal_position_id
@@ -6957,8 +6954,8 @@ msgid ""
 "customers or sales orders/invoices. The default value comes from the "
 "customer."
 msgstr ""
-"Veroasemia käytetään mukauttamaan veroja sekä tilejä tietyille asiakkaille "
-"tai myyntitilauksille/-laskuille. Oletusarvo tulee asiakkaalta."
+"Verokantasääntöjä käytetään verojen ja tilien mukauttamiseen tietyille "
+"asiakkaille tai tilauksille/laskuille. Oletusarvo tulee asiakkaalta."
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_financial_year_op__fiscalyear_last_day
@@ -7417,7 +7414,7 @@ msgstr "Sisältää kirjanpitomerkintöjä"
 #: model:ir.model.fields,field_description:account.field_account_move__show_update_fpos
 #: model:ir.model.fields,field_description:account.field_account_payment__show_update_fpos
 msgid "Has Fiscal Position Changed"
-msgstr "Sisältää muuttuneen verovelvollisuusaseman"
+msgstr "Sisältää muuttuneen verokantasäännön"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_setup_bank_manual_config__has_iban_warning
@@ -12051,8 +12048,7 @@ msgstr "Kirjaamispäivä"
 #: model_terms:ir.ui.view,arch_db:account.view_move_form
 msgid "Recompute all taxes and accounts based on this fiscal position"
 msgstr ""
-"Laske kaikki verot ja tilit uudelleen tämän verovelvollisuusaseman "
-"perusteella"
+"Laske kaikki verot ja tilit uudelleen tämän verokantasäännön perusteella"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_move_line__reconciled
@@ -12745,7 +12741,7 @@ msgstr "Hakupalkki"
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_position_filter
 msgid "Search Fiscal Positions"
-msgstr "Hae verovelvollisuusasemia"
+msgstr "Hae verokantasääntöjä"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_tax_group_view_search
@@ -13903,7 +13899,7 @@ msgstr "Verokohdistus"
 #. module: account
 #: model:ir.model,name:account.model_account_fiscal_position_tax
 msgid "Tax Mapping of Fiscal Position"
-msgstr "Verotuksen kartoittaminen verotuksessa"
+msgstr "Verokantasäännön verokartoitus"
 
 #. module: account
 #: model:ir.model.fields,field_description:account.field_account_tax__name
@@ -14100,8 +14096,7 @@ msgstr "Verot asetettu!"
 msgid ""
 "Taxes, fiscal positions, chart of accounts & legal statements for your "
 "country"
-msgstr ""
-"Maasi verot, verovelvollisuusasemat, tilikartta & oikeudelliset lausunnot"
+msgstr "Maasi verot, verokantasäännöt, tilikartta & oikeudelliset lausunnot"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_res_company__account_enabled_tax_country_ids
@@ -14564,7 +14559,8 @@ msgid ""
 "The country set on the foreign VAT fiscal position must match the one set on "
 "the report."
 msgstr ""
-"Ulkomaisen alv-veroposition maan on vastattava raportissa määritettyä maata."
+"Ulkomaisen ALV-verokantasäännön maan on vastattava raportissa määritettyä "
+"maata."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_fiscal_position__company_country_id
@@ -14619,7 +14615,7 @@ msgstr "Valittu päivämäärä on suojattu lukituspäivämäärällä"
 #: model:ir.model.fields,help:account.field_account_payment__partner_shipping_id
 msgid ""
 "The delivery address will be used in the computation of the fiscal position."
-msgstr "Toimitusosoitetta käytetään verovelvollisuusasemaa laskettaessa."
+msgstr "Toimitusosoitetta käytetään verokantasääntöä laskettaessa."
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_bank_statement_line__invoice_origin
@@ -14684,9 +14680,7 @@ msgstr ""
 #: model:ir.model.fields,help:account.field_res_users__property_account_position_id
 msgid ""
 "The fiscal position determines the taxes/accounts used for this contact."
-msgstr ""
-"Verovelvollisuusasema määrittää verot/tilit, joita tälle yhteystiedolle "
-"käytetään."
+msgstr "Verokantasääntö määrittää tälle yhteystiedolle käytettävät verot/tilit."
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_automatic_entry_wizard_form
@@ -14734,9 +14728,7 @@ msgstr ""
 #. module: account
 #: model:ir.model.fields,help:account.field_account_report_external_value__foreign_vat_fiscal_position_id
 msgid "The foreign fiscal position for which this external value is made."
-msgstr ""
-"Ulkomainen finanssipoliittinen asema, jota varten tämä ulkoinen arvo on "
-"muodostettu."
+msgstr "Ulkomainen verokantasääntö, jota varten tämä ulkoinen arvo on lisätty."
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.report_hash_integrity
@@ -15290,8 +15282,7 @@ msgstr ""
 #: model:ir.model.fields,help:account.field_account_fiscal_position__foreign_vat
 msgid ""
 "The tax ID of your company in the region mapped by this fiscal position."
-msgstr ""
-"Yrityksesi verotunnus tämän verovelvollisuusaseman kartoittamalla alueella."
+msgstr "Yrityksesi verotunnus tämän verokantasäännön kattamalla alueella."
 
 #. module: account
 #. odoo-python
@@ -15558,8 +15549,8 @@ msgid ""
 "Check the country set in fiscal position and in your tax configuration."
 msgstr ""
 "Tämä kirjaus sisältää veroja, jotka eivät ole yhteensopivia "
-"verovelvollisuusasemasi kanssa. Tarkista verovelvollisuusasemassa sekä "
-"veroasetuksissa määritetty maa."
+"verokantasääntösi kanssa. Tarkista verokantasäännössä sekä veroasetuksissa "
+"määritetty maa."
 
 #. module: account
 #. odoo-python
@@ -15740,8 +15731,8 @@ msgid ""
 "This will update all taxes and accounts based on the currently selected "
 "fiscal position."
 msgstr ""
-"Tämä päivittää kaikki verot ja tilit sillä hetkellä valittuna olevan "
-"verovelvollisuusaseman perusteella."
+"Tämä päivittää kaikki verot ja tilit kyseisellä hetkellä valittuna olevan "
+"verokantasäännön perusteella."
 
 #. module: account
 #: model_terms:ir.actions.act_window,help:account.action_validate_account_move
@@ -17325,8 +17316,7 @@ msgid ""
 "You cannot create a fiscal position with a country outside of the selected "
 "country group."
 msgstr ""
-"Et voi luoda verovelvollisuusasemaa maalla, joka ei kuulu valittuun "
-"maaryhmään."
+"Et voi luoda verokantasääntöä maalla, joka ei kuulu valittuun maaryhmään."
 
 #. module: account
 #. odoo-python
@@ -17336,7 +17326,7 @@ msgid ""
 "You cannot create a fiscal position with a foreign VAT within your fiscal "
 "country without assigning it a state."
 msgstr ""
-"Et voi luoda veromaasi sisäistä verovelvollisuusasemaa ulkomaisella "
+"Et voi luoda veromaasi sisäistä verokantasääntöä ulkomaisella "
 "arvonlisäverolla ilman, että sille määritetään osavaltio."
 
 #. module: account
@@ -17627,7 +17617,7 @@ msgid ""
 "account mapping of a fiscal position."
 msgstr ""
 "Et voi poistaa/deaktivoida tilejä \"%s\", jotka on määritetty "
-"verovelvollisuusaseman tilikartoituksessa."
+"verokantasäännön tilikartoituksessa."
 
 #. module: account
 #. odoo-python

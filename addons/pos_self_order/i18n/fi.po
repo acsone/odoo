@@ -24,7 +24,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-29 18:37+0000\n"
-"PO-Revision-Date: 2026-03-07 08:22+0000\n"
+"PO-Revision-Date: 2026-03-21 08:04+0000\n"
 "Last-Translator: Saara Hakanen <sahak@odoo.com>\n"
 "Language-Team: Finnish <https://translate.odoo.com/projects/odoo-17/"
 "pos_self_order/fi/>\n"
@@ -33,7 +33,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.16.1\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #. module: pos_self_order
 #: model:ir.actions.report,print_report_name:pos_self_order.report_self_order_qr_codes_page
@@ -143,7 +143,7 @@ msgstr "Kaikki tuotteet poistetaan ostoskorista."
 #: model:ir.model.fields,field_description:pos_self_order.field_res_config_settings__pos_self_ordering_alternative_fp_id
 #: model_terms:ir.ui.view,arch_db:pos_self_order.res_config_settings_view_form_menu
 msgid "Alternative Fiscal Position"
-msgstr "Vaihtoehtoinen verokanta"
+msgstr "Vaihtoehtoinen verokantasääntö"
 
 #. module: pos_self_order
 #. odoo-javascript
@@ -477,7 +477,7 @@ msgstr ""
 #. module: pos_self_order
 #: model_terms:ir.ui.view,arch_db:pos_self_order.res_config_settings_view_form_menu
 msgid "Fiscal Positions"
-msgstr "Verokannat"
+msgstr "Verokantasäännöt"
 
 #. module: pos_self_order
 #. odoo-javascript

@@ -46,7 +46,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-02-20 18:37+0000\n"
-"PO-Revision-Date: 2026-03-14 08:12+0000\n"
+"PO-Revision-Date: 2026-03-21 08:05+0000\n"
 "Last-Translator: Saara Hakanen <sahak@odoo.com>\n"
 "Language-Team: Finnish <https://translate.odoo.com/projects/odoo-17/web/fi/>"
 "\n"
@@ -22838,7 +22838,7 @@ msgstr "postilaatikko"
 #: code:addons/web/static/src/core/emoji_picker/emoji_data.js:0
 #, python-format
 msgid "post office"
-msgstr "toimipaikka"
+msgstr "postitoimipaikka"
 
 #. module: web
 #. odoo-javascript
