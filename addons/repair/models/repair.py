@@ -462,19 +462,24 @@ class RepairOrder(models.Model):
                     ref_str=ref_str,
                 ),
             )
-        sale_order_values_list = []
-        for repair in self:
-            sale_order_values_list.append({
-                "company_id": self.company_id.id,
-                "partner_id": self.partner_id.id,
-                "warehouse_id": self.picking_type_id.warehouse_id.id,
-                "repair_order_ids": [Command.link(repair.id)],
-                "origin": repair.name,
-            })
-        self.env['sale.order'].create(sale_order_values_list)
+        self._create_sale_order()
         # Add Sale Order Lines for 'add' move_ids
         self.move_ids._create_repair_sale_order_line()
         return self.action_view_sale_order()
+
+    def _get_sale_order_values(self):
+        self.ensure_one()
+        return {
+            "company_id": self.company_id.id,
+            "partner_id": self.partner_id.id,
+            "warehouse_id": self.picking_type_id.warehouse_id.id,
+            "repair_order_ids": [Command.link(repair.id)],
+            "origin": repair.name,
+        }
+
+    def _create_sale_order(self):
+        sale_order_values_list = [repair._get_sale_order_values() for repair in self]
+        return self.env['sale.order'].create(sale_order_values_list)
 
     def action_repair_cancel(self):
         if any(repair.state == 'done' for repair in self):
