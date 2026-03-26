@@ -440,3 +440,40 @@ test("should not apply bold formatting for partial selection inside contentedita
     expect(getContent(el)).toBe(`<p contenteditable="false">T[e]st</p>`);
     expect(queryOne(`p[contenteditable="false"]`).childNodes.length).toBe(1);
 });
+
+test("should toggle bold around non editable", async () => {
+    const { el, editor } = await setupEditor(`<p>[a</p><p contenteditable="false">b</p><p>c]</p>`);
+    bold(editor);
+    expect(getContent(el)).toBe(
+        `<p><strong>[a</strong></p><p contenteditable="false">b</p><p><strong>c]</strong></p>`
+    );
+    bold(editor);
+    expect(getContent(el)).toBe(`<p>[a</p><p contenteditable="false">b</p><p>c]</p>`);
+});
+
+test("should toggle bold across indented list items", async () => {
+    const { el, editor } = await setupEditor(`<ul>
+        <li><strong>A[B</strong></li>
+        <li>C]D</li>
+    </ul>`);
+    bold(editor);
+    expect(getContent(el)).toBe(`<ul>
+        <li><strong>A[B</strong></li>
+        <li><strong>C]</strong>D</li>
+    </ul>`);
+    bold(editor);
+    expect(getContent(el)).toBe(`<ul>
+        <li><strong>A</strong>[B</li>
+        <li>C]D</li>
+    </ul>`);
+});
+
+test("should toggle bold across nested spans", async () => {
+    const { el, editor } = await setupEditor(`<p><span><span>[A</span> </span></p><p>B]</p>`);
+    bold(editor);
+    expect(getContent(el)).toBe(
+        `<p><span><span><strong>[A</strong></span> </span></p><p><strong>B]</strong></p>`
+    );
+    bold(editor);
+    expect(getContent(el)).toBe(`<p><span><span>[A</span> </span></p><p>B]</p>`);
+});
