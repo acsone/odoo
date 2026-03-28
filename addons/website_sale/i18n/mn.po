@@ -20,13 +20,13 @@
 # hish, 2022
 # Baskhuu Lodoikhuu <baskhuujacara@gmail.com>, 2022
 # Гэрэлтцог Цогтбаатар, 2023
-# Weblate <noreply-mt-weblate@weblate.org>, 2025.
+# Weblate <noreply-mt-weblate@weblate.org>, 2025, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-02-20 18:36+0000\n"
-"PO-Revision-Date: 2025-12-27 08:03+0000\n"
+"PO-Revision-Date: 2026-03-25 14:50+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Mongolian <https://translate.odoo.com/projects/odoo-17/"
 "website_sale/mn/>\n"
@@ -35,7 +35,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.14.3\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.products
@@ -898,6 +898,11 @@ msgid ""
 "purchase amount, period). Rewards can be discounts (% or amount) or free "
 "products."
 msgstr ""
+"Купон, урамшуулал, бэлгийн карт, үнэнч хэрэглэгчийн хөтөлбөр зэрэг олон "
+"төрлийн хөтөлбөрөөр борлуулалтаа нэмэгдүүлээрэй. Тусгай нөхцөлүүдийг "
+"(бүтээгдэхүүн, харилцагч, худалдан авалтын доод дүн, хугацаа) тохируулах "
+"боломжтой. Урамшуулал нь хөнгөлөлт (% эсвэл мөнгөн дүнгээр) эсвэл үнэгүй "
+"бүтээгдэхүүн байж болно."
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.snippet_options
@@ -1800,7 +1805,7 @@ msgstr "Шинэ бүтээгдэхүүнээ нэрлэнэ үү"
 #: code:addons/website_sale/models/product_public_category.py:0
 #, python-format
 msgid "Error! You cannot create recursive categories."
-msgstr ""
+msgstr "Алдаа! Та давталттай ангилал үүсгэх боломжгүй."
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.snippet_options

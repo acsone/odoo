@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-29 18:36+0000\n"
-"PO-Revision-Date: 2026-02-24 14:04+0000\n"
+"PO-Revision-Date: 2026-03-23 10:39+0000\n"
 "Last-Translator: \"Marta (wacm)\" <wacm@odoo.com>\n"
 "Language-Team: Polish <https://translate.odoo.com/projects/odoo-17/project/"
 "pl/>\n"
@@ -24,9 +24,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
-"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || "
-"(n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
-"X-Generator: Weblate 5.14.3\n"
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #. module: project
 #. odoo-python
@@ -208,6 +208,10 @@ msgid ""
 "tag them)</i>. Use @ <b>mentions</b> to ping a colleague or # <b>mentions</"
 "b> to reach an entire team."
 msgstr ""
+"<b>Publikowanie notatek</b> na potrzeby komunikacji wewnętrznej <i>(osoby "
+"wykonujące to zadanie nie będą powiadamiane o notatce, chyba że zostaną "
+"oznaczone)</i>. Użyj @<b>wzmianki</b>, aby wysłać wiadomość do "
+"współpracownika lub #<b>wzmianki</b>, aby dotrzeć do całego zespołu."
 
 #. module: project
 #: model:mail.template,body_html:project.rating_project_request_email_template
@@ -320,6 +324,113 @@ msgid ""
 "</div>\n"
 "            "
 msgstr ""
+"<div>\n"
+"    <t t-set=\"access_token\" t-value=\"object._rating_get_access_token()\">"
+"</t>\n"
+"    <t t-set=\"partner\" t-value=\"object._rating_get_partner()\"></t>\n"
+"    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"590\" "
+"style=\"width:100%; margin:0px auto;\">\n"
+"    <tbody>\n"
+"        <tr><td valign=\"top\" style=\"font-size: 13px;\">\n"
+"            <t t-if=\"partner.name\">\n"
+"                Dzień dobry <t t-out=\"partner.name or ''\">Brandon Freeman</"
+"t>,<br><br>\n"
+"            </t>\n"
+"            <t t-else=\"\">\n"
+"                Dzień dobry,<br><br>\n"
+"            </t>\n"
+"            Poświęć chwilę na ocenę naszych usług związanych z zadaniem "
+"<strong t-out=\"object.name or ''\">Planowanie i budżetowanie</strong>\n"
+"            <t t-if=\"object._rating_get_operator().name\">\n"
+"                przypisane <strong t-out=\"object._rating_get_operator()"
+".name or ''\">Mitchell Admin</strong>.<br>\n"
+"            </t>\n"
+"            <t t-else=\"\">\n"
+"                .<br>\n"
+"            </t>\n"
+"        </td></tr>\n"
+"        <tr><td style=\"text-align: center;\">\n"
+"            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" "
+"width=\"590\" summary=\"o_mail_notification\" style=\"width:100%; margin: "
+"32px 0px 32px 0px;\">\n"
+"                <tr><td style=\"font-size: 13px;\">\n"
+"                    <strong>Powiedz nam, co myślisz o naszych usługach</"
+"strong><br>\n"
+"                    <span style=\"font-size: 12px; opacity: 0.5; color: "
+"#454748;\">(kliknij na jedną z poniższych emotikon)</span>\n"
+"                </td></tr>\n"
+"                <tr><td style=\"font-size: 13px;\">\n"
+"                    <table style=\"width:100%;text-align:center;margin-"
+"top:2rem;\">\n"
+"                        <tr>\n"
+"                            <td>\n"
+"                                <a t-attf-href=\"/rate/{{ access_token }}/"
+"5\">\n"
+"                                    <img alt=\"Zadowolony\" src=\"/rating/"
+"static/src/img/rating_5.png\" title=\"Zadowolony\">\n"
+"                                </a>\n"
+"                            </td>\n"
+"                            <td>\n"
+"                                <a t-attf-href=\"/rate/{{ access_token }}/"
+"3\">\n"
+"                                    <img alt=\"Neutralny\" src=\"/rating/"
+"static/src/img/rating_3.png\" title=\"Neutralny\">\n"
+"                                </a>\n"
+"                            </td>\n"
+"                            <td>\n"
+"                                <a t-attf-href=\"/rate/{{ access_token }}/"
+"1\">\n"
+"                                    <img alt=\"Niezadowolony\" src=\"/rating/"
+"static/src/img/rating_1.png\" title=\"Niezadowolony\">\n"
+"                                </a>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                    </table>\n"
+"                </td></tr>\n"
+"            </table>\n"
+"        </td></tr>\n"
+"        <tr><td valign=\"top\" style=\"font-size: 13px;\">\n"
+"            Cenimy sobie Twoją opinię, pomaga nam stale ulepszać oferowane "
+"usługi.\n"
+"            <t t-if=\"object.project_id.rating_status == 'stage'\">\n"
+"                <br><span style=\"margin: 0; font-size: 12px; opacity: 0.5; "
+"color: #454748;\">Ta ankieta satysfakcji zostałą wysłania, ponieważTwoje "
+"zadanie zostało przeniesione do etapu <b t-out=\"object.stage_id.name or "
+"''\">W toku</b>.</span>\n"
+"            </t>\n"
+"            <t t-if=\"object.project_id.rating_status == 'periodic'\">\n"
+"                <br><span style=\"margin: 0; font-size: 12px; opacity: 0.5; "
+"color: #454748;\">Ta ankieta satysfakcji jest wysyłana <b t-"
+"out=\"object.project_id.rating_status_period or ''\">co tydzień</b> tak "
+"długo, jak zadanie znajduje się na etapie <b t-out=\"object.stage_id.name or "
+"''\">w toku</b>.</span>\n"
+"            </t>\n"
+"        </td></tr>\n"
+"        <tr><td><br>Z pozdrowieniami,</td></tr>\n"
+"        <tr><td>\n"
+"           <t t-out=\"object.project_id.company_id.name or ''\">YourCompany</"
+"t>\n"
+"        </td></tr>\n"
+"        <tr><td style=\"opacity: 0.5;\">\n"
+"            <t t-out=\"object.project_id.company_id.phone or ''\">1 650-123-"
+"4567</t>\n"
+"            <t t-if=\"object.project_id.company_id.email\">\n"
+"                | <a t-attf-href=\"mailto:{{ "
+"object.project_id.company_id.email }}\" style=\"text-decoration:none; color: "
+"#454748;\" t-out=\"object.project_id.company_id.email or ''\">"
+"info@yourcompany.com</a>\n"
+"            </t>\n"
+"            <t t-if=\"object.project_id.company_id.website\">\n"
+"                | <a t-attf-href=\"{{ object.project_id.company_id.website }}"
+"\" style=\"text-decoration:none; color: #454748;\" t-"
+"out=\"object.project_id.company_id.website or ''\">http://www.example.com</a>"
+"\n"
+"            </t>\n"
+"        </td></tr>\n"
+"    </tbody>\n"
+"    </table>\n"
+"</div>\n"
+"            "
 
 #. module: project
 #: model:mail.template,body_html:project.project_done_email_template
@@ -487,12 +598,12 @@ msgstr "<span class=\"fw-normal\">Zadania</span>"
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.view_task_form2
 msgid "<span class=\"o_stat_text order-2\">Closed</span>"
-msgstr ""
+msgstr "<span class=\"o_stat_text order-2\">Zamknięte</span>"
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.view_task_form2
 msgid "<span class=\"o_stat_text order-2\">Sub-tasks</span>"
-msgstr ""
+msgstr "<span class=\"o_stat_text order-2\">Podzadania</span>"
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.edit_project
@@ -1198,7 +1309,7 @@ msgstr "Blokuje"
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.view_task_form2
 msgid "Blocking Tasks"
-msgstr ""
+msgstr "Zadania blokujące"
 
 #. module: project
 #. odoo-javascript
@@ -1295,12 +1406,12 @@ msgstr "Liczba zamkniętych podzadań"
 #: model:ir.model.fields,field_description:project.field_project_project__closed_task_count
 #: model:ir.model.fields,field_description:project.field_project_update__closed_task_count
 msgid "Closed Task Count"
-msgstr ""
+msgstr "Liczba zamkniętych zadań"
 
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_update__closed_task_percentage
 msgid "Closed Task Percentage"
-msgstr ""
+msgstr "Procent zamkniętych zadań"
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.project_task_burndown_chart_report_view_search
@@ -1858,6 +1969,9 @@ msgid ""
 "preserve the sub-tasks, make sure to unlink them from their parent task "
 "beforehand. Are you sure you want to proceed?"
 msgstr ""
+"Usunięcie zadania spowoduje również usunięcie powiązanych z nim podzadań. "
+"Jeśli chcesz zachować podzadania, upewnij się, że wcześniej odłączyłeś je od "
+"zadania nadrzędnego. Czy na pewno chcesz kontynuować?"
 
 #. module: project
 #: model:ir.model.fields,help:project.field_project_task__milestone_id
@@ -1960,7 +2074,7 @@ msgstr "Tryb dostępu do wyświetlacza"
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_task__display_in_project
 msgid "Display In Project"
-msgstr ""
+msgstr "Wyświetl w Projekcie"
 
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_collaborator__display_name
@@ -2558,7 +2672,7 @@ msgstr "Nieprawidłowa wartość: %s"
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.project_sharing_access_view_tree
 msgid "Invite Collaborators"
-msgstr ""
+msgstr "Zaproś współpracowników"
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.project_share_wizard_view_form
@@ -3359,7 +3473,7 @@ msgstr "Ups! Coś poszło nie tak. Spróbuj odświeżyć stronę i się zalogowa
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_project__open_task_count
 msgid "Open Task Count"
-msgstr ""
+msgstr "Liczba otwartych zadań"
 
 #. module: project
 #: model:ir.model.fields,field_description:project.field_digest_digest__kpi_project_task_opened
@@ -3561,7 +3675,7 @@ msgstr "Stan na etapie osobistym"
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_task__personal_stage_type_ids
 msgid "Personal Stages"
-msgstr ""
+msgstr "Etapy osobiste"
 
 #. module: project
 #: model:ir.model,name:project.model_project_task_stage_personal
@@ -3684,6 +3798,8 @@ msgid ""
 "Private tasks cannot be converted into sub-tasks. Please set a project for "
 "the task to gain access to this feature."
 msgstr ""
+"Zadania prywatne nie mogą być przekształcane w podzadania. Aby uzyskać "
+"dostęp do tej funkcji, należy przypisać zadanie do Projektu."
 
 #. module: project
 #. odoo-javascript
@@ -4633,7 +4749,7 @@ msgstr "Podzadania"
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_task__subtask_allocated_hours
 msgid "Sub-tasks Allocated Time"
-msgstr ""
+msgstr "Czas przydzielony na podzadania"
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.rating_rating_view_form_project
@@ -4754,7 +4870,7 @@ msgstr "Czasy pracy"
 #. module: project
 #: model:ir.actions.act_window,name:project.mail_activity_plan_action_config_task_plan
 msgid "Task Plans"
-msgstr ""
+msgstr "Plany zadań"
 
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_project__task_properties_definition
@@ -5086,6 +5202,11 @@ msgid ""
 "mode on your website. This includes leads/opportunities, quotations/sales "
 "orders, purchase orders, invoices and bills, timesheets, and tickets."
 msgstr ""
+"Mogą edytować wspólne zadania projektowe i przeglądać określone dokumenty w "
+"trybie tylko do odczytu na Twojej stronie internetowej. Obejmuje to "
+"potencjalnych klientów/szanse sprzedaży, oferty/Zamówienia sprzedaży, "
+"zamówienia zakupu, faktury i rachunki, karty ewidencji czasu pracy oraz "
+"zgłoszenia."
 
 #. module: project
 #. odoo-python
@@ -5140,6 +5261,10 @@ msgid ""
 "project's company to align with the stage's company or remove the company "
 "designation from the stage"
 msgstr ""
+"Ten projekt nie jest powiązany z żadną firmą, podczas gdy etap jest "
+"powiązany z %s. Istnieje kilka opcji do rozważenia: Zmień firmę projektu, "
+"aby dopasować go do firmy związanej z etapem, lub usuń oznaczenie firmy z "
+"etapu."
 
 #. module: project
 #. odoo-javascript
@@ -5301,6 +5426,8 @@ msgid ""
 "Track the profitability of your project with analytic accounting. Select the "
 "analytic plan for new projects:"
 msgstr ""
+"Śledź rentowność swojego projektu dzięki rachunkowości analitycznej. Wybierz "
+"plan analityczny dla nowych projektów:"
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.res_config_settings_view_form
@@ -5591,6 +5718,10 @@ msgid ""
 "                    Collaborators will be able to view and modify part of "
 "the tasks' information."
 msgstr ""
+"Udostępniając projekt w trybie edycji, dajesz innym dostęp do widoków kanban "
+"i listy zadań.\n"
+"                    Współpracownicy będą mogli przeglądać i modyfikować "
+"część informacji o zadaniach."
 
 #. module: project
 #: model_terms:ir.ui.view,arch_db:project.project_share_wizard_view_form
@@ -5600,6 +5731,10 @@ msgid ""
 "                    These people will be able to view the tasks, but not "
 "edit them."
 msgstr ""
+"Udostępniając projekt w trybie tylko do odczytu, dajesz innym osobom dostęp "
+"do zadań w ich portalu.\n"
+"                    Osoby te będą mogły przeglądać zadania, ale nie będą "
+"mogły ich edytować."
 
 #. module: project
 #: model:ir.model.fields,field_description:project.field_project_task__working_days_open
@@ -5909,6 +6044,9 @@ msgid ""
 "icon to see tasks waiting on other ones. Once a task is marked as complete "
 "or canceled, all of its dependencies will be unblocked."
 msgstr ""
+"ikonę, aby zobaczyć zadania oczekujące na inne. Gdy zadanie zostanie "
+"oznaczone jako ukończone lub anulowane, wszystkie jego zależności zostaną "
+"odblokowane."
 
 #. module: project
 #. odoo-javascript
@@ -5967,7 +6105,7 @@ msgstr ""
 #: code:addons/project/static/src/xml/project_task_kanban_examples.xml:0
 #, python-format
 msgid "state to mark the task as canceled."
-msgstr ""
+msgstr "stan, aby oznaczyć zadanie jako anulowane."
 
 #. module: project
 #. odoo-javascript
@@ -6050,6 +6188,8 @@ msgid ""
 "{{ record.closed_subtask_count.value }} sub-tasks closed out of "
 "{{ record.subtask_count.value }}"
 msgstr ""
+"{{ record.closed_subtask_count.value }} podzadania zamknięte poza {{ "
+"record.subtask_count.value }}"
 
 #. module: project
 #. odoo-javascript

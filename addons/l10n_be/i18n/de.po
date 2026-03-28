@@ -7,13 +7,13 @@
 # Larissa Manderfeld, 2023
 #
 # "Dylan Kiss (dyki)" <dyki@odoo.com>, 2025.
-# Weblate <noreply-mt-weblate@weblate.org>, 2025.
+# Weblate <noreply-mt-weblate@weblate.org>, 2025, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.3alpha1+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-29 19:00+0000\n"
-"PO-Revision-Date: 2025-12-01 15:09+0000\n"
+"PO-Revision-Date: 2026-03-28 17:10+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: German <https://translate.odoo.com/projects/odoo-17-l10n/"
 "l10n_be/de/>\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.14.3\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_line_00
@@ -214,6 +214,8 @@ msgstr "Kontenplanvorlage"
 msgid ""
 "All our contractual relations will be governed exclusively by Belgium law."
 msgstr ""
+"Alle unsere Vertragsbeziehungen unterliegen ausschließlich dem belgischen "
+"Recht."
 
 #. module: l10n_be
 #. odoo-python
@@ -232,6 +234,13 @@ msgid ""
 "appear as a third party in the context of any claim for damages filed "
 "against the client by an end consumer."
 msgstr ""
+"Mein BE-Unternehmen CoA verpflichtet sich, sein Bestes zu tun, um "
+"leistungsfähige Dienstleistungen rechtzeitig gemäß den vereinbarten Fristen "
+"zu erbringen. Keine seiner Verpflichtungen kann jedoch als Verpflichtung zur "
+"Erzielung von Ergebnissen angesehen werden. Mein BE-Unternehmen CoA kann "
+"unter keinen Umständen vom Kunden verpflichtet werden, als Dritte im Rahmen "
+"einer Schadensersatzklage gegen den Kunden durch einen Endverbraucher "
+"aufzutreten."
 
 #. module: l10n_be
 #: model:account.report.column,name:l10n_be.tax_report_vat_balance
@@ -271,6 +280,13 @@ msgid ""
 "entirety and does not include any costs relating to the legislation of the "
 "country in which the client is located."
 msgstr ""
+"Bestimmte Länder wenden gemäß ihrer internen Gesetzgebung eine Quellensteuer "
+"auf den Rechnungsbetrag an. Jede Quellensteuer wird vom Kunden an die "
+"Steuerbehörden abgeführt. BE-Unternehmen CoA kann unter keinen Umständen in "
+"Kosten involviert werden, die sich aus der Gesetzgebung eines Landes "
+"ergeben. Der Rechnungsbetrag ist daher in voller Höhe an BE-Unternehmen CoA "
+"zu zahlen und umfasst keine Kosten, die sich aus der Gesetzgebung des Landes "
+"ergeben, in dem der Kunde ansässig ist."
 
 #. module: l10n_be
 #: model:ir.model.fields,field_description:l10n_be.field_account_journal__invoice_reference_model
@@ -311,6 +327,10 @@ msgid ""
 "payment date, BE Company CoA reserves the right to call on the services of a "
 "debt recovery company. All legal expenses will be payable by the client."
 msgstr ""
+"Wenn eine Zahlung mehr als sechzig (60) Tage nach dem Fälligkeitsdatum noch "
+"aussteht, behält sich BE-Unternehmen CoA das Recht vor, die Dienste eines "
+"Inkassounternehmens in Anspruch zu nehmen. Alle Rechtskosten sind vom Kunden "
+"zu tragen."
 
 #. module: l10n_be
 #: model_terms:res.company,invoice_terms_html:l10n_be.demo_company_be
@@ -320,6 +340,9 @@ msgid ""
 "office within 8 days of the delivery of the goods or the provision of the "
 "services."
 msgstr ""
+"Damit ein Anspruch geltend gemacht werden kann, muss das BE-Unternehmen CoA "
+"innerhalb von 8 Tagen nach Lieferung der Waren oder Erbringung der "
+"Dienstleistungen per Einschreiben an seinen Firmensitz benachrichtigt werden."
 
 #. module: l10n_be
 #: model:ir.model,name:l10n_be.model_account_journal
@@ -346,6 +369,13 @@ msgid ""
 "CoA will be authorized to suspend any provision of services without prior "
 "warning in the event of late payment."
 msgstr ""
+"Unsere Rechnungen sind innerhalb von 21 Werktagen zu begleichen, sofern auf "
+"der Rechnung oder der Bestellung kein anderer Zahlungszeitraum angegeben "
+"ist. Bei Nichtzahlung bis zum Fälligkeitsdatum behält sich BE-Unternehmen "
+"CoA das Recht vor, einen festen Zinsbetrag in Höhe von 10 % auf den "
+"ausstehenden Betrag zu verlangen. BE-Unternehmen CoA ist berechtigt, bei "
+"Zahlungsverzug ohne vorherige Ankündigung die Erbringung von "
+"Dienstleistungen auszusetzen."
 
 #. module: l10n_be
 #: model_terms:res.company,invoice_terms_html:l10n_be.demo_company_be

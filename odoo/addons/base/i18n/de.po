@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-02-16 13:08+0000\n"
-"PO-Revision-Date: 2026-03-07 08:22+0000\n"
+"PO-Revision-Date: 2026-03-24 12:56+0000\n"
 "Last-Translator: \"Larissa Manderfeld (lman)\" <lman@odoo.com>\n"
 "Language-Team: German <https://translate.odoo.com/projects/odoo-17/base/de/>"
 "\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.16.1\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_at_reports
@@ -4115,6 +4115,9 @@ msgid ""
 "Bridge module to support the debit notes (nota di debito - NDD) by adding "
 "debit note fields.\n"
 msgstr ""
+"\n"
+"Brückenmodul zur Unterstützung der Lastschriften (nota di debito – NDD) "
+"durch Hinzufügen von Lastschriftfeldern.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_base_automation_hr_contract
@@ -6394,6 +6397,11 @@ msgid ""
 "This module provides functionality for filing GST returns specifically for "
 "Debit Notes in India.\n"
 msgstr ""
+"\n"
+"Einreichung von GST-Erklärungen für Lastschriften\n"
+"=================================\n"
+"Dieses Modul bietet Funktionen zur Einreichung von GST-Erklärungen speziell "
+"für Lastschriften in Indien.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_in_reports_gstr
@@ -7094,6 +7102,12 @@ msgid ""
 "transport\n"
 "modes classified as Air or Sea in the e-Way Bill system.\n"
 msgstr ""
+"\n"
+"Indien – E-Waybill-Versandhäfen\n"
+"====================================\n"
+"Einführung eines neuen Moduls zur Verwaltung indischer Hafencodes, speziell "
+"für Transportarten,\n"
+" die im E-Way-Bill-System als Luft- oder Seetransport klassifiziert sind.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_in
@@ -8147,6 +8161,11 @@ msgid ""
 "-Profit and Loss\n"
 "-Balance Sheet\n"
 msgstr ""
+"\n"
+"Buchhaltungsberichte für Mauretanien.\n"
+"====================================================\n"
+"-Gewinn- und Verlustrechnung\n"
+"-Bilanz\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_mr
@@ -8155,6 +8174,9 @@ msgid ""
 "Mauritania basic package that contains the chart of accounts, the taxes, tax "
 "reports, etc.\n"
 msgstr ""
+"\n"
+"Basispaket für Mauretanien, das den Kontenplan, die Steuern, Steuerberichte "
+"usw. enthält.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_mx_hr_payroll
@@ -9647,6 +9669,10 @@ msgid ""
 "============================\n"
 "Submit your Tax Reports to the Danish tax authorities\n"
 msgstr ""
+"\n"
+"RSU Denmark Localization.\n"
+"============================\n"
+"Reichen Sie Ihre Steuererklärungen bei den dänischen Steuerbehörden ein\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_hr_payroll_expense
@@ -11533,6 +11559,12 @@ msgid ""
 "categorisation of products sold to be included in the details of the line of "
 "an invoice.\n"
 msgstr ""
+"\n"
+"Dies ist das Modul zum Hinzufügen der CPV-Identifikationsnummer (Common "
+"Procurement Vocabulary) zu Produkten.\n"
+"Das rumänische CIUS-RO-Format erfordert in einigen Fällen die genaue "
+"Kategorisierung der verkauften Produkte, die in den Details der "
+"Rechnungszeile angegeben werden muss.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_ro
@@ -12497,6 +12529,8 @@ msgid ""
 "\n"
 "This module allows you to add sequence for Debit note\n"
 msgstr ""
+"\n"
+"Mit diesem Modul können Sie eine Sequenz für Lastschriften hinzufügen\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_mrp_landed_costs
@@ -13489,6 +13523,12 @@ msgid ""
 "       1. Adds support for different invoice types and payment methods.\n"
 "       2. Introduces demo mode.\n"
 msgstr ""
+"\n"
+"Dieses Modul verbessert die jordanische E-Rechnungsstellung (JoFotara) durch "
+"folgende Funktionen:\n"
+"       1. Unterstützung für verschiedene Rechnungsarten und "
+"Zahlungsmethoden.\n"
+"       2. Einführung eines Demo-Modus.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_my_edi_extended
@@ -16927,6 +16967,9 @@ msgid ""
 "Chain processes in order to make our customers more productive, responsive "
 "and profitable."
 msgstr ""
+"Die Acme Corporation entwirft, entwickelt, integriert und unterstützt "
+"Personalverwaltungs- und Lieferkettenprozesse, um die Produktivität, "
+"Reaktionsfähigkeit und Rentabilität unserer Kunden zu steigern."
 
 #. module: base
 #: model_terms:res.partner,website_description:base.res_partner_2
@@ -17198,7 +17241,7 @@ msgstr "Website-Snippet für die Mailing-Gruppen hinzufügen."
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_uy_website_sale
 msgid "Add address Uruguay localisation fields in address page. "
-msgstr ""
+msgstr "Adressfelder für Uruguay auf der Adressseite hinzufügen. "
 
 #. module: base
 #: model:ir.module.module,summary:base.module_account_reports_cash_basis
@@ -17336,6 +17379,8 @@ msgstr "Hinzufügen"
 #: model:res.partner,website_short_description:base.res_partner_address_31
 msgid "Addison Olson is a mighty sales representative at Acme Corporation."
 msgstr ""
+"Addison Olson ist ein hervorragender Vertriebsmitarbeiter bei der Acme "
+"Corporation."
 
 #. module: base
 #: model_terms:res.partner,website_description:base.res_partner_address_31
@@ -17352,7 +17397,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_ro_efactura_synchronize
 msgid "Additional module to synchronize bills with the SPV"
-msgstr ""
+msgstr "Zusätzliches Modul zur Synchronisierung von Rechnungen mit SPV"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_pos_self_order
@@ -18803,12 +18848,12 @@ msgstr "Avatax Brasilien"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_br_edi_fiscal_reform
 msgid "Avatax Brazil Fiscal Reform"
-msgstr ""
+msgstr "Avatax Brasilien - Steuerreform"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_br_edi_sale_fiscal_reform
 msgid "Avatax Brazil Sale Fiscal Reform"
-msgstr ""
+msgstr "Avatax Brasilien: Verkauf - Steuerreform"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_br_edi_sale_services
@@ -18818,7 +18863,7 @@ msgstr "Avatax Brasilien für Verkauf von Dienstleistungen"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_br_website_sale_fiscal_reform
 msgid "Avatax Brazil eCommerce Fiscal Reform"
-msgstr ""
+msgstr "Avatax Brasilien: E-Commerce - Steuerreform"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_br_avatax_services
@@ -22323,7 +22368,7 @@ msgstr "Tage"
 #: model:ir.module.module,shortdesc:base.module_account_debit_note_sequence
 #: model:ir.module.module,summary:base.module_account_debit_note_sequence
 msgid "Debit Note Sequence"
-msgstr ""
+msgstr "Nummerkreis für Lastschriften"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_debit_note
@@ -22588,7 +22633,7 @@ msgstr "Dänemark - Intrastat"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_dk_rsu
 msgid "Denmark - RSU"
-msgstr ""
+msgstr "Dänemark – RSU"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_dk_saft_import
@@ -22608,7 +22653,7 @@ msgstr "Dänemark - Prüfpfad"
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_dk_rsu
 msgid "Denmark Localization - RSU"
-msgstr ""
+msgstr "Lokalisierung für Dänemark – RSU"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_model_fields__depends
@@ -23203,6 +23248,7 @@ msgstr "Erledigt!"
 #: model:res.partner,website_short_description:base.res_partner_address_3
 msgid "Douglas Fletcher is a mighty functional consultant at Acme Corporation"
 msgstr ""
+"Douglas Fletcher ist ein äußerst kompetenter Berater bei der Acme Corporation"
 
 #. module: base
 #: model_terms:res.partner,website_description:base.res_partner_address_3
@@ -24238,7 +24284,7 @@ msgstr "Erweiterte Adressen"
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_jo_edi_extended
 msgid "Extended features for JoFotara"
-msgstr ""
+msgstr "Erweiterte Funktionen für JoFotara"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_my_edi_extended
@@ -25029,7 +25075,7 @@ msgstr "Gleitkommazahlen"
 #. module: base
 #: model:res.partner,website_short_description:base.res_partner_address_4
 msgid "Floyd Steward is a mighty analyst at Acme Corporation."
-msgstr ""
+msgstr "Floyd Steward ist ein hervorragender Analyst bei der Acme Corporation."
 
 #. module: base
 #: model_terms:res.partner,website_description:base.res_partner_address_4
@@ -25229,7 +25275,7 @@ msgstr "Frankreich - Buchhaltungsberichte"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_fr_reports_extended
 msgid "France - Accounting Reports Extension"
-msgstr ""
+msgstr "Frankreich – Erweiterung für Buchhaltungsberichte"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_fr_invoice_addr
@@ -25364,6 +25410,8 @@ msgid ""
 "Functionality to manage GSTR Document Summary (Table 13) for India GST "
 "returns."
 msgstr ""
+"Funktionalität zur Verwaltung der GSTR-Dokumentzusammenfassung (Tabelle 13) "
+"für indische GST-Erklärungen."
 
 #. module: base
 #: model:res.partner.industry,full_name:base.res_partner_industry_G
@@ -25439,7 +25487,7 @@ msgstr "GSTIN"
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_in_reports_gstr_document_summary
 msgid "GSTR Document Summary Management"
-msgstr ""
+msgstr "Verwaltung der GSTR-Dokumentzusammenfassung"
 
 #. module: base
 #: model:res.country,name:base.ga
@@ -27286,7 +27334,7 @@ msgstr "Indisch - E-waybill Bestand"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_in_reports_gstr_document_summary
 msgid "Indian - GSTR Document Summary"
-msgstr ""
+msgstr "Indisch – GSTR-Dokumentzusammenfassung"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_in_reports_gstr
@@ -27303,7 +27351,7 @@ msgstr ""
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_in_reports_debit_note
 msgid "Indian - GSTR eFiling for Debit Note"
-msgstr ""
+msgstr "Indien – GSTR-eFiling für Lastschriften"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_in_pos
@@ -27323,7 +27371,7 @@ msgstr "Indien – Verkaufsbericht (GST)"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_in_ewaybill_port
 msgid "Indian - Shipping Ports for E-waybill"
-msgstr ""
+msgstr "Indisch – Versandhäfen für E-waybill"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_in_stock
@@ -28213,6 +28261,8 @@ msgstr ""
 msgid ""
 "Italy - E-invoicing - Bridge module between Italy NDD and Account Debit Note"
 msgstr ""
+"Italien – E-Rechnungsstellung – Brückenmodul zwischen italienischem NDD und "
+"Lastschriften"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_it_edi_sale
@@ -28298,7 +28348,7 @@ msgstr "Elektronische Rechnungsstellung für Jordanien"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_jo_edi_extended
 msgid "Jordan E-Invoicing Extended Features"
-msgstr ""
+msgstr "Erweiterte Funktionen für elektronische Rechnungsstellung in Jordanien"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_base_partner_merge_automatic_wizard__exclude_journal_item
@@ -29039,7 +29089,7 @@ msgstr "Verknüpfungsmodul zwischen pos_sale und pos_loyalty"
 #. module: base
 #: model:ir.module.module,summary:base.module_l10n_es_edi_tbai_multi_refund
 msgid "Link one refund with multiple invoices"
-msgstr ""
+msgstr "Eine Rückerstattung mit mehreren Rechnungen verknüpfen"
 
 #. module: base
 #. odoo-python
@@ -30048,12 +30098,12 @@ msgstr "Mauretanien"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_mr
 msgid "Mauritania - Accounting"
-msgstr ""
+msgstr "Mauretanien – Buchhaltung"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_mr_reports
 msgid "Mauritania - Accounting Reports"
-msgstr ""
+msgstr "Mauretanien – Buchhaltungsberichte"
 
 #. module: base
 #: model:res.country,name:base.mu
@@ -37369,7 +37419,7 @@ msgstr "Rumänien - Buchhaltungsberichte"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ro_cpv_code
 msgid "Romania - CPV Code"
-msgstr ""
+msgstr "Rumänien – CPV-Code"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ro_edi_stock
@@ -37409,7 +37459,7 @@ msgstr "Rumänien - E-Factura versenden"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ro_efactura_synchronize
 msgid "Romania - Synchronize E-Factura"
-msgstr ""
+msgstr "Rumänien – E-Factura synchronisieren"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_ro_saft
@@ -42197,7 +42247,7 @@ msgstr "Donnerstag"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_es_edi_tbai_multi_refund
 msgid "TicketBAI multi refund"
-msgstr ""
+msgstr "Mehrere Rückerstattungen mit TicketBAI"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_website_helpdesk_livechat
@@ -43277,7 +43327,7 @@ msgstr "Uruguay - Elektronische Rechnung"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_uy_website_sale
 msgid "Uruguay Website"
-msgstr ""
+msgstr "Website für Uruguay"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_decimal_precision__name

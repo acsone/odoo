@@ -7,15 +7,15 @@
 # Lukas Van Cauter <cvl@odoo.com>, 2023
 # Martin Trigaux, 2023
 # "Dylan Kiss (dyki)" <dyki@odoo.com>, 2025.
-# Weblate <noreply-mt-weblate@weblate.org>, 2025.
+# Weblate <noreply-mt-weblate@weblate.org>, 2025, 2026.
 # Bren Driesen <brdri@odoo.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.3alpha1+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-29 19:00+0000\n"
-"PO-Revision-Date: 2026-02-14 08:02+0000\n"
-"Last-Translator: Bren Driesen <brdri@odoo.com>\n"
+"PO-Revision-Date: 2026-03-28 17:10+0000\n"
+"Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Dutch <https://translate.odoo.com/projects/odoo-17-l10n/"
 "l10n_be/nl/>\n"
 "Language: nl\n"
@@ -23,7 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.14.3\n"
+"X-Generator: Weblate 5.16.2\n"
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_line_00
@@ -224,6 +224,8 @@ msgstr "Rekeningstelsel sjabloon"
 msgid ""
 "All our contractual relations will be governed exclusively by Belgium law."
 msgstr ""
+"Al onze contractuele relaties worden uitsluitend beheerst door het Belgische "
+"recht."
 
 #. module: l10n_be
 #. odoo-python
@@ -242,6 +244,12 @@ msgid ""
 "appear as a third party in the context of any claim for damages filed "
 "against the client by an end consumer."
 msgstr ""
+"BE Company CoA verbindt zich ertoe om haar best te doen om tijdig "
+"performante diensten te leveren in overeenstemming met de overeengekomen "
+"termijnen. Geen van haar verplichtingen kan echter worden beschouwd als een "
+"verplichting om resultaten te behalen. BE Company CoA kan in geen geval door "
+"de klant worden verplicht om als derde partij op te treden in het kader van "
+"een schadeclaim die door een eindconsument tegen de klant wordt ingediend."
 
 #. module: l10n_be
 #: model:account.report.column,name:l10n_be.tax_report_vat_balance
@@ -281,6 +289,13 @@ msgid ""
 "entirety and does not include any costs relating to the legislation of the "
 "country in which the client is located."
 msgstr ""
+"Bepaalde landen passen bronheffing toe op het bedrag van de factuur, in "
+"overeenstemming met hun interne wetgeving. Eventuele bronheffing wordt door "
+"de klant aan de belastingdienst betaald. BE Company CoA kan in geen geval "
+"betrokken worden bij kosten die verband houden met de wetgeving van een "
+"land. Het bedrag van de factuur is daarom volledig verschuldigd aan BE "
+"Company CoA en omvat geen kosten die verband houden met de wetgeving van het "
+"land waar de klant gevestigd is."
 
 #. module: l10n_be
 #: model:ir.model.fields,field_description:l10n_be.field_account_journal__invoice_reference_model
@@ -321,6 +336,10 @@ msgid ""
 "payment date, BE Company CoA reserves the right to call on the services of a "
 "debt recovery company. All legal expenses will be payable by the client."
 msgstr ""
+"Als een betaling meer dan zestig (60) dagen na de vervaldatum nog steeds "
+"niet is voldaan, behoudt BE Company CoA zich het recht voor om een "
+"incassobureau in te schakelen. Alle juridische kosten komen voor rekening "
+"van de klant."
 
 #. module: l10n_be
 #: model_terms:res.company,invoice_terms_html:l10n_be.demo_company_be
@@ -330,6 +349,9 @@ msgid ""
 "office within 8 days of the delivery of the goods or the provision of the "
 "services."
 msgstr ""
+"Om ontvankelijk te zijn, moet BE Company CoA binnen 8 dagen na levering van "
+"de goederen of dienstverlening per aangetekende brief op haar "
+"maatschappelijke zetel in kennis worden gesteld van elke vordering."
 
 #. module: l10n_be
 #: model:ir.model,name:l10n_be.model_account_journal
@@ -356,6 +378,12 @@ msgid ""
 "CoA will be authorized to suspend any provision of services without prior "
 "warning in the event of late payment."
 msgstr ""
+"Onze facturen zijn te betalen binnen 21 werkdagen, tenzij een andere "
+"betalingstermijn is aangegeven op de factuur of de order. Bij niet-betaling "
+"op de vervaldag behoudt BE Company CoA zich het recht voor om een vaste "
+"rente van 10% op het openstaande bedrag aan te rekenen. BE Company CoA is "
+"gerechtigd om bij laattijdige betaling zonder voorafgaande waarschuwing de "
+"levering van diensten op te schorten."
 
 #. module: l10n_be
 #: model_terms:res.company,invoice_terms_html:l10n_be.demo_company_be
