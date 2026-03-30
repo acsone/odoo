@@ -1143,6 +1143,9 @@ class HrExpense(models.Model):
         self.ensure_one()
         return (not self.manager_id and not self.employee_id.expense_manager_id) or self.manager_id == self.employee_id.user_id
 
+    def _get_duplicate_expenses(self):
+        return self.duplicate_expense_ids.filtered(lambda exp: exp.state in {'submitted', 'approved', 'posted', 'paid', 'in_payment'})
+
     def action_approve(self):
         """ Approve an expense, pops a wizard if a duplicated expense is found to confirm they are all valid expenses """
         self._check_can_approve()
@@ -1153,8 +1156,7 @@ class HrExpense(models.Model):
                 business_domain='expense',
                 company_id=expense.company_id.id,
             )
-
-        duplicates = self.duplicate_expense_ids.filtered(lambda exp: exp.state in {'submitted', 'approved', 'posted', 'paid', 'in_payment'})
+        duplicates = self._get_duplicate_expenses()
         if duplicates:
             action = self.env["ir.actions.act_window"]._for_xml_id('hr_expense.hr_expense_approve_duplicate_action')
             action['context'] = {'default_expense_ids': duplicates.ids}
