@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 18:36+0000\n"
+"POT-Creation-Date: 2026-04-03 18:39+0000\n"
 "PO-Revision-Date: 2026-03-14 08:09+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Dutch <https://translate.odoo.com/projects/odoo-17/base_vat/"
@@ -44,13 +44,6 @@ msgstr "11111111111 (NIN) of 2222222222 (VKN)"
 #, python-format
 msgid "1792060346001 or 1792060346"
 msgstr "1792060346001 of 1792060346"
-
-#. module: base_vat
-#. odoo-python
-#: code:addons/base_vat/models/res_partner.py:0
-#, python-format
-msgid "3101012009"
-msgstr "3101012009"
 
 #. module: base_vat
 #. odoo-python
@@ -318,6 +311,10 @@ msgstr "fiscale positie [%s]"
 #, python-format
 msgid "partner [%s]"
 msgstr "relatie [%s]"
+
+#, python-format
+#~ msgid "3101012009"
+#~ msgstr "3101012009"
 
 #, python-format
 #~ msgid "17291716060 (NIN) or 1729171602 (VKN)"

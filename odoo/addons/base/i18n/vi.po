@@ -14,8 +14,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-02-16 13:08+0000\n"
-"PO-Revision-Date: 2026-03-21 08:05+0000\n"
-"Last-Translator: \"Thi Huong Nguyen (thng)\" <thng@odoo.com>\n"
+"PO-Revision-Date: 2026-04-04 08:06+0000\n"
+"Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Vietnamese <https://translate.odoo.com/projects/odoo-17/base/"
 "vi/>\n"
 "Language: vi\n"
@@ -286,6 +286,84 @@ msgid ""
 "\n"
 "**Købskonto:**      4010 Restaurationsbesøg\n"
 msgstr ""
+"\n"
+"\n"
+"Module Bản địa hóa dành cho Đan Mạch\n"
+"===============================\n"
+"\n"
+"Đây là phân hệ quản lý **hệ thống tài khoản cho Đan Mạch**. Bao gồm cả doanh "
+"nghiệp một thành viên cũng như I/S, IVS, ApS and A/S\n"
+"\n"
+"**Modulet opsætter:**\n"
+"\n"
+"- **Dansk kontoplan**\n"
+"\n"
+"- Dansk moms\n"
+"        - 25 % moms\n"
+"        - Restaurationsmoms 6,25 %\n"
+"        - Omvendt betalingspligt\n"
+"\n"
+"- Konteringsgrupper\n"
+"        - EU (Virksomhed)\n"
+"        - EU (Privat)\n"
+"        - Tredjelande\n"
+"\n"
+"- Finansrapporter\n"
+"        - Resultatopgørelse\n"
+"        - Balance\n"
+"        - Momsafregning\n"
+"            - Afregning\n"
+"            - Rubrik A, B og C\n"
+"\n"
+"- **Anglo-saksisk regnskabsmetode**\n"
+"\n"
+".\n"
+"\n"
+"Produktopsætning:\n"
+"=================\n"
+"\n"
+"**Vare**\n"
+"\n"
+"**Salgsmoms:**      Salgsmoms 25 %\n"
+"\n"
+"**Salgskonto:**     1.010 Salg af varer inkl. moms\n"
+"\n"
+"**Købsmoms:**       Købsmoms 25 %\n"
+"\n"
+"**Købskonto:**      2.010 Direkte vareomkostninger inkl. moms\n"
+"\n"
+".\n"
+"\n"
+"**Ydelse**\n"
+"\n"
+"**Salgsmoms:**      Salgsmoms 25 %, ydelser\n"
+"\n"
+"**Salgskonto:**     1.011 Salg af ydelser inkl. moms\n"
+"\n"
+"**Købsmoms:**       Købsmoms 25 %, ydelser\n"
+"\n"
+"**Købskonto:**      2.011 Direkte omkostninger ydelser inkl. moms\n"
+"\n"
+".\n"
+"\n"
+"**Vare med omvendt betalingspligt**\n"
+"\n"
+"**Salgsmoms:**      Salg med omvendt betalingspligt\n"
+"\n"
+"**Salgskonto:**     1.012 Salg af varer ekskl. moms\n"
+"\n"
+"**Købsmoms:**       Køb med omvendt betalingspligt\n"
+"\n"
+"**Købskonto:**      2.012 Direkte vareomkostninger ekskl. moms\n"
+"\n"
+"\n"
+".\n"
+"\n"
+"**Restauration**\n"
+"\n"
+"**Købsmoms:**       Restaurationsmoms 6,25 %, købsmoms\n"
+"\n"
+"**Købskonto:**      4010 Restaurationsbesøg\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_do
@@ -7885,6 +7963,11 @@ msgid ""
 "-Profit and Loss\n"
 "-Balance Sheet\n"
 msgstr ""
+"\n"
+"Báo cáo kế toán cho Mauritania.\n"
+"====================================================\n"
+"- Báo cáo kết quả hoạt động kinh doanh\n"
+"- Bảng cân đối kế toán\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_mr
@@ -7893,6 +7976,9 @@ msgid ""
 "Mauritania basic package that contains the chart of accounts, the taxes, tax "
 "reports, etc.\n"
 msgstr ""
+"\n"
+"Gói cơ bản cho Mauritania bao gồm hệ thống tài khoản, các loại thuế, báo cáo "
+"thuế, v.v.\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_mx_hr_payroll
@@ -16522,6 +16608,10 @@ msgid ""
 "productive,\n"
 "                responsive and profitable."
 msgstr ""
+"Acme Corporation thiết kế, phát triển, tích hợp và hỗ trợ các quy trình Nhân "
+"sự và\n"
+"Chuỗi cung ứng nhằm giúp khách hàng của chúng tôi nâng cao năng suất,\n"
+"khả năng phản hồi và lợi nhuận."
 
 #. module: base
 #: model:res.partner,website_short_description:base.res_partner_2
@@ -16531,6 +16621,9 @@ msgid ""
 "Chain processes in order to make our customers more productive, responsive "
 "and profitable."
 msgstr ""
+"Acme Corporation thiết kế, phát triển, tích hợp và hỗ trợ các quy trình Nhân "
+"sự và Chuỗi cung ứng nhằm giúp khách hàng của chúng tôi nâng cao năng suất, "
+"khả năng phản hồi và lợi nhuận."
 
 #. module: base
 #: model_terms:res.partner,website_description:base.res_partner_2
@@ -16540,6 +16633,9 @@ msgid ""
 "                with Open Sources software to manage their businesses. Our\n"
 "                consultants are experts in the following areas:"
 msgstr ""
+"Acme Corporation tích hợp ERP cho các công ty toàn cầu và hỗ trợ các PME\n"
+"bằng phần mềm mã nguồn mở để quản lý hoạt động kinh doanh. Các tư vấn viên\n"
+"của chúng tôi là chuyên gia trong những lĩnh vực sau:"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_actions_act_window_view__act_window_id
@@ -16923,7 +17019,7 @@ msgstr "Thêm"
 #. module: base
 #: model:res.partner,website_short_description:base.res_partner_address_31
 msgid "Addison Olson is a mighty sales representative at Acme Corporation."
-msgstr ""
+msgstr "Addison Olson là một nhân viên sales xuất sắc tại Acme Corporation."
 
 #. module: base
 #: model_terms:res.partner,website_description:base.res_partner_address_31
@@ -22000,6 +22096,8 @@ msgid ""
 "Deleting the public user is not allowed. Deleting this profile will "
 "compromise critical functionalities."
 msgstr ""
+"Không được phép xóa người dùng công khai. Việc xóa hồ sơ này sẽ làm mất đi "
+"các chức năng quan trọng."
 
 #. module: base
 #. odoo-python
@@ -22726,6 +22824,8 @@ msgstr "Hoàn thành!"
 #: model:res.partner,website_short_description:base.res_partner_address_3
 msgid "Douglas Fletcher is a mighty functional consultant at Acme Corporation"
 msgstr ""
+"Douglas Fletcher là một chuyên viên tư vấn triển khai xuất sắc tại Acme "
+"Corporation"
 
 #. module: base
 #: model_terms:res.partner,website_description:base.res_partner_address_3
@@ -24543,6 +24643,7 @@ msgstr "Float"
 #: model:res.partner,website_short_description:base.res_partner_address_4
 msgid "Floyd Steward is a mighty analyst at Acme Corporation."
 msgstr ""
+"Floyd Steward là một chuyên viên phân tích xuất sắc tại Acme Corporation."
 
 #. module: base
 #: model_terms:res.partner,website_description:base.res_partner_address_4
@@ -29519,12 +29620,12 @@ msgstr "Mauritania"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_mr
 msgid "Mauritania - Accounting"
-msgstr ""
+msgstr "Mauritania - Kế toán"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_mr_reports
 msgid "Mauritania - Accounting Reports"
-msgstr ""
+msgstr "Mauritania - Báo cáo kế toán"
 
 #. module: base
 #: model:res.country,name:base.mu

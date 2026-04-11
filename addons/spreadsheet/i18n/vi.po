@@ -12,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-22 18:37+0000\n"
-"PO-Revision-Date: 2026-03-21 08:05+0000\n"
-"Last-Translator: \"Thi Huong Nguyen (thng)\" <thng@odoo.com>\n"
+"POT-Creation-Date: 2026-04-03 18:40+0000\n"
+"PO-Revision-Date: 2026-04-07 09:24+0000\n"
+"Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Vietnamese <https://translate.odoo.com/projects/odoo-17/"
 "spreadsheet/vi/>\n"
 "Language: vi\n"
@@ -183,6 +183,13 @@ msgstr "2 cột"
 #, python-format
 msgid "2 rows"
 msgstr "2 hàng"
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
+#, python-format
+msgid "A"
+msgstr ""
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -3178,6 +3185,8 @@ msgstr "Hàm [[FUNCTION_NAME]] cần criteria_range có cùng kích thước"
 msgid ""
 "Function [[FUNCTION_NAME]] expects number values for %s, but got a boolean."
 msgstr ""
+"Hàm [[FUNCTION_NAME]] yêu cầu giá trị số cho %s, nhưng nhận được giá trị "
+"boolean."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -3185,7 +3194,7 @@ msgstr ""
 #, python-format
 msgid ""
 "Function [[FUNCTION_NAME]] expects number values for %s, but got a string."
-msgstr ""
+msgstr "Hàm [[FUNCTION_NAME]] yêu cầu giá trị số cho %s, nhưng nhận được chuỗi."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -3195,6 +3204,8 @@ msgid ""
 "Function [[FUNCTION_NAME]] expects number values for %s, but got an empty "
 "value."
 msgstr ""
+"Hàm [[FUNCTION_NAME]] yêu cầu giá trị số cho %s, nhưng nhận được giá trị "
+"trống."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -7333,6 +7344,8 @@ msgid ""
 "The first and second arguments of [[FUNCTION_NAME]] must be non-empty "
 "matrices."
 msgstr ""
+"Đối số thứ nhất và thứ hai của [[FUNCTION_NAME]] phải là các ma trận không "
+"rỗng."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -10544,7 +10557,7 @@ msgstr "Giá trị thay đổi so với giá trị khóa"
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "Value for parameter %s is missing in [[FUNCTION_NAME]]."
-msgstr ""
+msgstr "Thiếu giá trị cho tham số %s trong [[FUNCTION_NAME]]."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -11153,6 +11166,13 @@ msgstr "Bạn không có quyền xuất dữ liệu. Vui lòng liên hệ với 
 
 #. module: spreadsheet
 #. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
+#, python-format
+msgid "Z"
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
 #: code:addons/spreadsheet/static/src/pivot/pivot_functions.js:0
 #, python-format
 msgid "[[FUNCTION_NAME]] cannot be called from the spreadsheet."
@@ -11194,6 +11214,8 @@ msgid ""
 "[[FUNCTION_NAME]] expects the provided values of %(argName)s to be a non-"
 "empty matrix."
 msgstr ""
+"[[FUNCTION_NAME]] yêu cầu các giá trị được cung cấp cho %(argName)s phải là "
+"một ma trận không rỗng."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -11384,6 +11406,13 @@ msgstr "hôm nay"
 #, python-format
 msgid "tomorrow"
 msgstr "ngày mai"
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/public_readonly_app/public_readonly.xml:0
+#, python-format
+msgid "x"
+msgstr ""
 
 #. module: spreadsheet
 #. odoo-javascript

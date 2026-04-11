@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-22 18:37+0000\n"
+"POT-Creation-Date: 2026-04-03 18:40+0000\n"
 "PO-Revision-Date: 2026-02-14 08:07+0000\n"
 "Last-Translator: \"Junko Augias (juau)\" <juau@odoo.com>\n"
 "Language-Team: Japanese <https://translate.odoo.com/projects/odoo-17/"
@@ -31,7 +31,8 @@ msgstr ""
 msgid ""
 " A string, possible empty, or a reference to a valid string. If empty, the "
 "text will be simply concatenated."
-msgstr " 文字列は、空または有効な文字列への参照が可能です。空の場合、文字列は単に連結"
+msgstr ""
+" 文字列は、空または有効な文字列への参照が可能です。空の場合、文字列は単に連結"
 "されます。"
 
 #. module: spreadsheet
@@ -184,6 +185,13 @@ msgstr "2行"
 
 #. module: spreadsheet
 #. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
+#, python-format
+msgid "A"
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid ""
@@ -200,7 +208,8 @@ msgstr ""
 msgid ""
 "A boolean; if TRUE, empty cells selected in the text arguments won't be "
 "included in the result."
-msgstr "ブール値:TRUE の場合、文字列引数で選択された空のセルは結果に含まれません。"
+msgstr ""
+"ブール値:TRUE の場合、文字列引数で選択された空のセルは結果に含まれません。"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -2759,7 +2768,8 @@ msgstr "フィールド %s は存在しません"
 #: code:addons/spreadsheet/static/src/pivot/pivot_model.js:0
 #, python-format
 msgid "Field %s is not supported because of its type (%s)"
-msgstr "フィールド「%(field)s」は、型「%(type)s」に対応していないためサポートされてい"
+msgstr ""
+"フィールド「%(field)s」は、型「%(type)s」に対応していないためサポートされてい"
 "ません"
 
 #. module: spreadsheet
@@ -2873,7 +2883,8 @@ msgstr "検索対象の文字列が文字列内で最初に見つかった位置
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid "First position of string found in text, ignoring case."
-msgstr "検索対象の文字列が文字列内で最初に見つかった位置(大文字と小文字を区別しない)"
+msgstr ""
+"検索対象の文字列が文字列内で最初に見つかった位置(大文字と小文字を区別しない)"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -3118,7 +3129,8 @@ msgstr "関数 [[FUNCTION_NAME]] の結果が見つかりませんでした。"
 msgid ""
 "Function [[FUNCTION_NAME]] expects criteria_range and criterion to be in "
 "pairs."
-msgstr "関数 [[FUNCTION_NAME]] では、criteria_range と criterion はペアで指定する必要"
+msgstr ""
+"関数 [[FUNCTION_NAME]] では、criteria_range と criterion はペアで指定する必要"
 "があります。"
 
 #. module: spreadsheet
@@ -3127,7 +3139,8 @@ msgstr "関数 [[FUNCTION_NAME]] では、criteria_range と criterion はペア
 #, python-format
 msgid ""
 "Function [[FUNCTION_NAME]] expects criteria_range to have the same dimension"
-msgstr "関数 [[FUNCTION_NAME]] では、criteria_range の次元が同一である必要があります"
+msgstr ""
+"関数 [[FUNCTION_NAME]] では、criteria_range の次元が同一である必要があります"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -7501,7 +7514,8 @@ msgstr "引用符で囲まれたリンクの完全なURL"
 msgid ""
 "The function [[FUNCTION_NAME]] expects a boolean value, but '%s' is a text, "
 "and cannot be coerced to a number."
-msgstr "関数[[FUNCTION_NAME]]は、ブール値を想定していますが、 '%s' は文字列であり、数"
+msgstr ""
+"関数[[FUNCTION_NAME]]は、ブール値を想定していますが、 '%s' は文字列であり、数"
 "値にすることはできません。"
 
 #. module: spreadsheet
@@ -11062,6 +11076,13 @@ msgstr "データをエクスポートする権限がありません。管理者
 
 #. module: spreadsheet
 #. odoo-javascript
+#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
+#, python-format
+msgid "Z"
+msgstr ""
+
+#. module: spreadsheet
+#. odoo-javascript
 #: code:addons/spreadsheet/static/src/pivot/pivot_functions.js:0
 #, python-format
 msgid "[[FUNCTION_NAME]] cannot be called from the spreadsheet."
@@ -11295,6 +11316,13 @@ msgstr "本日"
 #, python-format
 msgid "tomorrow"
 msgstr "明日"
+
+#. module: spreadsheet
+#. odoo-javascript
+#: code:addons/spreadsheet/static/src/public_readonly_app/public_readonly.xml:0
+#, python-format
+msgid "x"
+msgstr ""
 
 #. module: spreadsheet
 #. odoo-javascript

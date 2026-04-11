@@ -49,7 +49,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-02-16 13:08+0000\n"
-"PO-Revision-Date: 2026-03-26 13:22+0000\n"
+"PO-Revision-Date: 2026-04-10 13:25+0000\n"
 "Last-Translator: Saara Hakanen <sahak@odoo.com>\n"
 "Language-Team: Finnish <https://translate.odoo.com/projects/odoo-17/base/fi/>"
 "\n"
@@ -18293,7 +18293,7 @@ msgstr "Houkuttele kävijöitä tilaamaan postituslistoja"
 #: model:ir.module.module,summary:base.module_l10n_de_audit_trail
 #: model:ir.module.module,summary:base.module_l10n_dk_audit_trail
 msgid "Audit trail"
-msgstr "Tarkastusketju"
+msgstr "Auditointiloki"
 
 #. module: base
 #: model:res.country,name:base.au
@@ -18646,7 +18646,7 @@ msgstr "Virheellinen tiedostomuoto: %s"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_users__barcode
 msgid "Badge ID"
-msgstr "Tunnuskortin ID"
+msgstr "Tunnisteen tunnus"
 
 #. module: base
 #: model:res.country,name:base.bs
@@ -28078,7 +28078,7 @@ msgstr "Kiribati"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_website_sale_mrp
 msgid "Kit Availability"
-msgstr "Paketin saatavuus"
+msgstr "Setin saatavuus"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_sale_mrp_renting
@@ -29666,7 +29666,7 @@ msgstr "Massapostitus tekstiviesteinä myyntitilauksilla"
 #: model:ir.module.module,description:base.module_hr_recruitment_sms
 #: model:ir.module.module,summary:base.module_hr_recruitment_sms
 msgid "Mass mailing sms to job applicants"
-msgstr "Joukkoviestien lähettäminen työnhakijoille (SMS)"
+msgstr "Joukkotekstiviestien lähettäminen työnhakijoille"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_mrp_mps
@@ -30816,7 +30816,7 @@ msgstr "Uutiskirjeen tilauspainike"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_website_mass_mailing_sms
 msgid "Newsletter Subscribe SMS Template"
-msgstr "Uutiskirjeen tilaus SMS malli"
+msgstr "Uutiskirjeen tilauksen tekstiviestipohja"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_cron__nextcall
@@ -34317,7 +34317,7 @@ msgstr ""
 "Laskumme on maksettava 21 työpäivän kuluessa, ellei laskussa tai tilauksessa "
 "ole ilmoitettu muuta maksuaikaa. Jos laskua ei makseta eräpäivään mennessä, "
 "My Company (San Francisco) pidättää oikeuden vaatia kiinteää korkoa, jonka "
-"määrä on 10% of jäljellä olevasta erääntyneestä summasta. My Company (San "
+"määrä on 10% jäljellä olevasta erääntyneestä summasta. My Company (San "
 "Francisco) on oikeutettu keskeyttämään palvelujen tarjoamisen ilman "
 "ennakkovaroitusta, jos maksu viivästyy."
 
@@ -35024,7 +35024,7 @@ msgstr "Peppol"
 #: model_terms:res.partner,website_description:base.res_partner_2
 #: model_terms:res.partner,website_description:base.res_partner_4
 msgid "Personnel Administration"
-msgstr "Henkilökunnan hallinto"
+msgstr "Henkilöstöhallinto"
 
 #. module: base
 #: model:res.country,name:base.pe
@@ -35641,7 +35641,7 @@ msgstr "Projekti - Tili"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_project_sms
 msgid "Project - SMS"
-msgstr "Projekti - SMS"
+msgstr "Projekti - Tekstiviesti"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_project_sale_expense
@@ -36529,7 +36529,7 @@ msgstr "Rekrytointi"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_recruitment_sms
 msgid "Recruitment - SMS"
-msgstr "Rekrytointi – SMS"
+msgstr "Rekrytointi - Tekstiviesti"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_hr_recruitment_sign
@@ -36771,7 +36771,7 @@ msgstr "Raportti"
 #. module: base
 #: model:ir.model,name:base.model_ir_actions_report
 msgid "Report Action"
-msgstr "Raporttin"
+msgstr "Raporttitoiminto"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_actions_report__report_file
@@ -37165,7 +37165,7 @@ msgstr "Tekstiviestimarkkinointi markkinoinnin automaatiossa"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_test_mail_sms
 msgid "SMS Tests"
-msgstr "SMS-testit"
+msgstr "Tekstiviestitestit"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_test_mail_sms
@@ -37175,12 +37175,12 @@ msgstr "Tekstiviestitestit: tekstiviestien esitykset ja testit"
 #. module: base
 #: model:ir.module.module,summary:base.module_sms
 msgid "SMS Text Messaging"
-msgstr "SMS-tekstiviestit"
+msgstr "Tekstiviestintä"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_sms
 msgid "SMS gateway"
-msgstr "SMS gateway"
+msgstr "Tekstiviestiyhdyskäytävä"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_crm_sms
@@ -37334,7 +37334,7 @@ msgstr "Ale"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_sale_sms
 msgid "Sale - SMS"
-msgstr "Myynti - SMS"
+msgstr "Myynti - Tekstiviestit"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_sale_account_accountant
@@ -39254,7 +39254,7 @@ msgstr "Valmistuksen työtilauksen askeleet IoT-laitteissa"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_stock_sms
 msgid "Stock - SMS"
-msgstr "Varasto - SMS"
+msgstr "Varasto - Tekstiviestit"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_stock_accountant
@@ -39712,7 +39712,7 @@ msgstr "Tadžikistan"
 #: model_terms:res.partner,website_description:base.res_partner_2
 #: model_terms:res.partner,website_description:base.res_partner_4
 msgid "Talent Management"
-msgstr "Taitojen hallinta"
+msgstr "Kykyjen hallinta"
 
 #. module: base
 #: model:res.country,name:base.tz
@@ -41979,7 +41979,7 @@ msgstr "Traces Sync"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_mass_mailing_event_track_sms
 msgid "Track Speakers SMS Marketing"
-msgstr "Esiintyjien SMS-markkinointi"
+msgstr "Seuraa puhujien tekstiviestimarkkinointia"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_hr_attendance
@@ -44825,7 +44825,7 @@ msgstr "delivery_mondialrelay"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.wizard_lang_export
 msgid "documentation"
-msgstr "dokumentointi"
+msgstr "dokumentaatio"
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__base_module_update__state__done
