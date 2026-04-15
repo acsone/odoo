@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-03 18:39+0000\n"
-"PO-Revision-Date: 2026-04-04 19:13+0000\n"
+"PO-Revision-Date: 2026-04-15 15:00+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Croatian <https://translate.odoo.com/projects/odoo-17/bus/hr/>"
 "\n"
@@ -139,6 +139,8 @@ msgid ""
 "Save your work and refresh to get the latest updates and avoid potential "
 "issues."
 msgstr ""
+"Spremite svoj rad i osvježite kako biste dobili najnovija ažuriranja i "
+"izbjegli moguće probleme."
 
 #. module: bus
 #. odoo-javascript
@@ -152,7 +154,7 @@ msgstr "Stranica se čini zastarjela."
 #: code:addons/bus/static/src/services/bus_service.js:0
 #, python-format
 msgid "The page is out of date"
-msgstr ""
+msgstr "Stranica nije ažurna"
 
 #. module: bus
 #: model:ir.model,name:bus.model_res_users
@@ -178,6 +180,9 @@ msgid ""
 "users it is important to change it immediately for security reasons. I will "
 "keep nagging you about it!"
 msgstr ""
+"Vaša lozinka je zadana (admin)! Ako je ovaj sustav izložen nepouzdanim "
+"korisnicima, važno je odmah je promijeniti iz sigurnosnih razloga. Podsjećat "
+"ću vas na ovo!"
 
 #. module: bus
 #: model:ir.model,name:bus.model_ir_websocket
