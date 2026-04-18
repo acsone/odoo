@@ -28,7 +28,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-03 18:38+0000\n"
+"POT-Creation-Date: 2026-04-17 18:36+0000\n"
 "PO-Revision-Date: 2026-04-09 10:44+0000\n"
 "Last-Translator: Odoo Translation Bot <c3p@odoo.com>\n"
 "Language-Team: Norwegian Bokmål <https://translate.odoo.com/projects/odoo-17/"
@@ -12217,11 +12217,6 @@ msgid "Responsible User"
 msgstr "Ansvarlig bruker"
 
 #. module: account
-#: model:ir.model.fields,help:account.field_account_tax__tax_scope
-msgid "Restrict the use of taxes to a type of product."
-msgstr "Begrens bruken av skatter til en type produkt."
-
-#. module: account
 #: model:ir.model.fields,help:account.field_account_reconcile_model__match_same_currency
 msgid ""
 "Restrict to propositions having the same currency as the statement line."
@@ -18235,6 +18230,9 @@ msgid ""
 "{{ object.company_id.name }} Payment Receipt (Ref {{ object.name or 'n/a' }})"
 msgstr ""
 "{{ object.company_id.name }} Kjøpskvittering (Ref {{ object.name or 'n/a' }})"
+
+#~ msgid "Restrict the use of taxes to a type of product."
+#~ msgstr "Begrens bruken av skatter til en type produkt."
 
 #~ msgid "1.05"
 #~ msgstr "1.05"

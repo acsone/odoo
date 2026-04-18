@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-03 18:38+0000\n"
+"POT-Creation-Date: 2026-04-17 18:36+0000\n"
 "PO-Revision-Date: 2026-04-10 13:25+0000\n"
 "Last-Translator: \"Marianna Ciofani (cima)\" <cima@odoo.com>\n"
 "Language-Team: Italian <https://translate.odoo.com/projects/odoo-17/account/"
@@ -12313,11 +12313,6 @@ msgid "Responsible User"
 msgstr "Utente responsabile"
 
 #. module: account
-#: model:ir.model.fields,help:account.field_account_tax__tax_scope
-msgid "Restrict the use of taxes to a type of product."
-msgstr "Limita l'utilizzo delle imposte a una tipologia di prodotto."
-
-#. module: account
 #: model:ir.model.fields,help:account.field_account_reconcile_model__match_same_currency
 msgid ""
 "Restrict to propositions having the same currency as the statement line."
@@ -18419,6 +18414,9 @@ msgid ""
 msgstr ""
 "Ricevuta di pagamento {{ object.company_id.name }} (rif. {{ object.name or "
 "'n/d' }})"
+
+#~ msgid "Restrict the use of taxes to a type of product."
+#~ msgstr "Limita l'utilizzo delle imposte a una tipologia di prodotto."
 
 #~ msgid "1.05"
 #~ msgstr "1.05"

@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-03 18:40+0000\n"
-"PO-Revision-Date: 2026-04-14 14:24+0000\n"
+"PO-Revision-Date: 2026-04-18 08:07+0000\n"
 "Last-Translator: \"Manon Rondou (ronm)\" <ronm@odoo.com>\n"
 "Language-Team: French <https://translate.odoo.com/projects/odoo-17/sale/fr/>"
 "\n"
@@ -5319,7 +5319,7 @@ msgstr "Les paramètres fournis ne sont pas valides."
 #: code:addons/sale/wizard/payment_link_wizard.py:0
 #, python-format
 msgid "The sale order has expired."
-msgstr "La commande client est expirée."
+msgstr "La commande client a expiré."
 
 #. module: sale
 #. odoo-python

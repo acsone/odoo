@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-03 18:38+0000\n"
-"PO-Revision-Date: 2026-04-09 10:41+0000\n"
+"PO-Revision-Date: 2026-04-18 08:09+0000\n"
 "Last-Translator: \"Kwanghee Park (kwpa)\" <kwpa@odoo.com>\n"
 "Language-Team: Korean <https://translate.odoo.com/projects/odoo-17/"
 "point_of_sale/ko/>\n"
@@ -116,7 +116,7 @@ msgstr "\"%s\" 관련 %s 고객이 검색되었습니다."
 #: code:addons/point_of_sale/static/src/app/store/pos_store.js:0
 #, python-format
 msgid "%s fiscal position(s) added to the configuration."
-msgstr "%s 재정 위치가 설정에 추가되었습니다."
+msgstr "%s 재정 포지션이 설정에 추가되었습니다."
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -1434,8 +1434,8 @@ msgid ""
 "Choose a specific fiscal position at the order depending on the kind of "
 "customer (tax exempt, onsite vs. takeaway, etc.)."
 msgstr ""
-"주문할 때 고객 분류 (면세, 현장 또는 테이크아웃 등)에 따라 특정 재정 위치를 "
-"선택하세요."
+"주문할 때 고객 분류 (면세, 현장 또는 테이크아웃 등)에 따라 특정 재정 "
+"포지션을 선택하세요."
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -2104,7 +2104,7 @@ msgstr "기본 미수금 (POS)"
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_config__default_fiscal_position_id
 #: model:ir.model.fields,field_description:point_of_sale.field_res_config_settings__pos_default_fiscal_position_id
 msgid "Default Fiscal Position"
-msgstr "기본 재정 위치"
+msgstr "기본 재정 포지션"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
@@ -2663,21 +2663,21 @@ msgstr "주문 가져오기 완료됨"
 #: model:ir.model,name:point_of_sale.model_account_fiscal_position
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_order__fiscal_position_id
 msgid "Fiscal Position"
-msgstr "재정 위치"
+msgstr "재정 포지션"
 
 #. module: point_of_sale
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/app/screens/ticket_screen/ticket_screen.js:0
 #, python-format
 msgid "Fiscal Position not found"
-msgstr "재정 위치를 찾을 수 없습니다."
+msgstr "재정 포지션을 찾을 수 없습니다."
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_config__fiscal_position_ids
 #: model:ir.model.fields,field_description:point_of_sale.field_res_config_settings__pos_fiscal_position_ids
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
 msgid "Fiscal Positions"
-msgstr "재정 위치"
+msgstr "재정 포지션"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
@@ -6182,7 +6182,7 @@ msgstr "선택"
 #: code:addons/point_of_sale/static/src/app/screens/product_screen/control_buttons/fiscal_position_button/fiscal_position_button.js:0
 #, python-format
 msgid "Select Fiscal Position"
-msgstr "재정 위치 선택"
+msgstr "재정 포지션 선택"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
@@ -6388,7 +6388,7 @@ msgstr "세션을 종료할 때 예상 금액과 계산 금액 간의 최대 허
 #: code:addons/point_of_sale/static/src/app/screens/product_screen/control_buttons/fiscal_position_button/fiscal_position_button.xml:0
 #, python-format
 msgid "Set fiscal position"
-msgstr "재정 위치 설정"
+msgstr "재정 포지션 설정"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
@@ -7042,8 +7042,8 @@ msgid ""
 "The fiscal position used in the original order is not loaded. Make sure it "
 "is loaded by adding it in the pos configuration."
 msgstr ""
-"원 주문에 사용된 재정 위치를 불러오지 못했습니다. POS 환경 설정에 추가한 후 "
-"불러오시기 바랍니다."
+"원 주문에 사용된 재정 포지션을 불러오지 못했습니다. POS 환경설정에 추가한 후 "
+"새로 불러오세요."
 
 #. module: point_of_sale
 #. odoo-python
@@ -7989,7 +7989,7 @@ msgstr "바코드를 사용하여 제품이나 고객 카드 등을 스캔하십
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
 msgid "Use fiscal positions to get different taxes by order"
-msgstr "재정 위치를 사용하여 주문별로 세금을 다르게 받으십시오."
+msgstr "재정 포지션을 활용하여 주문별로 세금을 다르게 받으세요."
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form

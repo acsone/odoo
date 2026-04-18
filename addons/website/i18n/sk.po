@@ -18,8 +18,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-03 18:38+0000\n"
-"PO-Revision-Date: 2026-04-09 10:46+0000\n"
-"Last-Translator: Odoo Translation Bot <c3p@odoo.com>\n"
+"PO-Revision-Date: 2026-04-18 17:00+0000\n"
+"Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Slovak <https://translate.odoo.com/projects/odoo-17/website/"
 "sk/>\n"
 "Language: sk\n"
@@ -54,7 +54,7 @@ msgstr ""
 #: code:addons/website/models/website_rewrite.py:0
 #, python-format
 msgid "\"URL from\" can not be empty."
-msgstr ""
+msgstr "„Z URL“ nemôže byť prázdne."
 
 #. module: website
 #. odoo-python
@@ -72,13 +72,16 @@ msgid ""
 "\"Homepage URL\" field in the website settings or the page properties on any "
 "custom page."
 msgstr ""
+"„Na URL“ nie je možné nastaviť na „/“. Ak chcete zmeniť obsah domovskej "
+"stránky, použite pole „URL domovskej stránky“ v nastaveniach webovej stránky "
+"alebo vo vlastnostiach stránky na akejkoľvek vlastnej stránke."
 
 #. module: website
 #. odoo-python
 #: code:addons/website/models/website_rewrite.py:0
 #, python-format
 msgid "\"URL to\" cannot be set to an existing page."
-msgstr ""
+msgstr "„Na URL“ nie je možné nastaviť na existujúcu stránku."
 
 #. module: website
 #. odoo-python
@@ -86,21 +89,21 @@ msgstr ""
 #, python-format
 msgid ""
 "\"URL to\" cannot contain parameter %s which is not used in \"URL from\"."
-msgstr ""
+msgstr "„Na URL“ nemôže obsahovať parameter %s, ktorý sa nepoužíva v „Z URL“."
 
 #. module: website
 #. odoo-python
 #: code:addons/website/models/website_rewrite.py:0
 #, python-format
 msgid "\"URL to\" is invalid: %s"
-msgstr ""
+msgstr "„Na URL“ je neplatné: %s"
 
 #. module: website
 #. odoo-python
 #: code:addons/website/models/website_rewrite.py:0
 #, python-format
 msgid "\"URL to\" must contain parameter %s used in \"URL from\"."
-msgstr ""
+msgstr "„Na URL“ musí obsahovať parameter %s použitý v „Z URL“."
 
 #. module: website
 #. odoo-python
@@ -118,7 +121,7 @@ msgstr "# Navštívené stránky"
 #: model:ir.model.fields,field_description:website.field_website_visitor__visit_count
 #: model_terms:ir.ui.view,arch_db:website.website_visitor_view_search
 msgid "# Visits"
-msgstr ""
+msgstr "Počet návštev"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.navbar
@@ -140,7 +143,7 @@ msgstr ""
 #: code:addons/website/static/src/components/views/page_list.js:0
 #, python-format
 msgid "%s record(s) selected, are you sure you want to publish them all?"
-msgstr ""
+msgstr "%s vybraných záznamov, ste si istí, že ich chcete všetky publikovať?"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippet_options
@@ -155,7 +158,7 @@ msgstr "' nezodpovedá žiadnym stránkam."
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.list_hybrid
 msgid "' did not match anything."
-msgstr ""
+msgstr "' sa nezhodovalo s ničím."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.list_hybrid
@@ -163,6 +166,8 @@ msgid ""
 "' did not match anything.\n"
 "                        Results are displayed for '"
 msgstr ""
+"' sa nezhodovalo s ničím.\n"
+"                        Zobrazujú sa výsledky pre '"
 
 #. module: website
 #. odoo-javascript
@@ -186,7 +191,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:website.list_website_public_pages
 #, python-format
 msgid "'. Showing results for '"
-msgstr ""
+msgstr "'. Zobrazujú sa výsledky pre '"
 
 #. module: website
 #. odoo-javascript
@@ -198,12 +203,12 @@ msgstr "(môže byť použitý v"
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_website_form_options
 msgid "+ Field"
-msgstr ""
+msgstr "+ Pole"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.res_config_settings_view_form
 msgid "+ New Website"
-msgstr ""
+msgstr "+ Nová webová stránka"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.show_website_info
@@ -240,72 +245,72 @@ msgstr "... a prepnite obsah časovej osi tak, aby vyhovoval vašim potrebám."
 #: model_terms:ir.ui.view,arch_db:website.layout
 #: model_terms:ir.ui.view,arch_db:website.snippets
 msgid "/contactus"
-msgstr ""
+msgstr "/contactus"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "1 km"
-msgstr ""
+msgstr "1 km"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "10 m"
-msgstr ""
+msgstr "10 m"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "100 km"
-msgstr ""
+msgstr "100 km"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "100 m"
-msgstr ""
+msgstr "100 m"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "1000 km"
-msgstr ""
+msgstr "1000 km"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "15 km"
-msgstr ""
+msgstr "15 km"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
 msgid "2 <span class=\"visually-hidden\">(current)</span>"
-msgstr ""
+msgstr "2 <span class=\"visually-hidden\">(aktuálne)</span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "2 km"
-msgstr ""
+msgstr "2 km"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "2.5 m"
-msgstr ""
+msgstr "2,5 m"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "20 m"
-msgstr ""
+msgstr "20 m"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "200 km"
-msgstr ""
+msgstr "200 km"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "200 m"
-msgstr ""
+msgstr "200 m"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "2000 km"
-msgstr ""
+msgstr "2000 km"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_comparisons
@@ -329,7 +334,7 @@ msgstr "250 Executive Park Blvd, Suite 3400 • San Francisco CA 94134 • USA"
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "30 km"
-msgstr ""
+msgstr "30 km"
 
 #. module: website
 #. odoo-javascript
@@ -355,24 +360,24 @@ msgstr "308 Presmerovanie / Prepísanie"
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "4 km"
-msgstr ""
+msgstr "4 km"
 
 #. module: website
 #. odoo-javascript
 #: code:addons/website/static/src/client_actions/configurator/configurator.xml:0
 #, python-format
 msgid "4 steps"
-msgstr ""
+msgstr "4 kroky"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "400 km"
-msgstr ""
+msgstr "400 km"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "400 m"
-msgstr ""
+msgstr "400 m"
 
 #. module: website
 #: model:ir.model.fields.selection,name:website.selection__website_rewrite__redirect_type__404
@@ -382,17 +387,17 @@ msgstr "404 Nenájdené"
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "5 m"
-msgstr ""
+msgstr "5 m"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "50 km"
-msgstr ""
+msgstr "50 km"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "50 m"
-msgstr ""
+msgstr "50 m"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.template_footer_call_to_action
@@ -404,7 +409,7 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_map_options
 msgid "8 km"
-msgstr ""
+msgstr "8 km"
 
 #. module: website
 #. odoo-javascript
@@ -465,7 +470,7 @@ msgstr "<b>Kliknutím</b>na tejto hlavičke ju nakonfigurovať."
 #: code:addons/website/static/src/js/tours/tour_utils.js:0
 #, python-format
 msgid "<b>Click</b> on this option to change the %s of the block."
-msgstr ""
+msgstr "<b>Kliknite </b> na túto možnosti, aby ste zmenili %s bloku."
 
 #. module: website
 #. odoo-javascript
@@ -475,6 +480,8 @@ msgid ""
 "<b>Customize</b> any block through this menu. Try to change the background "
 "color of this block."
 msgstr ""
+"<b>Prispôsobte</b> akýkoľvek blok prostredníctvom tohto menu. Skúste zmeniť "
+"farbu pozadia tohto bloku."
 
 #. module: website
 #. odoo-javascript
@@ -484,6 +491,8 @@ msgid ""
 "<b>Customize</b> any block through this menu. Try to change the background "
 "image of this block."
 msgstr ""
+"<b>Prispôsobte</b> akýkoľvek blok prostredníctvom tohto menu. Skúste zmeniť "
+"obrázok pozadia tohto bloku."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.template_footer_headline
@@ -493,7 +502,7 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.template_footer_descriptive
 msgid "<b>Designed</b> for companies"
-msgstr ""
+msgstr "<b>Navrhnuté</b> pre spoločnosti"
 
 #. module: website
 #. odoo-javascript
@@ -508,6 +517,8 @@ msgstr ""
 #, python-format
 msgid "<b>Double click on an image</b> to change it with one of your choice."
 msgstr ""
+"<b>Dvojitým kliknutím na obrázok</b> ho môžete nahradiť obrázkom podľa "
+"vlastného výberu."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.template_footer_descriptive
@@ -521,28 +532,28 @@ msgstr ""
 #: code:addons/website/static/src/js/tours/tour_utils.js:0
 #, python-format
 msgid "<b>Select</b> a %s."
-msgstr ""
+msgstr "<b>Vyberte</b> a %s."
 
 #. module: website
 #. odoo-javascript
 #: code:addons/website/static/src/js/tours/tour_utils.js:0
 #, python-format
 msgid "<b>Select</b> a Color Palette."
-msgstr ""
+msgstr "<b>Vyberte</b> paletu farieb."
 
 #. module: website
 #. odoo-javascript
 #: code:addons/website/static/src/js/tours/tour_utils.js:0
 #, python-format
 msgid "<b>Slide</b> this button to change the %s padding"
-msgstr ""
+msgstr "<b>Posuňte</b> toto tlačidlo pre zmenu %s odsadenia (padding)"
 
 #. module: website
 #. odoo-javascript
 #: code:addons/website/static/src/js/tours/tour_utils.js:0
 #, python-format
 msgid "<b>Slide</b> this button to change the column size."
-msgstr ""
+msgstr "<b>Posuňte</b> toto tlačidlo pre zmenu veľkosti stĺpca."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.view_edit_robots
@@ -550,6 +561,8 @@ msgid ""
 "<br/><br/>\n"
 "                    Example of rule:<br/>"
 msgstr ""
+"<br/><br/>\n"
+"                    Príklad pravidla:<br/>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_carousel
@@ -579,6 +592,8 @@ msgid ""
 "<i class=\"fa fa-1x fa-fw fa-envelope me-2\"/"
 "><span>info@yourcompany.example.com</span>"
 msgstr ""
+"<i class=\"fa fa-1x fa-fw fa-envelope me-2\"/><span>"
+"info@yourcompany.example.com</span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.template_footer_call_to_action
@@ -594,11 +609,14 @@ msgid ""
 "                        <span class=\"o_force_ltr\"><small>+1 555-555-5556</"
 "small></span>"
 msgstr ""
+"<i class=\"fa fa-1x fa-fw fa-phone me-1\"/>\n"
+"                        <span class=\"o_force_ltr\"><small>+421 555 555 555</"
+"small></span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.header_text_element
 msgid "<i class=\"fa fa-1x fa-fw fa-phone me-1\"/>͏"
-msgstr ""
+msgstr "<i class=\"fa fa-1x fa-fw fa-phone me-1\"/>͏"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_rating_options
@@ -644,11 +662,13 @@ msgid ""
 "<i class=\"fa fa-fw o_button_icon fa-circle text-success\" "
 "title=\"Connected\"/>"
 msgstr ""
+"<i class=\"fa fa-fw o_button_icon fa-circle text-success\" "
+"title=\"Pripojený\"/>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.website_pages_kanban_view
 msgid "<i class=\"fa fa-globe me-1\" title=\"Website\"/>"
-msgstr ""
+msgstr "<i class=\"fa fa-globe me-1\" title=\"Webstránka\"/>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.page_404
@@ -684,6 +704,8 @@ msgid ""
 "<i class=\"fa fa-map-marker fa-fw me-2\"/><span class=\"o_force_ltr\">3575 "
 "Fake Buena Vista Avenue</span>"
 msgstr ""
+"<i class=\"fa fa-map-marker fa-fw me-2\"/><span class=\"o_force_ltr\">3575 "
+"Fake Buena Vista Avenue</span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.contactus
@@ -692,6 +714,8 @@ msgid ""
 "<i class=\"fa fa-phone fa-fw me-2\"/><span class=\"o_force_ltr\">+1 "
 "555-555-5556</span>"
 msgstr ""
+"<i class=\"fa fa-phone fa-fw me-2\"/><span class=\"o_force_ltr\">+421 555 "
+"555 555</span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.res_config_settings_view_form
@@ -791,11 +815,14 @@ msgstr ""
 msgid ""
 "<i class=\"s_mega_menu_thumbnails_icon fa fa-comments me-2\"/> Contact us"
 msgstr ""
+"<i class=\"s_mega_menu_thumbnails_icon fa fa-comments me-2\"/> Kontaktujte "
+"nás"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_mega_menu_thumbnails
 msgid "<i class=\"s_mega_menu_thumbnails_icon fa fa-cube me-2\"/> Free returns"
 msgstr ""
+"<i class=\"s_mega_menu_thumbnails_icon fa fa-cube me-2\"/> Bezplatné vrátenie"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_mega_menu_thumbnails
@@ -803,12 +830,16 @@ msgid ""
 "<i class=\"s_mega_menu_thumbnails_icon fa fa-shopping-basket me-2\"/> Pickup "
 "in store"
 msgstr ""
+"<i class=\"s_mega_menu_thumbnails_icon fa fa-shopping-basket me-2\"/> "
+"Vyzdvihnutie v obchode"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_mega_menu_thumbnails
 msgid ""
 "<i class=\"s_mega_menu_thumbnails_icon fa fa-truck me-2\"/> Express delivery"
 msgstr ""
+"<i class=\"s_mega_menu_thumbnails_icon fa fa-truck me-2\"/> Expresné "
+"doručenie"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_comparisons
@@ -820,7 +851,7 @@ msgstr "<i>Okamžité založenie, spokojný alebo refundovaný.</i>"
 #: code:addons/website/controllers/form.py:0
 #, python-format
 msgid "<p>Attached files: </p>"
-msgstr ""
+msgstr "<p>Priložené súbory: </p>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
@@ -836,6 +867,16 @@ msgid ""
 "value=\"3\">Three</option>\n"
 "                                                        </select>"
 msgstr ""
+"<select id=\"exampleSelect\" class=\"form-select\">\n"
+"                                                            <option "
+"selected=\"true\">Otvorte toto výberové menu</option>\n"
+"                                                            <option "
+"value=\"1\">Jeden</option>\n"
+"                                                            <option "
+"value=\"2\">Dva</option>\n"
+"                                                            <option "
+"value=\"3\">Tri</option>\n"
+"                                                        </select>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.header_text_element
@@ -855,6 +896,20 @@ msgid ""
 "                        Standard Shipping\n"
 "                    </small>"
 msgstr ""
+"<small class=\"d-flex align-items-center\">\n"
+"                        <i class=\"fa fa-1x fa-fw fa-usd fa-stack me-1\"/>\n"
+"                        Záruka nízkej ceny\n"
+"                   </small>\n"
+"                    <small class=\"d-flex align-items-center\"> \n"
+"                       <i class=\"fa fa-1x fa-fw fa-shopping-basket fa-stack "
+"me-1\"/> \n"
+"                        30 dní na vrátenie tovaru online\n"
+"                   </small>\n"
+"                    <small class=\"d-flex align-items-center\"> \n"
+"                       <i class=\"fa fa-1x fa-fw fa-truck fa-stack me-1\"/> "
+"\n"
+"                        Štandardná doprava\n"
+"                   </small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.res_config_settings_view_form
@@ -868,42 +923,42 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
 msgid "<small class=\"text-muted\">(rounded-0)</small>"
-msgstr ""
+msgstr "<small class=\"text-muted\">(rounded-0)</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
 msgid "<small class=\"text-muted\">(rounded-1)</small>"
-msgstr ""
+msgstr "<small class=\"text-muted\">(rounded-1)</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
 msgid "<small class=\"text-muted\">(rounded-2)</small>"
-msgstr ""
+msgstr "<small class=\"text-muted\">(rounded-2)</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
 msgid "<small class=\"text-muted\">(rounded-3)</small>"
-msgstr ""
+msgstr "<small class=\"text-muted\">(rounded-3)</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
 msgid "<small class=\"text-muted\">(shadow)</small>"
-msgstr ""
+msgstr "<small class=\"text-muted\">(shadow)</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
 msgid "<small class=\"text-muted\">(shadow-lg)</small>"
-msgstr ""
+msgstr "<small class=\"text-muted\">(shadow-lg)</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
 msgid "<small class=\"text-muted\">(shadow-sm)</small>"
-msgstr ""
+msgstr "<small class=\"text-muted\">(shadow-sm)</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
 msgid "<small class=\"text-muted\">Last updated 3 mins ago</small>"
-msgstr ""
+msgstr "<small class=\"text-muted\">Naposledy upravené pred 3 minútami</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.color_combinations_debug_view
@@ -911,6 +966,8 @@ msgid ""
 "<small id=\"emailHelp\" class=\"form-text text-muted\">Form field help text</"
 "small>"
 msgstr ""
+"<small id=\"emailHelp\" class=\"form-text text-muted\">Text nápovedy pre "
+"formulárové polia</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
@@ -929,6 +986,10 @@ msgid ""
 "                            info@yourcompany.example.com\n"
 "                        </small>"
 msgstr ""
+"<small>\n"
+"                            <i class=\"fa fa-1x fa-fw fa-envelope me-1\"/>\n"
+"                            info@yourcompany.example.com\n"
+"                       </small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_comparisons
@@ -941,16 +1002,18 @@ msgid ""
 "<small><i class=\"fa fa-1x fa-fw fa-envelope me-1\"/> "
 "info@yourcompany.example.com</small>"
 msgstr ""
+"<small><i class=\"fa fa-1x fa-fw fa-envelope me-1\"/> "
+"info@yourcompany.example.com</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.header_text_element
 msgid "<small>Free Returns and Standard Shipping</small>"
-msgstr ""
+msgstr "<small>Bezplatné vrátenie tovaru a štandardná doprava</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.color_combinations_debug_view
 msgid "<small>TABS</small>"
-msgstr ""
+msgstr "<small>TABS</small>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.bs_debug_view
@@ -980,6 +1043,9 @@ msgid ""
 "                            <b>Discover our new products</b>\n"
 "                        </span>"
 msgstr ""
+"<span class=\"d-block p-2 small\">\n"
+"                            <b>Objavte naše nové produkty</b>\n"
+"                        </span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.contactus_thanks_ir_ui_view
@@ -992,7 +1058,7 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.language_selector_inline
 msgid "<span class=\"list-inline-item\">|</span>"
-msgstr ""
+msgstr "<span class=\"list-inline-item\">|</span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_rating_options
@@ -1014,12 +1080,12 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.header_text_element
 msgid "<span class=\"o_force_ltr\">+1 555-555-5556</span>"
-msgstr ""
+msgstr "<span class=\"o_force_ltr\">+421 555 555 555</span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.website_visitor_view_form
 msgid "<span class=\"o_stat_text\">Connected</span>"
-msgstr ""
+msgstr "<span class=\"o_stat_text\">Pripojený</span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.website_visitor_view_form
@@ -1156,7 +1222,7 @@ msgstr "<span class=\"s_website_form_label_content\">Spoločnosť</span>"
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.contactus
 msgid "<span class=\"s_website_form_label_content\">Email To</span>"
-msgstr ""
+msgstr "<span class=\"s_website_form_label_content\">E-mail</span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.contactus
@@ -1217,7 +1283,7 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_website_form
 msgid "<span class=\"s_website_form_label_content\">Your Company</span>"
-msgstr ""
+msgstr "<span class=\"s_website_form_label_content\">Vaša Spoločnosť</span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_website_form
@@ -1241,6 +1307,8 @@ msgid ""
 "<span class=\"s_website_form_label_content\">Your Question</span>\n"
 "                                <span class=\"s_website_form_mark\"> *</span>"
 msgstr ""
+"<span class=\"s_website_form_label_content\">Vaša otázka</span>\n"
+"                                <span class=\"s_website_form_mark\"> *</span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.website_controller_pages_form_view
@@ -1254,7 +1322,7 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.website_controller_pages_form_view
 msgid "<span>/model/</span>"
-msgstr ""
+msgstr "<span>/model/</span>"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_timeline

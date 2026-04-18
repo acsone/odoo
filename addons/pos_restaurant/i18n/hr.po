@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-03 18:38+0000\n"
-"PO-Revision-Date: 2026-04-04 19:13+0000\n"
+"PO-Revision-Date: 2026-04-18 17:00+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Croatian <https://translate.odoo.com/projects/odoo-17/"
 "pos_restaurant/hr/>\n"
@@ -179,7 +179,7 @@ msgstr ""
 #: code:addons/pos_restaurant/static/src/overrides/components/navbar/back_button/back_button.xml:0
 #, python-format
 msgid "BACK"
-msgstr ""
+msgstr "NAZAD"
 
 #. module: pos_restaurant
 #. odoo-javascript
@@ -1090,6 +1090,8 @@ msgid ""
 "This order is not yet synced to server. Make sure it is synced then try "
 "again."
 msgstr ""
+"Ova narudžba još nije sinkronizirana sa serverom. Osigurajte da je "
+"sinkronizirana pa pokušajte ponovno."
 
 #. module: pos_restaurant
 #. odoo-javascript
@@ -1152,7 +1154,7 @@ msgstr ""
 #: code:addons/pos_restaurant/static/src/app/tip_screen/tip_screen.js:0
 #, python-format
 msgid "Unsynced order"
-msgstr ""
+msgstr "Nesinkronizirana narudžba"
 
 #. module: pos_restaurant
 #. odoo-javascript
