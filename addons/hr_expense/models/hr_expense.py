@@ -1027,9 +1027,12 @@ class HrExpense(models.Model):
         if expenses_submitted_to_review and parse_version(installed_module_version)[2:] < parse_version('2.1'):
             self._send_submitted_expenses_mail()
 
+    def _get_expenses_send_mail(self):
+        return self.search([('state', '=', 'submitted')])
+
     @api.model
     def _cron_send_submitted_expenses_mail(self):
-        expenses_submitted_to_review = self.search([('state', '=', 'submitted')])
+        expenses_submitted_to_review = self._get_expenses_send_mail()
         if expenses_submitted_to_review:
             expenses_submitted_to_review._send_submitted_expenses_mail()
 
