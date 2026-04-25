@@ -49,7 +49,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-02-16 13:08+0000\n"
-"PO-Revision-Date: 2026-04-18 08:08+0000\n"
+"PO-Revision-Date: 2026-04-24 13:41+0000\n"
 "Last-Translator: Saara Hakanen <sahak@odoo.com>\n"
 "Language-Team: Finnish <https://translate.odoo.com/projects/odoo-17/base/fi/>"
 "\n"
@@ -58,7 +58,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_at_reports
@@ -23757,7 +23757,7 @@ msgstr "Suorita joka"
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_actions_server__state__multi
 msgid "Execute Existing Actions"
-msgstr "Suorita olemassa oleva toiminto"
+msgstr "Suorita olemassa olevia toimintoja"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.ir_cron_view_search
@@ -29532,7 +29532,7 @@ msgstr "Tuotannon erääntyminen"
 #. module: base
 #: model:ir.module.module,summary:base.module_mrp
 msgid "Manufacturing Orders & BOMs"
-msgstr "Tuotantotilaukset ja kokoonpanolistat (BOM:t)"
+msgstr "Tuotantotilaukset & materiaaliluettelot"
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_property__type__many2one
@@ -37990,7 +37990,7 @@ msgstr "Myy tuotteitasi verkossa"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_partner_bank__allow_out_payment
 msgid "Send Money"
-msgstr "Tee tilisiirto"
+msgstr "Salli maksut"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_sms_twilio
@@ -39766,7 +39766,7 @@ msgstr "Tehtävien lokikirjaukset"
 #: model:ir.model.fields,field_description:base.field_res_partner__vat
 #: model:ir.model.fields,field_description:base.field_res_users__vat
 msgid "Tax ID"
-msgstr "ALV-numero"
+msgstr "Verotunnus"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_edi_ubl_cii_tax_extension

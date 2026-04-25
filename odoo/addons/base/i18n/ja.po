@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-02-16 13:08+0000\n"
-"PO-Revision-Date: 2026-04-14 14:24+0000\n"
+"PO-Revision-Date: 2026-04-24 09:48+0000\n"
 "Last-Translator: \"Junko Augias (juau)\" <juau@odoo.com>\n"
 "Language-Team: Japanese <https://translate.odoo.com/projects/odoo-17/base/"
 "ja/>\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 
 #. module: base
 #: model:ir.module.module,description:base.module_l10n_at_reports
@@ -15773,7 +15773,7 @@ msgid ""
 "create and manage appraisals for himself and the people he's manager of."
 msgstr ""
 "評価に何の権限も持たないユーザは、アプリケーションを見たり、自分自身や自分が"
-"マネージャーである従業員のために査定を作成したり、管理したりすることができま"
+"マネージャーである従業員のために評価を作成したり、管理したりすることができま"
 "す。"
 
 #. module: base
@@ -23952,7 +23952,7 @@ msgstr "ファイルコンテンツ(base64)"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_ir_attachment__raw
 msgid "File Content (raw)"
-msgstr "フィールドの内容(生)"
+msgstr "ファイル内容 (raw)"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_base_language_export__format
@@ -35885,7 +35885,7 @@ msgstr "全ての x で繰り返す"
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_asset__directive__replace
 msgid "Replace"
-msgstr "置き換える"
+msgstr "置換"
 
 #. module: base
 #: model:ir.model.fields.selection,name:base.selection__ir_actions_act_url__binding_type__report
@@ -41574,7 +41574,7 @@ msgstr "モジュールをアンインストール"
 #: model:ir.model.fields.selection,name:base.selection__ir_module_module_dependency__state__uninstallable
 #: model:ir.model.fields.selection,name:base.selection__ir_module_module_exclusion__state__uninstallable
 msgid "Uninstallable"
-msgstr "インストール不能"
+msgstr "アンインストール可能"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.view_base_module_uninstall
@@ -42133,7 +42133,7 @@ msgstr "ユーザ定義のデフォルト値"
 #: model:ir.actions.act_window,name:base.actions_ir_filters_view
 #: model:ir.ui.menu,name:base.menu_ir_filters
 msgid "User-defined Filters"
-msgstr "ユーザ定義のフィルタ"
+msgstr "ユーザ定義フィルタ"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_point_of_sale
@@ -42902,7 +42902,7 @@ msgstr "西サハラ"
 #. module: base
 #: model_terms:res.company,appraisal_employee_feedback_template:base.main_company
 msgid "What are my best achievement(s) since my last appraisal?"
-msgstr "前回の査定から、自分が達成した最も良いことは何だろう？"
+msgstr "前回の評価から、自分が達成した最も良いことは何だろう？"
 
 #. module: base
 #: model_terms:res.company,appraisal_employee_feedback_template:base.main_company

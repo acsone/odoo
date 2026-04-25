@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-10 18:36+0000\n"
-"PO-Revision-Date: 2026-04-09 10:40+0000\n"
+"POT-Creation-Date: 2026-04-24 17:37+0000\n"
+"PO-Revision-Date: 2026-04-25 17:00+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Russian <https://translate.odoo.com/projects/odoo-17/"
 "account_peppol/ru/>\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 
 #. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.mail_notification_layout_with_responsible_signature_and_peppol
@@ -103,10 +103,8 @@ msgstr ""
 #, python-format
 msgid ""
 "A participant with these details has already been registered on the network. "
-"If you have previously registered to a Peppol service, please deregister."
+"If you continue, Odoo will register this company as sender only."
 msgstr ""
-"A participant with these details has already been registered on the network. "
-"If you have previously registered to a Peppol service, please deregister."
 
 #. module: account_peppol
 #. odoo-python
@@ -115,6 +113,15 @@ msgstr ""
 msgid "A purchase journal must be used to receive Peppol documents."
 msgstr ""
 "Для получения документов Peppol необходимо использовать журнал покупок."
+
+#. module: account_peppol
+#. odoo-python
+#: code:addons/account_peppol/models/res_config_settings.py:0
+#, python-format
+msgid ""
+"A receiver connection is already registered for this participant. Please "
+"deregister that receiver connection first."
+msgstr ""
 
 #. module: account_peppol
 #: model:ir.model,name:account_peppol.model_account_edi_proxy_client_user
@@ -152,6 +159,14 @@ msgid "Active"
 msgstr "Активный"
 
 #. module: account_peppol
+#. odoo-javascript
+#: code:addons/account_peppol/static/src/components/res_config_settings_buttons/res_config_settings_buttons.js:0
+#: code:addons/account_peppol/static/src/components/res_config_settings_buttons/res_config_settings_buttons.xml:0
+#, python-format
+msgid "Allow reception"
+msgstr "Allow reception"
+
+#. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.res_config_settings_view_form
 msgid "Application status:"
 msgstr "Статус заявки:"
@@ -165,6 +180,11 @@ msgstr ""
 "электронные счета-фактуры."
 
 #. module: account_peppol
+#: model:ir.model.fields.selection,name:account_peppol.selection__res_company__account_peppol_proxy_state__sender
+msgid "Can send but not receive"
+msgstr "Can send but not receive"
+
+#. module: account_peppol
 #. odoo-python
 #: code:addons/account_peppol/models/res_config_settings.py:0
 #, python-format
@@ -174,6 +194,13 @@ msgid ""
 msgstr ""
 "Невозможно отменить активную регистрацию. Пожалуйста, запросите перенос или "
 "отмените регистрацию."
+
+#. module: account_peppol
+#. odoo-javascript
+#: code:addons/account_peppol/static/src/components/res_config_settings_buttons/res_config_settings_buttons.js:0
+#, python-format
+msgid "Cancel"
+msgstr "Отменить"
 
 #. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.account_peppol_view_move_form
@@ -282,6 +309,11 @@ msgstr "Демо"
 #, python-format
 msgid "Deregister from Peppol"
 msgstr "Отказаться от регистрации в Пепполе"
+
+#. module: account_peppol
+#: model_terms:ir.ui.view,arch_db:account_peppol.res_config_settings_view_form
+msgid "Disable the reception."
+msgstr "Disable the reception."
 
 #. module: account_peppol
 #: model:ir.model.fields.selection,name:account_peppol.selection__account_move__peppol_move_state__done
@@ -400,9 +432,23 @@ msgid "Not verified"
 msgstr "Не подтвержденный"
 
 #. module: account_peppol
+#. odoo-javascript
+#: code:addons/account_peppol/static/src/components/res_config_settings_buttons/res_config_settings_buttons.js:0
+#, python-format
+msgid "OK"
+msgstr "ОК"
+
+#. module: account_peppol
 #: model_terms:ir.ui.view,arch_db:account_peppol.mail_notification_layout_with_responsible_signature_and_peppol
 msgid "Odoo"
 msgstr "Odoo"
+
+#. module: account_peppol
+#. odoo-python
+#: code:addons/account_peppol/models/res_config_settings.py:0
+#, python-format
+msgid "Only sender-only connections can be reactivated for reception."
+msgstr ""
 
 #. module: account_peppol
 #: model:ir.model.fields.selection,name:account_peppol.selection__account_edi_proxy_client_user__proxy_type__peppol
@@ -659,6 +705,15 @@ msgstr "Зарегистрируйтесь в качестве пользова�
 #: model:ir.model.fields.selection,name:account_peppol.selection__res_company__account_peppol_proxy_state__rejected
 msgid "Rejected"
 msgstr "Отклонено"
+
+#. module: account_peppol
+#: model_terms:ir.ui.view,arch_db:account_peppol.res_config_settings_view_form
+msgid ""
+"Route your vendor bills elsewhere while maintaining the ability to send "
+"customer invoices."
+msgstr ""
+"Route your vendor bills elsewhere while maintaining the ability to send "
+"customer invoices."
 
 #. module: account_peppol
 #: model:ir.model.fields,field_description:account_peppol.field_account_edi_proxy_client_user__peppol_verification_code
@@ -1049,6 +1104,16 @@ msgstr "to send invoices, but this one"
 #: model_terms:ir.ui.view,arch_db:account_peppol.mail_notification_layout_with_responsible_signature_and_peppol
 msgid "uses"
 msgstr "uses"
+
+#, python-format
+#~ msgid ""
+#~ "A participant with these details has already been registered on the "
+#~ "network. If you have previously registered to a Peppol service, please "
+#~ "deregister."
+#~ msgstr ""
+#~ "A participant with these details has already been registered on the "
+#~ "network. If you have previously registered to a Peppol service, please "
+#~ "deregister."
 
 #, python-format
 #~ msgid "Can't cancel registration with this status: %s"

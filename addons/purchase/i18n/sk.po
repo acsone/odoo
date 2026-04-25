@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-12-29 18:36+0000\n"
-"PO-Revision-Date: 2026-04-14 14:25+0000\n"
+"PO-Revision-Date: 2026-04-23 17:04+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Slovak <https://translate.odoo.com/projects/odoo-17/purchase/"
 "sk/>\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && "
 "n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 
 #. module: purchase
 #: model:ir.actions.report,print_report_name:purchase.action_report_purchase_order
@@ -1678,7 +1678,7 @@ msgstr "Nenašli sa žiadne produkty. Vytvorte nový!"
 #. module: purchase
 #: model_terms:ir.actions.act_window,help:purchase.purchase_form_action
 msgid "No purchase order found. Let's create one!"
-msgstr ""
+msgstr "Nenašla sa žiadna nákupná objednávka. Vytvorme nejakú!"
 
 #. module: purchase
 #: model_terms:ir.actions.act_window,help:purchase.action_purchase_history
@@ -2500,7 +2500,7 @@ msgstr "Hľadaj zdrojový dokument"
 #: code:addons/purchase/static/src/js/tours/purchase.js:0
 #, python-format
 msgid "Search a vendor name, or create one on the fly."
-msgstr ""
+msgstr "Vyhľadajte názov dodávateľa alebo vytvorte nový za behu."
 
 #. module: purchase
 #: model:ir.model.fields.selection,name:purchase.selection__purchase_order_line__display_type__line_section
@@ -2561,12 +2561,12 @@ msgstr "Poslať PO emailom"
 #. module: purchase
 #: model:ir.actions.server,name:purchase.action_purchase_send_reminder
 msgid "Send Reminder"
-msgstr ""
+msgstr "Odoslať pripomienku"
 
 #. module: purchase
 #: model:res.groups,name:purchase.group_send_reminder
 msgid "Send an automatic reminder email to confirm delivery"
-msgstr ""
+msgstr "Odoslať automatický e-mail s pripomienkou na potvrdenie dodávky"
 
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_order_form
@@ -2583,23 +2583,25 @@ msgstr "Pošli správu"
 #: code:addons/purchase/static/src/js/tours/purchase.js:0
 #, python-format
 msgid "Send the request for quotation to your vendor."
-msgstr ""
+msgstr "Pošlite žiadosť o cenovú ponuku svojmu dodávateľovi."
 
 #. module: purchase
 #: model:mail.template,description:purchase.email_template_edi_purchase
 msgid "Sent manually to vendor to request a quotation"
-msgstr ""
+msgstr "Ručne odoslaná žiadosť o cenovú ponuku dodávateľovi"
 
 #. module: purchase
 #: model:mail.template,description:purchase.email_template_edi_purchase_done
 msgid "Sent to vendor with the purchase order in attachment"
-msgstr ""
+msgstr "Odoslané dodávateľovi s nákupnou objednávkou v prílohe"
 
 #. module: purchase
 #: model:mail.template,description:purchase.email_template_edi_purchase_reminder
 msgid ""
 "Sent to vendors before expected arrival, based on the purchase order setting"
 msgstr ""
+"Odoslané dodávateľom pred očakávaným príchodom na základe nastavenia "
+"nákupnej objednávky"
 
 #. module: purchase
 #: model:ir.model.fields,field_description:purchase.field_purchase_order_line__sequence
@@ -2674,17 +2676,17 @@ msgstr "Medzisúčet"
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_report_view_tree
 msgid "Sum of Qty Billed"
-msgstr ""
+msgstr "Súčet fakturovaného množstva"
 
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_report_view_tree
 msgid "Sum of Qty Ordered"
-msgstr ""
+msgstr "Súčet objednaného množstva"
 
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_report_view_tree
 msgid "Sum of Qty Received"
-msgstr ""
+msgstr "Súčet prijatého množstva"
 
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_report_view_tree
@@ -2742,7 +2744,7 @@ msgstr ""
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_order_form
 msgid "Tax excl.:"
-msgstr ""
+msgstr "Bez dane:"
 
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_order_form
@@ -2752,7 +2754,7 @@ msgstr ""
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_order_form
 msgid "Tax incl.:"
-msgstr ""
+msgstr "Vrátanie dane:"
 
 #. module: purchase
 #: model:ir.model.fields,field_description:purchase.field_purchase_order__amount_tax
@@ -2771,6 +2773,8 @@ msgid ""
 "Technical field to filter the available taxes depending on the fiscal "
 "country and fiscal position."
 msgstr ""
+"Technické pole na filtrovanie dostupných daní v závislosti od daňovej "
+"krajiny a fiškálnej pozície."
 
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_order_portal_content
@@ -2813,12 +2817,12 @@ msgstr ""
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.portal_my_purchase_orders
 msgid "There are currently no purchase orders for your account."
-msgstr ""
+msgstr "Aktuálne neexistujú žiadne nákupné objednávky pre váš účet."
 
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.portal_my_purchase_rfqs
 msgid "There are currently no requests for quotation for your account."
-msgstr ""
+msgstr "Aktuálne neexistujú žiadne žiadosti o cenovú ponuku pre váš účet."
 
 #. module: purchase
 #. odoo-python
@@ -2837,6 +2841,10 @@ msgid ""
 "                You can track your negotiation performance, the delivery "
 "performance of your vendors, etc"
 msgstr ""
+"Tento prehľad umožňuje ľahko kontrolovať a analyzovať históriu nákupov a "
+"výkonnosť nákupného oddelenia vašej spoločnosti.\n"
+"                Môžete sledovať svoje výsledky pri rokovaniach, spoľahlivosť "
+"dodávok od svojich dodávateľov atď."
 
 #. module: purchase
 #: model:ir.model.fields,help:purchase.field_res_partner__property_purchase_currency_id
@@ -2877,14 +2885,14 @@ msgstr ""
 #: code:addons/purchase/models/account_invoice.py:0
 #, python-format
 msgid "This vendor bill has been created from: "
-msgstr ""
+msgstr "Táto faktúra dodávateľa bola vytvorená z: "
 
 #. module: purchase
 #. odoo-python
 #: code:addons/purchase/models/account_invoice.py:0
 #, python-format
 msgid "This vendor bill has been modified from: "
-msgstr ""
+msgstr "Táto faktúra dodávateľa bola upravená z: "
 
 #. module: purchase
 #: model_terms:ir.actions.act_window,help:purchase.act_res_partner_2_purchase_order
@@ -2896,13 +2904,13 @@ msgstr ""
 #: model:digest.tip,name:purchase.digest_tip_purchase_0
 #: model_terms:digest.tip,tip_description:purchase.digest_tip_purchase_0
 msgid "Tip: How to keep late receipts under control?"
-msgstr ""
+msgstr "Tip: Ako mať pod kontrolou oneskorené dodávky?"
 
 #. module: purchase
 #: model:digest.tip,name:purchase.digest_tip_purchase_1
 #: model_terms:digest.tip,tip_description:purchase.digest_tip_purchase_1
 msgid "Tip: Never miss a purchase order"
-msgstr ""
+msgstr "Tip: Nikdy nezmeškajte nákupnú objednávku"
 
 #. module: purchase
 #: model:ir.model.fields.selection,name:purchase.selection__purchase_order__state__to_approve
@@ -3001,7 +3009,7 @@ msgstr "Jednotková cena"
 #. module: purchase
 #: model:ir.model.fields,field_description:purchase.field_purchase_order_line__price_unit_discounted
 msgid "Unit Price (Discounted)"
-msgstr ""
+msgstr "Jednotková cena (po zľave)"
 
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_order_form
@@ -3230,6 +3238,13 @@ msgid ""
 "dates and keep you informed in case of any delays. To get the vendor's "
 "performance statistics, click on the OTD rate."
 msgstr ""
+"Pri vytváraní nákupnej objednávky si pozrite mieru <i>včasnosti dodávok </i> "
+"dodávateľa: percento produktov dodaných načas. Ak je príliš nízka, aktivujte "
+"<i>automatické pripomienky</i> . Niekoľko dní pred termínom dodania pošle "
+"Odoo dodávateľovi e-mail s požiadavkou o potvrdenie termínov dodania a bude "
+"vás informovať v prípade akýchkoľvek oneskorení. Ak chcete získať štatistiky "
+"výkonnosti dodávateľa, kliknite na mieru včasnosti dodávok (OTD - On Time "
+"Delivery)."
 
 #. module: purchase
 #: model_terms:digest.tip,tip_description:purchase.digest_tip_purchase_1
@@ -3239,6 +3254,10 @@ msgid ""
 "clicking on a button in the email, the information is added on the purchase "
 "order. Use filters to track orders that have not been acknowledged."
 msgstr ""
+"Pri zasielaní nákupnej objednávky e-mailom Odoo požiada dodávateľa o "
+"potvrdenie prijatia objednávky. Keď dodávateľ potvrdí objednávku kliknutím "
+"na tlačidlo v e-maile, informácia sa pridá do nákupnej objednávky. Použite "
+"filtre na sledovanie objednávok, ktoré neboli potvrdené."
 
 #. module: purchase
 #: model:ir.model.fields,help:purchase.field_purchase_order__partner_id
@@ -3255,6 +3274,8 @@ msgid ""
 "You cannot change the type of a purchase order line. Instead you should "
 "delete the current line and create a new line of the proper type."
 msgstr ""
+"Typ riadku nákupnej objednávky nemôžete zmeniť. Namiesto toho by ste mali "
+"aktuálny riadok vymazať a vytvoriť nový riadok správneho typu."
 
 #. module: purchase
 #: model_terms:ir.actions.act_window,help:purchase.product_product_action
@@ -3271,6 +3292,8 @@ msgid ""
 "You must define a product for everything you sell or purchase,\n"
 "            whether it's a storable product, a consumable or a service."
 msgstr ""
+"Produkty musíte definovať pre všetko čo predávate alebo kupujete,\n"
+"                či už ide o skladovaný produkt, spotrebný tovar alebo službu."
 
 #. module: purchase
 #. odoo-python
@@ -3295,7 +3318,7 @@ msgstr "zatvoriť"
 #. module: purchase
 #: model_terms:ir.ui.view,arch_db:purchase.purchase_order_form
 msgid "day(s) before"
-msgstr ""
+msgstr "deň (dni) pred"
 
 #. module: purchase
 #: model:mail.template,subject:purchase.email_template_edi_purchase
@@ -3303,3 +3326,4 @@ msgstr ""
 #: model:mail.template,subject:purchase.email_template_edi_purchase_reminder
 msgid "{{ object.company_id.name }} Order (Ref {{ object.name or 'n/a' }})"
 msgstr ""
+"{{ object.company_id.name }} Objednávka (Ref {{ object.name or 'n/a' }})"

@@ -12,13 +12,14 @@
 # Wil Odoo, 2025
 # Marta Wacławek, 2025
 # "Marta (wacm)" <wacm@odoo.com>, 2025, 2026.
+# Weblate <noreply-mt-weblate@weblate.org>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-03 18:38+0000\n"
-"PO-Revision-Date: 2026-04-14 14:24+0000\n"
-"Last-Translator: \"Marta (wacm)\" <wacm@odoo.com>\n"
+"POT-Creation-Date: 2026-04-24 17:36+0000\n"
+"PO-Revision-Date: 2026-04-25 17:00+0000\n"
+"Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Polish <https://translate.odoo.com/projects/odoo-17/"
 "point_of_sale/pl/>\n"
 "Language: pl\n"
@@ -28,7 +29,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
 "(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
 "n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 
 #. module: point_of_sale
 #. odoo-python
@@ -1289,6 +1290,11 @@ msgstr "Zaokrąglenie gotówki"
 #: model:ir.model.fields,field_description:point_of_sale.field_res_config_settings__pos_cash_rounding
 msgid "Cash Rounding (PoS)"
 msgstr "Zaokrąglanie gotówki (PoS)"
+
+#. module: point_of_sale
+#: model_terms:ir.ui.view,arch_db:point_of_sale.report_saledetails
+msgid "Cash Rounding:"
+msgstr ""
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
@@ -3349,7 +3355,7 @@ msgstr "Kpi Pos Wartość całkowita"
 #. module: point_of_sale
 #: model:product.attribute.value,name:point_of_sale.size_attribute_l
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #. module: point_of_sale
 #: model:product.template,name:point_of_sale.led_lamp_product_template
@@ -3594,7 +3600,7 @@ msgstr "Numer partii / serii"
 #. module: point_of_sale
 #: model:product.attribute.value,name:point_of_sale.size_attribute_m
 msgid "M"
-msgstr ""
+msgstr "M"
 
 #. module: point_of_sale
 #: model:product.template,name:point_of_sale.magnetic_board_product_template
@@ -8244,7 +8250,7 @@ msgstr "Z"
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.report_saledetails
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -8764,7 +8770,7 @@ msgstr "były duplikatami istniejących zamówień"
 #: code:addons/point_of_sale/static/src/app/navbar/sale_details_button/sales_detail_report.xml:0
 #, python-format
 msgid "x"
-msgstr ""
+msgstr "x"
 
 #~ msgid "0.00"
 #~ msgstr "0.00"

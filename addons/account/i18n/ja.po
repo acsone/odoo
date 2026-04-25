@@ -16,8 +16,8 @@ msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-17 18:36+0000\n"
-"PO-Revision-Date: 2026-04-18 17:00+0000\n"
-"Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
+"PO-Revision-Date: 2026-04-24 09:50+0000\n"
+"Last-Translator: \"Junko Augias (juau)\" <juau@odoo.com>\n"
 "Language-Team: Japanese <https://translate.odoo.com/projects/odoo-17/account/"
 "ja/>\n"
 "Language: ja\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 
 #. module: account
 #. odoo-python
@@ -3403,8 +3403,8 @@ msgid ""
 "By default, we always unfold the lines that can be. If this is checked, the "
 "line won't be unfolded by default, and a folding button will be displayed."
 msgstr ""
-"折り畳まれる全ての明細はデフォルトで折り畳みます。チェックした場合は、デフォ"
-"ルトで折り畳みません。折り畳みボタンは表示されます。"
+"デフォルトでは、折りたたみ可能な明細行は常に展開されます。これにチェックを入"
+"れると、その行はデフォルトで展開されず、折りたたみボタンが表示されます。"
 
 #. module: account
 #: model:ir.model.fields,help:account.field_account_fiscal_position__active
@@ -4233,7 +4233,7 @@ msgstr "確定"
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.account_journal_dashboard_kanban_view
 msgid "Connect"
-msgstr "接続"
+msgstr "連携"
 
 #. module: account
 #: model:onboarding.onboarding.step,description:account.onboarding_onboarding_step_bank_account
@@ -4262,7 +4262,7 @@ msgstr "内容"
 #: model_terms:ir.ui.view,arch_db:account.account_tour_upload_bill
 #: model_terms:ir.ui.view,arch_db:account.account_tour_upload_bill_email_confirm
 msgid "Continue"
-msgstr "次へ進む"
+msgstr "続行"
 
 #. module: account
 #: model_terms:ir.ui.view,arch_db:account.view_account_journal_form

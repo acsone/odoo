@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-03 18:38+0000\n"
-"PO-Revision-Date: 2026-04-04 19:15+0000\n"
+"POT-Creation-Date: 2026-04-24 17:36+0000\n"
+"PO-Revision-Date: 2026-04-25 17:00+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Slovak <https://translate.odoo.com/projects/odoo-17/"
 "point_of_sale/sk/>\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && "
 "n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 
 #. module: point_of_sale
 #. odoo-python
@@ -1267,6 +1267,11 @@ msgstr "Zaokrúhľovanie hotovosti"
 #: model:ir.model.fields,field_description:point_of_sale.field_res_config_settings__pos_cash_rounding
 msgid "Cash Rounding (PoS)"
 msgstr "Zaokrúhľovanie hotovosti (PoS)"
+
+#. module: point_of_sale
+#: model_terms:ir.ui.view,arch_db:point_of_sale.report_saledetails
+msgid "Cash Rounding:"
+msgstr ""
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
@@ -3741,7 +3746,7 @@ msgstr "Termín mojej aktivity"
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.view_pos_session_search
 msgid "My Sessions"
-msgstr ""
+msgstr "Moje relácie"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -8565,7 +8570,7 @@ msgstr "boli duplikáty existujúcich objednávok"
 #: code:addons/point_of_sale/static/src/app/navbar/sale_details_button/sales_detail_report.xml:0
 #, python-format
 msgid "x"
-msgstr ""
+msgstr "x"
 
 #~ msgid "0.00"
 #~ msgstr "0.00"

@@ -27,8 +27,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-03 18:40+0000\n"
-"PO-Revision-Date: 2026-04-15 15:03+0000\n"
+"POT-Creation-Date: 2026-04-24 17:38+0000\n"
+"PO-Revision-Date: 2026-04-25 17:00+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Russian <https://translate.odoo.com/projects/odoo-17/"
 "spreadsheet/ru/>\n"
@@ -39,7 +39,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
-"X-Generator: Weblate 5.16.2\n"
+"X-Generator: Weblate 5.17\n"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -135,23 +135,13 @@ msgstr ""
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid ""
-"(1) Search starting at first item. \n"
-"      (-1) Search starting at last item. \n"
-"      (2) Perform a binary search that relies on lookup_array being sorted "
-"in ascending order. If not sorted, invalid results will be returned. \n"
-"      (-2) Perform a binary search that relies on lookup_array being sorted "
-"in descending order. If not sorted, invalid results will be returned.\n"
-"      "
+"(1) Search starting at first item.       (-1) Search starting at last "
+"item.       (2) Perform a binary search that relies on lookup_array being "
+"sorted in ascending order. If not sorted, invalid results will be "
+"returned.       (-2) Perform a binary search that relies on lookup_array "
+"being sorted in descending order. If not sorted, invalid results will be "
+"returned.      "
 msgstr ""
-"(1) Поиск начинается с первого элемента.\n"
-"      (-1) Поиск, начиная с последнего элемента.\n"
-"      (2) Выполните бинарный поиск, который основан на том, что lookup_array "
-"отсортирован по возрастанию. Если он не отсортирован, будут возвращены "
-"неверные результаты.\n"
-"      (-2) Выполните бинарный поиск, который основан на сортировке массива "
-"lookup_array по убыванию. Если он не отсортирован, будут возвращены "
-"недопустимые результаты.\n"
-"      "
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -3226,27 +3216,6 @@ msgstr "Функция [[FUNCTION_NAME]] не нашла результата."
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
 #, python-format
 msgid ""
-"Function [[FUNCTION_NAME]] expects criteria_range and criterion to be in "
-"pairs."
-msgstr ""
-"Функция [[FUNCTION_NAME]] ожидает, что criteria_range и criterion будут "
-"попарно."
-
-#. module: spreadsheet
-#. odoo-javascript
-#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
-#, python-format
-msgid ""
-"Function [[FUNCTION_NAME]] expects criteria_range to have the same dimension"
-msgstr ""
-"Функция [[FUNCTION_NAME]] ожидает, что criteria_range будет иметь ту же "
-"размерность"
-
-#. module: spreadsheet
-#. odoo-javascript
-#: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.js:0
-#, python-format
-msgid ""
 "Function [[FUNCTION_NAME]] expects number values for %s, but got a boolean."
 msgstr ""
 "Ожидается числовое значение для %s, а получено логическое в функции "
@@ -3664,12 +3633,8 @@ msgstr "При оценке [[FUNCTION_NAME]] не удается найти '%s
 #, python-format
 msgid ""
 "In [[FUNCTION_NAME]], the number of columns of the first matrix (%s) must be "
-"equal to the \n"
-"        number of rows of the second matrix (%s)."
+"equal to the         number of rows of the second matrix (%s)."
 msgstr ""
-"В [[FUNCTION_NAME]] количество столбцов первой матрицы (%s) должно быть "
-"равно\n"
-"        количеству строк второй матрицы (%s)."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -11146,14 +11111,9 @@ msgstr ""
 #, python-format
 msgid ""
 "Whether or not to remove empty text messages from the split results. The "
-"default behavior is to treat \n"
-"        consecutive delimiters as one (if TRUE). If FALSE, empty cells "
-"values are added between consecutive delimiters."
+"default behavior is to treat         consecutive delimiters as one (if "
+"TRUE). If FALSE, empty cells values are added between consecutive delimiters."
 msgstr ""
-"Удалять или нет пустые текстовые сообщения из результатов разбиения. По "
-"умолчанию\n"
-"        последовательные разделители как один (если TRUE). Если FALSE, то "
-"между последовательными разделителями добавляются значения пустых ячеек."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -11169,12 +11129,8 @@ msgstr "Причитаются ли платежи в конце (0) или на
 #, python-format
 msgid ""
 "Whether the array should be scanned by column. True scans the array by "
-"column and false (default) \n"
-"      scans the array by row."
+"column and false (default)       scans the array by row."
 msgstr ""
-"Должен ли массив сканироваться по столбцам. True сканирует массив по "
-"столбцам, а false (по умолчанию)\n"
-"      сканирует массив по строкам."
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -11383,7 +11339,7 @@ msgstr "У вас нет прав на экспорт данных. Обрати
 #: code:addons/spreadsheet/static/src/o_spreadsheet/o_spreadsheet.xml:0
 #, python-format
 msgid "Z"
-msgstr ""
+msgstr "Z"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -11634,7 +11590,7 @@ msgstr "завтра"
 #: code:addons/spreadsheet/static/src/public_readonly_app/public_readonly.xml:0
 #, python-format
 msgid "x"
-msgstr ""
+msgstr "x"
 
 #. module: spreadsheet
 #. odoo-javascript
@@ -11642,6 +11598,76 @@ msgstr ""
 #, python-format
 msgid "yesterday"
 msgstr "вчера"
+
+#, python-format
+#~ msgid ""
+#~ "(1) Search starting at first item. \n"
+#~ "      (-1) Search starting at last item. \n"
+#~ "      (2) Perform a binary search that relies on lookup_array being "
+#~ "sorted in ascending order. If not sorted, invalid results will be "
+#~ "returned. \n"
+#~ "      (-2) Perform a binary search that relies on lookup_array being "
+#~ "sorted in descending order. If not sorted, invalid results will be "
+#~ "returned.\n"
+#~ "      "
+#~ msgstr ""
+#~ "(1) Поиск начинается с первого элемента.\n"
+#~ "      (-1) Поиск, начиная с последнего элемента.\n"
+#~ "      (2) Выполните бинарный поиск, который основан на том, что "
+#~ "lookup_array отсортирован по возрастанию. Если он не отсортирован, будут "
+#~ "возвращены неверные результаты.\n"
+#~ "      (-2) Выполните бинарный поиск, который основан на сортировке "
+#~ "массива lookup_array по убыванию. Если он не отсортирован, будут "
+#~ "возвращены недопустимые результаты.\n"
+#~ "      "
+
+#, python-format
+#~ msgid ""
+#~ "Function [[FUNCTION_NAME]] expects criteria_range and criterion to be in "
+#~ "pairs."
+#~ msgstr ""
+#~ "Функция [[FUNCTION_NAME]] ожидает, что criteria_range и criterion будут "
+#~ "попарно."
+
+#, python-format
+#~ msgid ""
+#~ "Function [[FUNCTION_NAME]] expects criteria_range to have the same "
+#~ "dimension"
+#~ msgstr ""
+#~ "Функция [[FUNCTION_NAME]] ожидает, что criteria_range будет иметь ту же "
+#~ "размерность"
+
+#, python-format
+#~ msgid ""
+#~ "In [[FUNCTION_NAME]], the number of columns of the first matrix (%s) must "
+#~ "be equal to the \n"
+#~ "        number of rows of the second matrix (%s)."
+#~ msgstr ""
+#~ "В [[FUNCTION_NAME]] количество столбцов первой матрицы (%s) должно быть "
+#~ "равно\n"
+#~ "        количеству строк второй матрицы (%s)."
+
+#, python-format
+#~ msgid ""
+#~ "Whether or not to remove empty text messages from the split results. The "
+#~ "default behavior is to treat \n"
+#~ "        consecutive delimiters as one (if TRUE). If FALSE, empty cells "
+#~ "values are added between consecutive delimiters."
+#~ msgstr ""
+#~ "Удалять или нет пустые текстовые сообщения из результатов разбиения. По "
+#~ "умолчанию\n"
+#~ "        последовательные разделители как один (если TRUE). Если FALSE, то "
+#~ "между последовательными разделителями добавляются значения пустых ячеек."
+
+#, python-format
+#~ msgid ""
+#~ "Whether the array should be scanned by column. True scans the array by "
+#~ "column and false (default) \n"
+#~ "      scans the array by row."
+#~ msgstr ""
+#~ "Должен ли массив сканироваться по столбцам. True сканирует массив по "
+#~ "столбцам, а false (по умолчанию)\n"
+#~ "      сканирует массив по строкам."
 
 #, python-format
 #~ msgid ""
