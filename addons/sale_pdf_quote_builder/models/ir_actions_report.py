@@ -4,7 +4,7 @@ import base64
 import io
 import json
 
-from odoo import _, api, models
+from odoo import _, api, fields, models
 from odoo.tools import format_amount, format_date, format_datetime, pdf
 from odoo.tools.pdf import PdfFileWriter, PdfFileReader, NameObject, NumberObject, createStringObject
 
@@ -12,10 +12,13 @@ from odoo.tools.pdf import PdfFileWriter, PdfFileReader, NameObject, NumberObjec
 class IrActionsReport(models.Model):
     _inherit = 'ir.actions.report'
 
+    use_documents = fields.Boolean(help="Add quotation and product documents (headers and footers) to this report.")
+
     def _render_qweb_pdf_prepare_streams(self, report_ref, data, res_ids=None):
         """Override to add and fill headers, footers and product documents to the sale quotation."""
         result = super()._render_qweb_pdf_prepare_streams(report_ref, data, res_ids=res_ids)
-        if self._get_report(report_ref).report_name != 'sale.report_saleorder':
+        report = self._get_report(report_ref)
+        if not (report.use_documents and report.model == "sale.order"):
             return result
 
         orders = self.env['sale.order'].browse(res_ids)
