@@ -14,6 +14,7 @@
 
     <record id="sale.action_report_saleorder" model="ir.actions.report">
         <field name="name">PDF Quote</field>
+        <field name="use_documents">1</field>
     </record>
 
 </odoo>
