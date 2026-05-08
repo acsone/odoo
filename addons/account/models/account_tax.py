@@ -4397,7 +4397,7 @@ class AccountTax(models.Model):
 
     @api.model
     def _import_retrieve_tax(self, search_plan, company, tax_values_list):
-        cache = self.env.cr.cache.setdefault('retrieved_tax_map', {})
+        cache = self.env.cr.cache.setdefault('retrieved_tax_map', {}).setdefault(company.id, {})
 
         static_domain = expression.OR([
             [*self._check_company_domain(company), ('company_id', '!=', False)],
@@ -4408,6 +4408,7 @@ class AccountTax(models.Model):
                ('amount_type', '=', tax_values['amount_type']),
                ('type_tax_use', '=', tax_values['type_tax_use']),
                ('amount', '=', tax_values['amount']),
+               *([('country_id', '=', tax_values['invoice_predictive']['invoice'].tax_country_id.id)] if 'invoice_predictive' in tax_values else []),
             ]
             orders = ['sequence', 'id']
             if name := tax_values.get('name'):
@@ -4437,7 +4438,7 @@ class AccountTax(models.Model):
                         cache_key = criteria.get('cache_key')
 
                     # Look at the cache if the value has already been tested with this key.
-                    if cache_key in cache:
+                    if cache_key and cache_key in cache:
                         if tax := cache[cache_key]:
                             tax_values['tax'] = tax
                             break
