@@ -2783,7 +2783,7 @@ class AccountMove(models.Model):
             rounding_line_vals = {
                 'balance': diff_balance,
                 'amount_currency': diff_amount_currency,
-                'partner_id': self.partner_id.id,
+                'partner_id': self.commercial_partner_id.id,
                 'move_id': self.id,
                 'currency_id': self.currency_id.id,
                 'company_id': self.company_id.id,
@@ -4618,13 +4618,11 @@ class AccountMove(models.Model):
             return res
 
         # Get the current tax amounts in the current invoice.
-        tax_amounts = {
-            inverse_tax_rep(line.tax_repartition_line_id).id: {
-                'amount_currency': line.amount_currency,
-                'balance': line.balance,
-            }
-            for line in tax_lines
-        }
+        tax_amounts = defaultdict(lambda: {'amount_currency': 0.0, 'balance': 0.0})
+        for line in tax_lines:
+            tax_rep_id = inverse_tax_rep(line.tax_repartition_line_id).id
+            tax_amounts[tax_rep_id]['amount_currency'] += line.amount_currency
+            tax_amounts[tax_rep_id]['balance'] += line.balance
 
         base_lines = [
             {
