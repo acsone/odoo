@@ -159,7 +159,12 @@ class AccountTax(models.Model):
         "Based on Payment: the tax is due as soon as the payment of the invoice is received.")
     cash_basis_transition_account_id = fields.Many2one(string="Cash Basis Transition Account",
         check_company=True,
-        domain="[('deprecated', '=', False)]",
+        domain="""
+            [
+                ('deprecated', '=', False),
+                ('account_type', 'not in', ('asset_receivable', 'liability_payable'))
+            ]
+        """,
         comodel_name='account.account',
         help="Account used to transition the tax amount for cash basis taxes. It will contain the tax amount as long as the original invoice has not been reconciled ; at reconciliation, this amount cancelled on this account and put on the regular tax account.")
     invoice_repartition_line_ids = fields.One2many(
@@ -4387,10 +4392,22 @@ class AccountTax(models.Model):
     @api.model
     def _import_retrieve_tax_from_price_include_exclude(self, tax_values):
         price_include = tax_values.get('price_include')
+        fiscal_position = tax_values.get('fiscal_position')
+
+        fpos_domain = []
+        if fiscal_position:
+            fpos_dest_ids = fiscal_position.tax_ids.mapped('tax_dest_id').ids
+            if fpos_dest_ids:
+                fpos_domain = [('id', 'in', fpos_dest_ids)]
+
         criteria = []
         if not price_include:
+            if fpos_domain:
+                criteria.append({'domain': [('price_include', '=', False)] + fpos_domain})
             criteria.append({'domain': [('price_include', '=', False)]})
         elif price_include is None or price_include:
+            if fpos_domain:
+                criteria.append({'domain': [('price_include', '=', True)] + fpos_domain})
             criteria.append({'domain': [('price_include', '=', True)]})
 
         return {'criteria': criteria}
