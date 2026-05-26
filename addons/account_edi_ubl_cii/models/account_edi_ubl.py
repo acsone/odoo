@@ -2501,9 +2501,11 @@ class AccountEdiUBL(models.AbstractModel):
 
     def _import_ubl_invoice_line_add_name(self, collected_values):
         line_tree = collected_values['line_tree']
+        item_ref = line_tree.findtext('.//{*}Item/{*}SellersItemIdentification/{*}ID')
+        item_name = line_tree.findtext('.//{*}Item/{*}Name')
         name = collected_values['name'] = (
             line_tree.findtext('.//{*}Item/{*}Description')
-            or line_tree.findtext('.//{*}Item/{*}Name')
+            or (f"[{item_ref}] {item_name}" if (item_ref and item_name) else item_name)
         )
         if name:
             collected_values['to_write']['name'] = name
@@ -2593,7 +2595,7 @@ class AccountEdiUBL(models.AbstractModel):
                 price_subtotal = price_allowance_base_amount
             elif price_allowance_amount:
                 price_discount_amount = -price_allowance_amount
-                price_subtotal = price_amount
+                price_subtotal = price_amount - price_allowance_amount
             else:
                 price_discount_amount = 0.0
                 price_subtotal = price_amount
