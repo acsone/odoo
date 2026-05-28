@@ -192,7 +192,7 @@ class TestItEdiImport(TestItEdi):
         })
         self.env['ir.attachment'].with_company(other_company).create({
             'name': filename,
-            'datas': self.fake_test_content,
+            'raw': self.fake_test_content,
             'res_model': 'account.move',
             'res_id': invoice.id,
             'res_field': 'l10n_it_edi_attachment_file',
@@ -455,4 +455,24 @@ class TestItEdiImport(TestItEdi):
             'invoice_date': fields.Date.from_string('2014-12-18'),
             'amount_untaxed': 25.0,
             'amount_tax': 5.5,
+        }])
+
+    def test_import_simplified_invoice_zero_base(self):
+        """Test the import of a xml bill where the total amount equals the tax amount (Importo == Imposta)."""
+
+        self._assert_import_invoice('IT01234567890_FPR05.xml', [{
+            'move_type': 'in_refund',
+            'amount_untaxed': 0.0,
+            'invoice_line_ids': [
+                {
+                    'name': 'IVA ANNO PRECEDENTE',
+                    'quantity': 1.0,
+                    'price_unit': 9.20,
+                },
+                {
+                    'name': 'TOTALE IMPORTO IN ADDEBITO',
+                    'quantity': 1.0,
+                    'price_unit': -9.20,
+                }
+            ],
         }])
