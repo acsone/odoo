@@ -257,17 +257,23 @@ class AccountMove(models.Model):
             pension_fund_type = pension_fund.find("TipoCassa")
             tax_factor_percent = pension_fund.find("AlCassa")
             vat_tax_factor_percent = pension_fund.find("AliquotaIVA")
+            pension_fund_natura = pension_fund.find("Natura")
             pension_fund_type = pension_fund_type.text if pension_fund_type is not None else ""
             tax_factor_percent = float(tax_factor_percent.text or "0.0")
             vat_tax_factor_percent = float(vat_tax_factor_percent.text or "0.0")
+            pension_fund_natura = pension_fund_natura.text if pension_fund_natura is not None else False
             pension_fund_tax = self._l10n_it_edi_search_tax_for_import(
                 company,
                 tax_factor_percent,
                 ([('l10n_it_pension_fund_type', '=', pension_fund_type)]
                  + type_tax_use_domain),
+                l10n_it_exempt_reason=pension_fund_natura,
                 vat_only=False)
             if pension_fund_tax:
-                pension_fund_taxes[vat_tax_factor_percent] = pension_fund_tax
+                if vat_tax_factor_percent not in pension_fund_taxes:
+                    pension_fund_taxes[vat_tax_factor_percent] = pension_fund_tax
+                else:
+                    pension_fund_taxes[vat_tax_factor_percent] |= pension_fund_tax
             else:
                 message_to_log.append(Markup("%s<br/>%s") % (
                     _("Pension Fund tax not found"),
@@ -299,11 +305,24 @@ class AccountMove(models.Model):
         """
         pension_fund_map = extra_info.get('pension_fund_taxes', {})
         tax_rate_tag = self.get_tag(element, './/AliquotaIVA')
-        if tax_rate_tag is None:
+        exemption_reason_tag = self.get_tag(element, "Natura")
+        l10n_it_exemption_reason = exemption_reason_tag.text if exemption_reason_tag is not None else None
+        if tax_rate_tag is None and not l10n_it_exemption_reason:
             return None
 
         tax_rate = float(tax_rate_tag.text)
         pension_fund_tax = pension_fund_map.get(tax_rate)
+        if not pension_fund_tax:
+            return None
+
+        pension_fund_tax_candidates = pension_fund_map.get(tax_rate)
+        if not pension_fund_tax_candidates:
+            return None
+
+        if l10n_it_exemption_reason:
+            pension_fund_tax_candidates = pension_fund_tax_candidates.filtered(lambda t: t.l10n_it_exempt_reason == l10n_it_exemption_reason)
+        pension_fund_tax = pension_fund_tax_candidates[:1]
+
         if not pension_fund_tax:
             return None
 
