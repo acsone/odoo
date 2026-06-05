@@ -88,7 +88,7 @@ class PdpRegistration(models.TransientModel):
     @api.depends('company_id.siret')
     def _compute_siren_number(self):
         for wizard in self:
-            wizard.siren_number = wizard.company_id.siret[:9] if wizard.company_id.siret else ''
+            wizard.siren_number = wizard.company_id.partner_id._l10n_fr_pdp_get_siren()
 
     @api.depends('company_id.account_edi_proxy_client_ids')
     def _compute_edi_user_id(self):
@@ -160,7 +160,7 @@ class PdpRegistration(models.TransientModel):
             }
         }
 
-    def _action_open_pdp_form(self, reopen=True):
+    def _check_can_register(self):
         if not self.env.user.totp_enabled and not bool(self.env['ir.config_parameter'].sudo().get_param('auth_totp.policy')) and self.edi_mode != 'demo':
             raise RedirectWarning(
                 message=self.env._("To be able to register, you need to enable the two-factor authentication."),
@@ -170,6 +170,9 @@ class PdpRegistration(models.TransientModel):
                 ),
                 button_text=self.env._("Go to the Preferences panel"),
             )
+
+    def _action_open_pdp_form(self, reopen=True):
+        self._check_can_register()
         return self._get_records_action(
             name=self.env._("Send via French electronic invoicing"),
             target='new',
