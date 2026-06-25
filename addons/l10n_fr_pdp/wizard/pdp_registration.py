@@ -3,6 +3,7 @@ import logging
 from odoo import api, fields, models, modules
 from odoo.exceptions import UserError, ValidationError, RedirectWarning
 
+from odoo.addons.l10n_fr_pdp.models.res_company import PDP_identifier_re
 from odoo.addons.l10n_fr_pdp.tools.demo_utils import handle_demo
 from odoo.addons.iap.tools import iap_tools
 
@@ -28,6 +29,7 @@ class PdpRegistration(models.TransientModel):
         inverse="_inverse_pdp_identifier",
         readonly=False,
         required=True,
+        help="The identifier starts with the SIREN, the part after the SIREN is optional. The expected format of the identifier is: SIREN, SIREN_SIRET, SIREN_SIRET_CodeRoutage or SIREN_SuffixeAdressage",
     )
     pdp_pilot_phase = fields.Boolean(
         related='company_id.l10n_fr_pdp_pilot_phase',
@@ -99,10 +101,11 @@ class PdpRegistration(models.TransientModel):
         for record in self:
             record.company_id.pdp_identifier = record.pdp_identifier
 
-    @api.depends('company_id.siret', 'company_id.company_registry')
+    @api.depends('pdp_identifier')
     def _compute_siren_number(self):
         for wizard in self:
-            wizard.siren_number = wizard.company_id.partner_id._l10n_fr_pdp_get_siren()
+            match = PDP_identifier_re.match(wizard.pdp_identifier or '')
+            wizard.siren_number = match and match.group(1)
 
     @api.depends('company_id.account_edi_proxy_client_ids')
     def _compute_edi_user_id(self):
@@ -125,6 +128,13 @@ class PdpRegistration(models.TransientModel):
                     'message': self.env._("The SIREN of the company could not be determined."),
                     'action_text': self.env._("Go to company"),
                     'action': wizard.company_id._get_records_action(name=self.env._("Check Company Data")),
+                }
+            # Check SIREN
+            kyc_siren = wizard._get_kyc_siren()
+            if wizard.siren_number != kyc_siren:
+                warnings['kyc_siren_warning'] = {
+                    'level': 'info',
+                    'message': self.env._("%s will be used as SIREN for the KYC", kyc_siren),
                 }
             # Check identifier
             if (
@@ -158,6 +168,12 @@ class PdpRegistration(models.TransientModel):
     # -------------------------------------------------------------------------
     # HELPERS
     # -------------------------------------------------------------------------
+
+    def _get_kyc_siren(self):
+        kyc_siren_param = self.env['ir.config_parameter'].sudo().get_param('l10n_fr_pdp.kyc_siren', default='')
+        match = PDP_identifier_re.match(kyc_siren_param)
+        kyc_siren = match and match.group(1)
+        return kyc_siren or self.siren_number
 
     def _ensure_mandatory_fields(self):
         if not self.contact_email:
@@ -199,6 +215,7 @@ class PdpRegistration(models.TransientModel):
         return self._get_records_action(
             name=self.env._("Send via French electronic invoicing"),
             target='new',
+            view_mode='form',
         )
 
     # -------------------------------------------------------------------------
@@ -217,7 +234,7 @@ class PdpRegistration(models.TransientModel):
         base_url = self.company_id._pdp_get_iap_url()
         response = iap_tools.iap_jsonrpc(f'{base_url}/api/id_authentication/1/authentication', params={
             'db_uuid': self.env['ir.config_parameter'].sudo().get_param('database.uuid'),
-            'vat': self.siren_number,
+            'vat': self._get_kyc_siren(),
             'auth_email': self.contact_email,
             'company_name': self.company_id.name,
             'localization': 'FR',
@@ -245,7 +262,7 @@ class PdpRegistration(models.TransientModel):
                 'message': self.env._("Identity verified."),
                 'type': 'success',
                 'sticky': True,
-                'next': self._action_open_pdp_form(),
+                'next': self.button_register_pdp_participant(),
             }
         elif self.pdp_kyc_status == 'fail':
             return {
@@ -281,7 +298,7 @@ class PdpRegistration(models.TransientModel):
 
     def button_refresh_authentication(self):
         self.ensure_one()
-        self.company_id._refresh_pdp_authentication_status()
+        self.company_id._refresh_pdp_authentication_status(send_bus=False)
         return self._display_status_notification()
 
     def button_open_authentication_link(self):
@@ -289,7 +306,7 @@ class PdpRegistration(models.TransientModel):
         base_url = self.company_id._pdp_get_iap_url()
         response = iap_tools.iap_jsonrpc(f'{base_url}/api/id_authentication/1/get_authentication_hash', params={
             'db_uuid': self.env['ir.config_parameter'].sudo().get_param('database.uuid'),
-            'vat': self.siren_number,
+            'vat': self._get_kyc_siren(),
             'auth_email': self.contact_email,
             'object_uuid': self.pdp_authentication_uuid,
         })
@@ -364,5 +381,7 @@ class PdpRegistration(models.TransientModel):
         """
         self.ensure_one()
 
+        # Reset the kyc status
+        self.pdp_kyc_status = False
         if self.edi_user_id:
             self.edi_user_id._peppol_deregister_participant()
