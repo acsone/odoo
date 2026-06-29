@@ -7,6 +7,7 @@ import os
 import logging
 import re
 import requests
+import urllib.parse
 import werkzeug.urls
 import werkzeug.utils
 import werkzeug.wrappers
@@ -58,9 +59,9 @@ class QueryURL(object):
                     paths[key] = u"%s" % value
             elif value:
                 if isinstance(value, list) or isinstance(value, set):
-                    fragments.append(werkzeug.urls.url_encode([(key, item) for item in value]))
+                    fragments.append(urllib.parse.urlencode([(key, item) for item in value]))
                 else:
-                    fragments.append(werkzeug.urls.url_encode([(key, value)]))
+                    fragments.append(urllib.parse.urlencode([(key, value)]))
         for key in path_args:
             value = paths.get(key)
             if value is not None:
@@ -632,7 +633,7 @@ class Website(Home):
         # If that URL is also a menu, we update it accordingly.
         # NB: we don't want to slugify on menu creation as it could redirect
         # towards files (with spaces, apostrophes, etc.).
-        menu = request.env['website.menu'].search([('url', '=', '/' + path)])
+        menu = request.env['website.menu'].search([('url', '=', '/' + path), ('page_id', '=', False)])
         if menu:
             menu.page_id = page['page_id']
 

@@ -90,12 +90,12 @@ class ResPartner(models.Model):
     )
     account_peppol_verification_label = fields.Selection(
         selection=[
-            ('not_verified', 'Not verified yet'),
-            ('not_valid', 'Not valid'),  # does not exist on Peppol at all
-            ('not_valid_format', 'Cannot receive this format'),  # registered on Peppol but cannot receive the selected document type
-            ('valid', 'Valid'),
+            ('not_verified', 'Unchecked'),
+            ('not_valid', 'Partner is not on Peppol'),  # does not exist on Peppol at all
+            ('not_valid_format', 'Partner cannot receive format'),  # registered on Peppol but cannot receive the selected document type
+            ('valid', 'Partner is on Peppol'),
         ],
-        string='Peppol endpoint validity',
+        string='Peppol status',
         compute='_compute_account_peppol_verification_label',
         copy=False,
     )  # field to compute the label to show for partner endpoint
@@ -303,13 +303,13 @@ class ResPartner(models.Model):
             if not service_href:
                 return True
 
-            access_point_contact = True
+            access_point_description = True
             with contextlib.suppress(requests.exceptions.RequestException, etree.XMLSyntaxError):
                 response = requests.get(service_href, timeout=TIMEOUT)
                 if response.status_code == 200:
                     access_point_info = etree.fromstring(response.content)
-                    access_point_contact = access_point_info.findtext('.//{*}TechnicalContactUrl') or access_point_info.findtext('.//{*}TechnicalInformationUrl')
-            return access_point_contact
+                    access_point_description = access_point_info.findtext('.//{*}ServiceDescription')
+            return access_point_description
 
         return self._check_document_type_support(participant_info, ubl_cii_format)
 
@@ -366,6 +366,10 @@ class ResPartner(models.Model):
         if self.ubl_cii_format == 'nlcius':
             return self.env.ref('account_edi_ubl_cii.edi_nlcius_1', raise_if_not_found=False)
 
+    @api.onchange('ubl_cii_format', 'peppol_endpoint', 'peppol_eas')
+    def _onchange_verify_peppol_status(self):
+        self.button_account_peppol_check_partner_endpoint()
+
     # -------------------------------------------------------------------------
     # COMPUTE METHODS
     # -------------------------------------------------------------------------
@@ -409,19 +413,36 @@ class ResPartner(models.Model):
             else:
                 partner.ubl_cii_format = partner.ubl_cii_format
 
+    def _get_peppol_endpoint_value(self, country_code, field):
+        self.ensure_one()
+        value = field in self._fields and self[field]
+
+        if (
+            country_code == 'BE'
+            and field == 'company_registry'
+            and not value
+            and self.vat
+        ):
+            value = self.vat
+            if value.isalnum():
+                value = value[2:]  # remove the country_code prefix
+
+        return value
+
     @api.depends(lambda self: self._peppol_eas_endpoint_depends() + ['peppol_eas'])
     def _compute_peppol_endpoint(self):
         """ If the EAS changes and a valid endpoint is available, set it. Otherwise, keep the existing value."""
+        partners_not_to_recompute = self._get_partners_to_skip_peppol_computation()
         for partner in self:
+            if partner._origin in partners_not_to_recompute:
+                continue
             partner.peppol_endpoint = partner.peppol_endpoint
             country_code = partner._deduce_country_code()
             if country_code in EAS_MAPPING:
                 field = EAS_MAPPING[country_code].get(partner.peppol_eas)
-                if field \
-                        and field in partner._fields \
-                        and partner[field] \
-                        and not partner._build_error_peppol_endpoint(partner.peppol_eas, partner[field]):
-                    partner.peppol_endpoint = partner[field]
+                value = partner._get_peppol_endpoint_value(country_code, field)
+                if field and value and not partner._build_error_peppol_endpoint(partner.peppol_eas, value):
+                    partner.peppol_endpoint = value
 
     @api.depends(lambda self: self._peppol_eas_endpoint_depends())
     def _compute_peppol_eas(self):
@@ -429,7 +450,10 @@ class ResPartner(models.Model):
         If the country_code changes, recompute the EAS only if there is a country_code, it exists in the
         EAS_MAPPING, and the current EAS is not consistent with the new country_code.
         """
+        partners_not_to_recompute = self._get_partners_to_skip_peppol_computation()
         for partner in self:
+            if partner._origin in partners_not_to_recompute:
+                continue
             partner.peppol_eas = partner.peppol_eas
             country_code = partner._deduce_country_code()
             if country_code in EAS_MAPPING:
@@ -438,8 +462,9 @@ class ResPartner(models.Model):
                     new_eas = next(iter(EAS_MAPPING[country_code].keys()))
                     # Iterate on the possible EAS until a valid one is found
                     for eas, field in eas_to_field.items():
-                        if field and field in partner._fields and partner[field]:
-                            if not partner._build_error_peppol_endpoint(eas, partner[field]):
+                        if field and field in partner._fields:
+                            value = partner._get_peppol_endpoint_value(country_code, field)
+                            if value and not partner._build_error_peppol_endpoint(eas, value):
                                 new_eas = eas
                                 break
                     partner.peppol_eas = new_eas
@@ -467,15 +492,9 @@ class ResPartner(models.Model):
             edi_identification = f'{self.peppol_eas}:{self.peppol_endpoint}'.lower()
             self.account_peppol_validity_last_check = fields.Date.context_today(self)
             self.account_peppol_is_endpoint_valid = bool(self._check_peppol_participant_exists(edi_identification, ubl_cii_format=self.ubl_cii_format))
-
-            if (
-                not self.account_peppol_is_endpoint_valid
-                and self.peppol_eas in ('0208', '9925')
-            ):
-                inverse_eas = '9925' if self.peppol_eas == '0208' else '0208'
-                inverse_endpoint = f'BE{self.peppol_endpoint}' if self.peppol_eas == '0208' else self.peppol_endpoint[2:]
-                if self._check_peppol_participant_exists(f'{inverse_eas}:{inverse_endpoint}', ubl_cii_format=self.ubl_cii_format):
-                    self.peppol_eas = inverse_eas
-                    self.peppol_endpoint = inverse_endpoint
-                    self.account_peppol_is_endpoint_valid = True
         return False
+
+    def _get_partners_to_skip_peppol_computation(self):
+        return self.env['res.company'].search([
+            ('account_peppol_proxy_state', 'in', ['pending', 'active']),
+        ]).mapped('partner_id')

@@ -800,9 +800,10 @@ class AccountMove(models.Model):
     @api.depends('bank_partner_id')
     def _compute_partner_bank_id(self):
         for move in self:
+            # This will get the trusted bank accounts from the partner
             bank_ids = move.bank_partner_id.bank_ids.filtered(
-                lambda bank: not bank.company_id or bank.company_id == move.company_id)
-            move.partner_bank_id = bank_ids[0] if bank_ids else False
+                lambda bank: (not bank.company_id or bank.company_id == move.company_id) and bank.allow_out_payment)
+            move.partner_bank_id = bank_ids[:1]
 
     @api.depends('partner_id')
     def _compute_invoice_payment_term_id(self):
@@ -2940,7 +2941,8 @@ class AccountMove(models.Model):
     # -------------------------------------------------------------------------
 
     def _get_tax_lines_to_aggregate(self):
-        return self.line_ids.filtered(lambda x: x.display_type == 'tax')
+        # Note: We need to include cash rounding lines created by the 'biggest_tax' strategy too.
+        return self.line_ids.filtered('tax_repartition_line_id')
 
     def _prepare_invoice_aggregated_taxes(self, filter_invl_to_apply=None, filter_tax_values_to_apply=None, grouping_key_generator=None):
         self.ensure_one()
@@ -3545,6 +3547,10 @@ class AccountMove(models.Model):
                 raise UserError(_(
                     "The recipient bank account linked to this invoice is archived.\n"
                     "So you cannot confirm the invoice."
+                ))
+            if invoice.partner_bank_id and invoice.is_inbound() and not invoice.partner_bank_id.allow_out_payment:
+                raise UserError(_(
+                    "The company bank account linked to this invoice is not trusted, please double-check and trust it before confirming, or remove it"
                 ))
             if float_compare(invoice.amount_total, 0.0, precision_rounding=invoice.currency_id.rounding) < 0:
                 raise UserError(_(

@@ -344,9 +344,7 @@ class Field(MetaField('DummyField', (object,), {})):
         return "%s.%s" % (self.model_name, self.name)
 
     def __repr__(self):
-        if self.name is None:
-            return f"{'<%s.%s>'!r}" % (__name__, type(self).__name__)
-        return f"{'%s.%s'!r}" % (self.model_name, self.name)
+        return repr(str(self))
 
     ############################################################################
     #
@@ -2516,7 +2514,14 @@ class Image(Binary):
         records.env.cache.update(records, self, itertools.repeat(cache_value), dirty=dirty)
 
     def _image_process(self, value):
-        if self.readonly and not self.max_width and not self.max_height:
+        if self.readonly and (
+            (not self.max_width and not self.max_height)
+            or (
+                isinstance(self.related_field, Image)
+                and self.max_width == self.related_field.max_width
+                and self.max_height == self.related_field.max_height
+            )
+        ):
             # no need to process images for computed fields, or related fields
             return value
         try:
