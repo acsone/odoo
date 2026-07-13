@@ -7,6 +7,7 @@ from lxml import etree
 from odoo import _, api, fields, models, tools
 from odoo.addons.account_edi_proxy_client.models.account_edi_proxy_user import AccountEdiProxyError
 from odoo.addons.account_peppol.tools.demo_utils import handle_demo
+from odoo.addons.account_peppol.tools.peppol_errors import render_peppol_errors
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -149,6 +150,23 @@ class AccountEdiProxyClientUser(models.Model):
                 message['uuid']
                 for message in messages.get('messages', [])
             ]
+            # remove the duplicates
+            if duplicate_message_uuids := set(
+                self.env['account.move'].search([
+                    ('peppol_message_uuid', 'in', message_uuids),
+                    ('company_id', '=', edi_user.company_id.id),
+                ])
+                .mapped('peppol_message_uuid')
+            ):
+                message_uuids = [uuid for uuid in message_uuids if uuid not in duplicate_message_uuids]
+                # acknowledge the duplicates on IAP side.
+                edi_user._make_request(
+                    f"{edi_user._get_server_url()}/api/peppol/1/ack",
+                    {'message_uuids': list(duplicate_message_uuids)},
+                )
+                for uuid in duplicate_message_uuids:
+                    _logger.info("Message with UUID %s could not be imported because it is identified as a duplicate", uuid)
+
             if not message_uuids:
                 continue
 
@@ -183,13 +201,17 @@ class AccountEdiProxyClientUser(models.Model):
 
                     if invoice_type_code in ['389', '527'] or credit_note_type_code == '261':
                         # 389/527: Self-billing invoice; 261: Self-billing credit note
+                        sale_journal_domain = [
+                            *self.env['account.journal']._check_company_domain(company),
+                            ('type', '=', 'sale'),
+                        ]
                         journal = self.env['account.journal'].search(
-                            [
-                                *self.env['account.journal']._check_company_domain(company),
-                                ('type', '=', 'sale'),
-                            ],
+                            [*sale_journal_domain, ('is_self_billing', '=', True)],
                             limit=1,
                         )
+                        if not journal:
+                            journal = self.env['account.journal'].search(sale_journal_domain, limit=1)
+
                         move_type = 'out_invoice' if invoice_type_code else 'out_refund'
                     else:
                         # use the first purchase journal if the Peppol journal is not set up
@@ -281,7 +303,7 @@ class AccountEdiProxyClientUser(models.Model):
                         continue
 
                     move.peppol_move_state = 'error'
-                    move._message_log(body=_("Peppol error: %s", content['error'].get('data', {}).get('message') or content['error']['message']))
+                    move._message_log(body=render_peppol_errors(content['error'], move))
                     continue
 
                 move.peppol_move_state = content['state']
