@@ -46,14 +46,17 @@ class ResCompany(models.Model):
         required=True,
     )
 
-    def action_close_stock_valuation(self, at_date=None, auto_post=False):
+    def action_close_stock_valuation(self, at_date=None, auto_post=False, lot_id=None):
         self.ensure_one()
         if at_date and isinstance(at_date, str):
             at_date = fields.Date.from_string(at_date)
+        lot = None
+        if lot_id and isinstance(lot_id, int):
+            lot = self.env["stock.lot"].browse(lot_id).exists()
         last_closing_date = self._get_last_closing_date()
         if at_date and last_closing_date and at_date < fields.Date.to_date(last_closing_date):
             raise UserError(self.env._('It exists closing entries after the selected date. Cancel them before generate an entry prior to them'))
-        aml_vals_list = self.with_context(allowed_company_ids=self.ids)._action_close_stock_valuation(at_date=at_date)
+        aml_vals_list = self.with_context(allowed_company_ids=self.ids)._action_close_stock_valuation(at_date=at_date, lot=lot)
 
         if not aml_vals_list:
             # if we come from cron there might be no move to create for this company, but some for other companies
@@ -86,21 +89,24 @@ class ResCompany(models.Model):
             'views': [(False, 'form')],
         }
 
-    def stock_value(self, accounts_by_product=None, at_date=None):
+    def stock_value(self, accounts_by_product=None, at_date=None, lot=None):
         self.ensure_one()
         value_by_account: dict = defaultdict(float)
         if not accounts_by_product:
-            accounts_by_product = self.with_context(prefetch_fields=False)._get_accounts_by_product()
+            accounts_by_product = self.with_context(prefetch_fields=False)._get_accounts_by_product(lot=lot)
         for product, accounts in accounts_by_product.items():
             account = accounts['valuation']
-            product_value = product.with_context(to_date=at_date).total_value
+            if lot:
+                product_value = lot.with_context(to_date=at_date).total_value
+            else:
+                product_value = product.with_context(to_date=at_date).total_value
             value_by_account[account] += product_value
         return value_by_account
 
-    def stock_accounting_value(self, accounts_by_product=None, at_date=None):
+    def stock_accounting_value(self, accounts_by_product=None, at_date=None, lot=None):
         self.ensure_one()
         if not accounts_by_product:
-            accounts_by_product = self._get_accounts_by_product()
+            accounts_by_product = self._get_accounts_by_product(lot=lot)
         account_data = defaultdict(float)
         stock_valuation_accounts_ids = {accounts['valuation'].id for accounts in accounts_by_product.values()}
         stock_valuation_accounts = self.env['account.account'].browse(stock_valuation_accounts_ids)
@@ -109,6 +115,8 @@ class ResCompany(models.Model):
             ('company_id', '=', self.id),
             ('parent_state', '=', 'posted'),
         ])
+        if lot:
+            domain = domain & Domain([('saved_lot_id', '=', lot.id)])
         if at_date:
             domain = domain & Domain([('date', '<=', at_date)])
         amls_group = self.env['account.move.line']._read_group(domain, ['account_id'], ['balance:sum'])
@@ -116,20 +124,20 @@ class ResCompany(models.Model):
             account_data[account] += balance
         return account_data
 
-    def _action_close_stock_valuation(self, at_date=None):
+    def _action_close_stock_valuation(self, at_date=None, lot=None):
         aml_vals_list = []
-        accounts_by_product = self._get_accounts_by_product()
+        accounts_by_product = self._get_accounts_by_product(lot=lot)
 
-        vals_list = self._get_location_valuation_vals(at_date)
+        vals_list = self._get_location_valuation_vals(at_date, lot=lot)
         if vals_list:
             # Needed directly since it will impact the accounting stock valuation.
             aml_vals_list += vals_list
 
-        vals_list = self._get_stock_valuation_account_vals(accounts_by_product, at_date, aml_vals_list)
+        vals_list = self._get_stock_valuation_account_vals(accounts_by_product, at_date, aml_vals_list, lot=lot)
         if vals_list:
             aml_vals_list += vals_list
 
-        vals_list = self._get_continental_realtime_variation_vals(accounts_by_product, at_date, aml_vals_list)
+        vals_list = self._get_continental_realtime_variation_vals(accounts_by_product, at_date, aml_vals_list, lot=lot)
         if vals_list:
             aml_vals_list += vals_list
         return aml_vals_list
@@ -150,11 +158,14 @@ class ResCompany(models.Model):
     def _get_valuation_product_domain(self):
         return [('is_storable', '=', True)]
 
-    def _get_accounts_by_product(self, products=None):
+    def _get_accounts_by_product(self, products=None, lot=None):
         if not products:
-            products = self.env['product.product'].with_company(self).search_fetch(
-                self._get_valuation_product_domain(), ['categ_id'],
-            )
+            if lot:
+                products = lot.product_id
+            else:
+                products = self.env['product.product'].with_company(self).search_fetch(
+                    self._get_valuation_product_domain(), ['categ_id'],
+                )
 
         accounts_by_product = {}
         for product in products:
@@ -175,7 +186,7 @@ class ResCompany(models.Model):
             extra_balance[vals['account_id']] += (vals['debit'] - vals['credit'])
         return extra_balance
 
-    def _get_location_valuation_vals(self, at_date=None, location_domain=False):
+    def _get_location_valuation_vals(self, at_date=None, location_domain=False, lot=None):
         location_domain = Domain.AND([
             location_domain or [],
             [('valuation_account_id', '!=', False)],
@@ -188,6 +199,8 @@ class ResCompany(models.Model):
             ('product_id.is_storable', '=', True),
             ('product_id.valuation', '=', 'periodic')
         ])
+        if lot:
+            moves_base_domain = moves_base_domain & Domain([("saved_lot_id", "=", lot.id)])
         if last_closing_date:
             moves_base_domain &= Domain([('date', '>', last_closing_date)])
         if at_date:
@@ -233,7 +246,7 @@ class ResCompany(models.Model):
             amls_vals_list += amls_vals
         return amls_vals_list
 
-    def _get_stock_valuation_account_vals(self, accounts_by_product, at_date=None, extra_aml_vals_list=None):
+    def _get_stock_valuation_account_vals(self, accounts_by_product, at_date=None, extra_aml_vals_list=None, lot=None):
         amls_vals_list = []
         if not accounts_by_product:
             return amls_vals_list
@@ -243,8 +256,8 @@ class ResCompany(models.Model):
         if 'inventory_data' in self.env.context:
             inventory_data = self.env.context.get('inventory_data')
         else:
-            inventory_data = self.stock_value(accounts_by_product, at_date)
-        accounting_data = self.stock_accounting_value(accounts_by_product, at_date)
+            inventory_data = self.stock_value(accounts_by_product, at_date, lot=lot)
+        accounting_data = self.stock_accounting_value(accounts_by_product, at_date, lot=lot)
 
         accounts = inventory_data.keys() | accounting_data.keys()
         for account in accounts:
@@ -264,12 +277,13 @@ class ResCompany(models.Model):
                 account_variation,
                 balance,
                 _('Closing: Stock Variation Global for company [%(company)s]', company=self.display_name),
+                lot=lot,
             )
             amls_vals_list += amls_vals
 
         return amls_vals_list
 
-    def _get_continental_realtime_variation_vals(self, accounts_by_product, at_date=None, extra_aml_vals_list=None):
+    def _get_continental_realtime_variation_vals(self, accounts_by_product, at_date=None, extra_aml_vals_list=None, lot=None):
         """ In continental perpetual the inventory variation is never posted.
         This method compute the variation for a period and post it.
         """
@@ -278,8 +292,8 @@ class ResCompany(models.Model):
         fiscal_year_date_from = self.compute_fiscalyear_dates(fields.Date.today())['date_from']
 
         amls_vals_list = []
-        accounting_data_today = self.stock_accounting_value(accounts_by_product)
-        accounting_data_last_period = self.stock_accounting_value(accounts_by_product, at_date=fiscal_year_date_from)
+        accounting_data_today = self.stock_accounting_value(accounts_by_product, lot=lot)
+        accounting_data_last_period = self.stock_accounting_value(accounts_by_product, at_date=fiscal_year_date_from, lot=lot)
 
         accounts = accounting_data_today.keys() | accounting_data_last_period.keys()
 
@@ -301,6 +315,8 @@ class ResCompany(models.Model):
             ])
             if at_date:
                 current_balance_domain &= Domain([('date', '<=', at_date)])
+            if lot:
+                current_balance_domain &= Domain([('saved_lot_id', '=', lot.id)])
             existing_balance = sum(self.env['account.move.line'].search(current_balance_domain).mapped('balance'))
             balance_over_period += existing_balance
 
@@ -312,12 +328,13 @@ class ResCompany(models.Model):
                 variation_acc,
                 balance_over_period,
                 _('Closing: Stock Variation Over Period'),
+                lot=lot,
             )
             amls_vals_list += amls_vals
 
         return amls_vals_list
 
-    def _prepare_inventory_aml_vals(self, debit_acc, credit_acc, balance, ref, product_id=False):
+    def _prepare_inventory_aml_vals(self, debit_acc, credit_acc, balance, ref, product_id=False, lot=None):
         if balance < 0:
             temp = credit_acc
             credit_acc = debit_acc
