@@ -384,6 +384,8 @@ class ProductProduct(models.Model):
                     continue
                 qty_by_move[moves[0]] += remaining_qty
                 for move in moves[1:]:
+                    if not move.is_in and not move.is_out:
+                        continue
                     qty_by_move[move] += move._get_valued_qty(lot)
             if not qty_by_move:
                 continue
@@ -569,7 +571,7 @@ class ProductProduct(models.Model):
         while quantity > 0 and fifo_stack:
             move = fifo_stack.pop(0)
             last_move = move
-            move_value = move.value
+            move_value = move.value if move.is_in or move.is_out else 0
             if qty_on_first_move:
                 valued_qty = move._get_valued_qty()
                 in_qty = qty_on_first_move
@@ -624,7 +626,12 @@ class ProductProduct(models.Model):
         if external_location:
             moves_domain &= Domain([('is_out', '=', True)])
         else:
-            moves_domain &= Domain([('is_in', '=', True)])
+            valued_internal_locations = self.env['stock.location'].with_context(
+                active_test=False).sudo().search([('is_valued_internal', '=', True)])
+            moves_domain &= Domain([
+                ('location_dest_id', 'in', valued_internal_locations.ids),
+                ('location_id', 'not in', valued_internal_locations.ids),
+            ])
 
         # Arbitrary limit as we can't guess how many moves correspond to the qty_available, but avoid fetching all moves at the same time.
         initial_limit = 100
