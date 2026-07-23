@@ -325,6 +325,21 @@ class Base(models.AbstractModel):
             return 100 if parent_sequence is True else parent_sequence
         return 100 if sequence is True else sequence
 
+
+    def _get_suggested_email_to_customer(self, email_to, record, skip_customer_suggestion=False):
+        if not skip_customer_suggestion:
+            email_to = next(
+                (
+                    record[fname] for fname in [
+                        'email_from', 'x_email_from',
+                        'email', 'x_email',
+                        'partner_email',
+                        'email_normalized',
+                    ] if fname and fname in record and record[fname]
+                ), False
+            )
+        return email_to
+
     def _message_add_default_recipients(self):
         """ Generic implementation for finding default recipient to mail on
         a recordset. This method is a generic implementation available for
@@ -344,16 +359,8 @@ class Base(models.AbstractModel):
             # to computation
             email_to = primary_emails[record.id]
             if not email_to:
-                email_to = next(
-                    (
-                        record[fname] for fname in [
-                            'email_from', 'x_email_from',
-                            'email', 'x_email',
-                            'partner_email',
-                            'email_normalized',
-                        ] if fname and fname in record and record[fname]
-                    ), False
-                )
+                email_to = self._get_suggested_email_to_customer(email_to, record)
+
             if email_to:
                 # keep value to ease debug / trace update if cannot normalize
                 email_to_lst = tools.mail.email_split_and_format_normalize(email_to) or [email_to]
@@ -470,7 +477,6 @@ class Base(models.AbstractModel):
         # add customers
         for record_id, values in defaults.items():
             suggested[record_id]['partners'] |= values['partners']
-
         # add email
         for record in self:
             if force_primary_email:
