@@ -1292,8 +1292,11 @@ class WebsiteSale(payment_portal.PaymentPortal):
             partner_sudo = request.env['res.partner'].sudo().with_context(
                 create_context
             ).create(address_values)
-        elif not self._are_same_addresses(address_values, partner_sudo):
-            partner_sudo.write(address_values)  # Keep the same partner if nothing changed.
+        elif not self._are_same_addresses(address_values, partner_sudo):  # Keep the same partner if nothing changed.
+            write_values = address_values.copy()
+            if partner_sudo.parent_id:
+                write_values.pop('company_name', None)  # Avoid hiding parent link in partner form UI.
+            partner_sudo.write(write_values)
 
         partner_fnames = set()
         if is_main_address:  # Main address updated.
@@ -1793,6 +1796,8 @@ class WebsiteSale(payment_portal.PaymentPortal):
 
         order_sudo._recompute_taxes()
         order_sudo._recompute_prices()
+        if order_sudo.carrier_id:
+            order_sudo._set_delivery_method(order_sudo.carrier_id)
         extra_step = request.website.viewref('website_sale.extra_info')
         if extra_step.active:
             return request.redirect("/shop/extra_info")
