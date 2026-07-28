@@ -11,6 +11,7 @@ import weUtils from "@web_editor/js/common/utils";
 import options from "@web_editor/js/editor/snippets.options";
 import { NavbarLinkPopoverWidget } from "@website/js/widgets/link_popover_widget";
 import wUtils from "@website/js/utils";
+import { PlacesAutoComplete } from "@website/components/googleplaces_autocomplete/places_autocomplete";
 import {
     applyModifications,
     isImageSupportedForStyle,
@@ -682,12 +683,12 @@ const GPSPicker = InputUserValueWidget.extend({
             this.trigger_up('gmap_api_request', {
                 editableMode: true,
                 configureIfNecessary: true,
-                onSuccess: key => {
+                onSuccess: async (key) => {
                     if (!key) {
                         resolve(false);
                         return;
                     }
-
+                    await this.contentWindow.google.maps.importLibrary("places");
                     // TODO see _notifyGMapError, this tries to trigger an error
                     // early but this is not consistent with new gmap keys.
                     this._nearbySearch('(50.854975,4.3753899)', !!key)
@@ -710,22 +711,29 @@ const GPSPicker = InputUserValueWidget.extend({
             return;
         }
 
-        this._gmapAutocomplete = new this.contentWindow.google.maps.places.Autocomplete(this.inputEl, {types: ['geocode']});
-        this.contentWindow.google.maps.event.addListener(this._gmapAutocomplete, 'place_changed', this._onPlaceChanged.bind(this));
+        this._unmountAutocompleteWithGPS = wUtils.mountAutocompleteComponent(PlacesAutoComplete, {
+            targetDropdown: this.inputEl,
+            maps: this.contentWindow.google.maps,
+            onPlaceSelected: this.onPlaceSelected.bind(this),
+            onError: this._notifyGMapError.bind(this),
+        });
     },
     /**
      * @override
      */
     destroy() {
         this._super(...arguments);
+        this._unmountAutocompleteWithGPS?.();
 
         // Without this, the google library injects elements inside the backend
         // DOM but do not remove them once the editor is left. Notice that
         // this is also done when the widget is destroyed for another reason
         // than leaving the editor, but if the google API needs that container
         // again afterwards, it will simply recreate it.
-        for (const el of document.body.querySelectorAll('.pac-container')) {
-            el.remove();
+        if (this.__gmapAutocomplete) {
+            for (const el of document.body.querySelectorAll('.pac-container')) {
+                el.remove();
+            }
         }
     },
 
@@ -771,46 +779,42 @@ const GPSPicker = InputUserValueWidget.extend({
         }
 
         const p = gps.substring(1).slice(0, -1).split(',');
-        const location = new this.contentWindow.google.maps.LatLng(p[0] || 0, p[1] || 0);
-        return new Promise(resolve => {
-            const service = new this.contentWindow.google.maps.places.PlacesService(document.createElement('div'));
-            service.nearbySearch({
-                // Do a 'nearbySearch' followed by 'getDetails' to avoid using
+        try {
+            const { places } = await this.contentWindow.google.maps.places.Place.searchNearby({
+                // Do a 'searchNearby' followed by 'fetchFields' to avoid using
                 // GMap Geocoder which the user may not have enabled... but
                 // ideally Geocoder should be used to get the exact location at
                 // those coordinates and to limit billing query count.
-                location: location,
-                radius: 1,
-            }, (results, status) => {
-                const GMAP_CRITICAL_ERRORS = [
-                    this.contentWindow.google.maps.places.PlacesServiceStatus.REQUEST_DENIED,
-                    this.contentWindow.google.maps.places.PlacesServiceStatus.UNKNOWN_ERROR
-                ];
-                if (status === this.contentWindow.google.maps.places.PlacesServiceStatus.OK) {
-                    service.getDetails({
-                        placeId: results[0].place_id,
-                        fields: ['geometry', 'formatted_address'],
-                    }, (place, status) => {
-                        if (status === this.contentWindow.google.maps.places.PlacesServiceStatus.OK) {
-                            this._gmapCacheGPSToPlace[gps] = place;
-                            resolve(place);
-                        } else if (GMAP_CRITICAL_ERRORS.includes(status)) {
-                            if (notify) {
-                                this._notifyGMapError();
-                            }
-                            resolve();
-                        }
-                    });
-                } else if (GMAP_CRITICAL_ERRORS.includes(status)) {
-                    if (notify) {
-                        this._notifyGMapError();
-                    }
-                    resolve();
-                } else {
-                    resolve();
-                }
+                fields: ["id", "location", "formattedAddress"],
+                locationRestriction: {
+                    center: { lat: Number(p[0]), lng: Number(p[1]) },
+                    radius: 10,
+                },
+                maxResultCount: 1,
             });
-        });
+            if (!places.length) {
+                return null;
+            }
+            const placeResult = places[0];
+            const place = {
+                place_id: placeResult.id,
+                formatted_address: placeResult.formattedAddress,
+                geometry: {
+                    location: {
+                        lat: placeResult.location.lat(),
+                        lng: placeResult.location.lng(),
+                    },
+                },
+            };
+            this._gmapCacheGPSToPlace[gps] = place;
+            return place;
+        } catch (error) {
+            console.error(error);
+            if (notify) {
+                this._notifyGMapError();
+            }
+            return null;
+        }
     },
     /**
      * Indicates to the user there is an error with the google map API and
@@ -850,6 +854,24 @@ const GPSPicker = InputUserValueWidget.extend({
     //--------------------------------------------------------------------------
 
     /**
+     * @param {Object} place Place object from Google Maps API
+     */
+    onPlaceSelected(place) {
+        if (place && place.geometry) {
+            this._gmapPlace = place;
+            const latLng = this._gmapPlace.geometry.location;
+            const oldValue = this._value;
+            this._value = `(${latLng.lat},${latLng.lng})`;
+            this._gmapCacheGPSToPlace[this._value] = place;
+            if (oldValue !== this._value) {
+                this._onUserValueChange();
+            }
+        }
+    },
+    /**
+     * @deprecated the GPS picker now relies on the `PlacesAutoComplete`
+     * component, which calls `onPlaceSelected` instead.
+     *
      * @private
      * @param {Event} ev
      */
@@ -865,6 +887,24 @@ const GPSPicker = InputUserValueWidget.extend({
                 this._onUserValueChange(ev);
             }
         }
+    },
+});
+
+Object.defineProperty(GPSPicker.prototype, '_gmapAutocomplete', {
+    configurable: true,
+    /**
+     * @deprecated `google.maps.places.Autocomplete` is deprecated, the GPS
+     * picker now uses `PlacesAutoComplete`.
+     */
+    get() {
+        if (!this.__gmapAutocomplete) {
+            this.__gmapAutocomplete = new this.contentWindow.google.maps.places.Autocomplete(this.inputEl, {types: ['geocode']});
+        }
+        console.warn("google.maps.places.Autocomplete is deprecated, you should update your code");
+        return this.__gmapAutocomplete;
+    },
+    set(value) {
+        this.__gmapAutocomplete = value;
     },
 });
 options.userValueWidgetsRegistry['we-urlpicker'] = UrlPickerUserValueWidget;
