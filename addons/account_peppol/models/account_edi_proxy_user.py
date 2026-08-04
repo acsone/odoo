@@ -10,6 +10,7 @@ from odoo.exceptions import UserError
 from odoo.tools import format_list
 from odoo.addons.account_edi_proxy_client.models.account_edi_proxy_user import AccountEdiProxyError
 from odoo.addons.account_peppol.tools.demo_utils import handle_demo
+from odoo.addons.account_peppol.tools.peppol_errors import render_peppol_errors
 
 _logger = logging.getLogger(__name__)
 BATCH_SIZE = 50
@@ -207,13 +208,16 @@ class AccountEdiProxyClientUser(models.Model):
         credit_note_type_code = xml_tree.findtext('.//{*}CreditNoteTypeCode')
         if invoice_type_code in ['389', '527'] or credit_note_type_code == '261':
             # 329/527: Self-billing invoice; 261: Self-billing credit note
+            sale_journal_domain = [
+                *self.env['account.journal']._check_company_domain(self.company_id),
+                ('type', '=', 'sale'),
+            ]
             journal = self.env['account.journal'].search(
-                [
-                    *self.env['account.journal']._check_company_domain(self.company_id),
-                    ('type', '=', 'sale'),
-                ],
+                [*sale_journal_domain, ('is_self_billing', '=', True)],
                 limit=1,
             )
+            if not journal:
+                journal = self.env['account.journal'].search(sale_journal_domain, limit=1)
             move_type = 'out_invoice' if invoice_type_code else 'out_refund'
         return journal, move_type
 
@@ -377,7 +381,8 @@ class AccountEdiProxyClientUser(models.Model):
                     # thrown when the IAP is still processing the message
                     continue
                 move.peppol_move_state = 'error'
-                move._message_log(body=self._peppol_get_message_status_error_body(move, content['error']))
+                error = content['error']
+                move._message_log(body=render_peppol_errors(move, error.get('data', {}).get('message') or error['message']))
                 processed_message_uuids.append(uuid)
                 continue
 
@@ -387,8 +392,8 @@ class AccountEdiProxyClientUser(models.Model):
         return processed_message_uuids
 
     def _peppol_get_message_status_error_body(self, move, error):
-        self.ensure_one()
-        return self.env._("Peppol error: %s", error.get('data', {}).get('message') or error['message'])
+        # DEPRECATED, TO BE REMOVED IN MASTER
+        pass
 
     def _peppol_get_message_status_update_body(self, move, content):
         self.ensure_one()
