@@ -746,6 +746,22 @@ class PurchaseOrderLine(models.Model):
             'view_mode': 'form',
         }
 
+    def _merge_get_existing_line(self, rfq_line):
+        return self.filtered(
+            lambda l: l._merge_is_line_matching(rfq_line)
+        )
+
+    def _merge_is_line_matching(self, rfq_line):
+        self.ensure_one()
+        return (
+            self.display_type not in ['line_section', 'line_subsection', 'line_note'] and
+            self.product_id == rfq_line.product_id and
+            self.product_uom_id == rfq_line.product_uom_id and
+            self.analytic_distribution == rfq_line.analytic_distribution and
+            self.discount == rfq_line.discount and
+            abs(self.date_planned - rfq_line.date_planned).total_seconds() <= 86400  # 24 hours in seconds
+        )
+
     def _merge_po_line(self, rfq_line):
         self.product_qty += rfq_line.product_qty
         self.price_unit = min(self.price_unit, rfq_line.price_unit)
