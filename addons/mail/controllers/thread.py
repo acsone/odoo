@@ -22,6 +22,10 @@ class ThreadController(http.Controller):
                 {"hasReadAccess": False, "hasWriteAccess": False},
                 as_thread=True,
             ).get_result()
+        if not request.env.user._is_internal() or not thread.sudo(False).with_context(
+            allowed_company_ids=[]
+        ).has_access("read"):
+            request_list = []
         return Store(thread, as_thread=True, request_list=request_list).get_result()
 
     @http.route("/mail/thread/messages", methods=["POST"], type="json", auth="user")
@@ -99,8 +103,12 @@ class ThreadController(http.Controller):
                     kwargs["partner_emails"], additional_values
                 )
             )
-        if not request.env.user._is_internal():
+        if not request.env.user._is_internal() or not thread.sudo(False).with_context(
+            allowed_company_ids=[]
+        ).has_access(thread._get_mail_message_access(thread.ids, "create")):
             partners = partners & self._filter_message_post_partners(thread, partners)
+            post_data["message_type"] = "comment"
+            post_data["subtype_xmlid"] = "mail.mt_comment"
         post_data["partner_ids"] = partners.ids
         post_data.setdefault("message_type", "comment")
         return post_data
