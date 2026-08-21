@@ -48,6 +48,7 @@ UOM_TO_UNECE_CODE = {
 # -------------------------------------------------------------------------
 # ELECTRONIC ADDRESS SCHEME (EAS), see https://docs.peppol.eu/poacc/billing/3.0/codelist/eas/
 # -------------------------------------------------------------------------
+DEPRECATED_PEPPOL_EAS = {'0037', '0213', '9955', '0193'}
 EAS_MAPPING = {
     'AD': {'9922': 'vat'},
     'AE': {'0235': 'vat'},
@@ -103,13 +104,13 @@ EAS_MAPPING = {
     # DOM-TOM
     'BL': {'0009': 'siret', '9957': 'vat', '0002': None},  # Saint Barthélemy
     'GF': {'0009': 'siret', '9957': 'vat', '0002': None},  # French Guiana
-    'GP': {'0009': 'siret', '9957': 'vat', '0002': None},  # Guadeloupe
+    'GP': {'0225': 'peppol_endpoint', '0009': 'siret', '9957': 'vat', '0002': None},  # Guadeloupe
     'MF': {'0009': 'siret', '9957': 'vat', '0002': None},  # Saint Martin
-    'MQ': {'0009': 'siret', '9957': 'vat', '0002': None},  # Martinique
+    'MQ': {'0225': 'peppol_endpoint', '0009': 'siret', '9957': 'vat', '0002': None},  # Martinique
     'NC': {'0009': 'siret', '9957': 'vat', '0002': None},  # New Caledonia
     'PF': {'0009': 'siret', '9957': 'vat', '0002': None},  # French Polynesia
     'PM': {'0009': 'siret', '9957': 'vat', '0002': None},  # Saint Pierre and Miquelon
-    'RE': {'0009': 'siret', '9957': 'vat', '0002': None},  # Réunion
+    'RE': {'0225': 'peppol_endpoint', '0009': 'siret', '9957': 'vat', '0002': None},  # Réunion
     'TF': {'0009': 'siret', '9957': 'vat', '0002': None},  # French Southern and Antarctic Lands
     'WF': {'0009': 'siret', '9957': 'vat', '0002': None},  # Wallis and Futuna
     'YT': {'0009': 'siret', '9957': 'vat', '0002': None},  # Mayotte
