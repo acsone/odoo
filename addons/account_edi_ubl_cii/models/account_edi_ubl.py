@@ -3033,11 +3033,16 @@ class AccountEdiUBL(models.AbstractModel):
             if not category_code:
                 continue
 
+            tax_key = frozendict({
+                'category_code': category_code,
+                'percentage': percentage,
+            })
             allowance_charge_values['attempt_tax_values'] = tax_values = {
                 'amount_type': 'percent',
                 'type_tax_use': odoo_document_type,
                 'ubl_cii_tax_category_code': category_code,
                 'amount': percentage,
+                '_tax_key': tax_key,
             }
             taxes_values.append(tax_values)
 
@@ -3470,6 +3475,11 @@ class AccountEdiUBL(models.AbstractModel):
             tax_values_list=tax_values_list,
         )
 
+        for tax_values in collected_values['taxes_values']:
+            tax_key = tax_values.get('_tax_key')
+            if tax_key and (global_tax_values := collected_values['tax_total_values'].get(tax_key)):
+                global_tax_values['related_taxes_values'].append(tax_values)
+
         # Taxes at the document line level.
         for line_collected_values in lines_collected_values:
             to_write = line_collected_values['to_write']
@@ -3729,11 +3739,18 @@ class AccountEdiUBL(models.AbstractModel):
 
         # Fix 'price_unit' if some price-included taxes are involved.
         for base_line in base_lines:
-            for tax_data in base_line['tax_details']['taxes_data']:
-                if tax_data['tax'].price_include:
-                    discount = base_line['discount'] / 100
-                    raw_tax_amount_currency = tax_data['raw_tax_amount_currency'] / (1 - discount)
-                    base_line['price_unit'] += raw_tax_amount_currency / (base_line['quantity'] if base_line['quantity'] else 1)
+            if base_line['discount'] != 100:
+                for tax_data in base_line['tax_details']['taxes_data']:
+                    if tax_data['tax'].price_include:
+                        discount = base_line['discount'] / 100
+                        raw_tax_amount_currency = tax_data['raw_tax_amount_currency'] / (1 - discount)
+                        base_line['price_unit'] += raw_tax_amount_currency / (base_line['quantity'] if base_line['quantity'] else 1)
+            else:
+                new_base_line = AccountTax._prepare_base_line_for_taxes_computation(record=base_line, discount=0.0, special_mode="total_excluded")
+                AccountTax._add_tax_details_in_base_lines([new_base_line], company)
+                for tax_data in new_base_line['tax_details']['taxes_data']:
+                    if tax_data['tax'].price_include:
+                        base_line['price_unit'] += tax_data['raw_tax_amount_currency'] / (base_line['quantity'] if base_line['quantity'] else 1)
 
         # Remove lines having a zero amount except 100% discounts
         collected_values['base_lines'] = [
