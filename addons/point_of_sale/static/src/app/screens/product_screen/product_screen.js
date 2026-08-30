@@ -25,6 +25,7 @@ import {
 import { pick } from "@web/core/utils/objects";
 import { unaccent } from "@web/core/utils/strings";
 import { CameraBarcodeScanner } from "@point_of_sale/app/screens/product_screen/camera_barcode_scanner";
+import { escapeRegExp } from "@web/core/utils/strings";
 
 export class ProductScreen extends Component {
     static template = "point_of_sale.ProductScreen";
@@ -425,7 +426,8 @@ export class ProductScreen extends Component {
             ? this.getProductsByCategory(this.pos.selectedCategory)
             : this.products;
 
-        const filteredProducts = products.filter((p) => unaccent(p.searchString).includes(words));
+        const ilikeRegexp = new RegExp(`(.*)${escapeRegExp(words).replaceAll("%", "(.*)")}(.*)`, "gi");
+        const filteredProducts = products.filter((p) => unaccent(p.searchString).includes(words) || unaccent(p.searchString).match(ilikeRegexp));
         return filteredProducts.sort((a, b) => {
             const nameA = unaccent(a.searchString);
             const nameB = unaccent(b.searchString);
