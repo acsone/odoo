@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-02-24 14:12+0000\n"
-"PO-Revision-Date: 2026-07-15 10:02+0000\n"
+"PO-Revision-Date: 2026-08-14 11:38+0000\n"
 "Last-Translator: \"Nurul Aini Akrima Sabila (nuaas)\" <nuaas@odoo.com>\n"
 "Language-Team: Indonesian <https://translate.odoo.com/projects/odoo-19/base/"
 "id/>\n"
@@ -16330,7 +16330,7 @@ msgstr ""
 "                                            Ubah Password\n"
 "                                        </span>\n"
 "                                        <span class=\"text-muted\">\n"
-"                                            Update bila dikompromi.\n"
+"                                            Ganti bila bocor.\n"
 "                                        </span>"
 
 #. module: base
@@ -16571,7 +16571,7 @@ msgstr "<span>Nama</span>"
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.server_action_history_wizard_view
 msgid "<span>No diff available</span>"
-msgstr "<span>Tidak ada perbedaan tersedia</span>"
+msgstr "<span>Tidak ada diff tersedia</span>"
 
 #. module: base
 #: model_terms:ir.ui.view,arch_db:base.report_irmodulereference
@@ -24702,7 +24702,7 @@ msgstr "Kontributor"
 #. module: base
 #: model:ir.module.module,summary:base.module_quality_control
 msgid "Control the quality of your products"
-msgstr "Kendalikkan kualitas produk Anda"
+msgstr "Kendalikan kualitas produk Anda"
 
 #. module: base
 #: model:ir.module.module,summary:base.module_quality_control_iot
@@ -25820,7 +25820,7 @@ msgstr "Struktur Database"
 #: model:ir.module.category,name:base.module_category_services_databases
 #: model:ir.module.module,shortdesc:base.module_databases
 msgid "Databases"
-msgstr "Database-database"
+msgstr "Database"
 
 #. module: base
 #. odoo-python
@@ -34127,7 +34127,7 @@ msgid ""
 "Link a spreadsheet to a quotation templates and access your calculator from "
 "a Sale Order."
 msgstr ""
-"Link spreadshet ke templat quotation dan akses kalkulator Anda dari Sale "
+"Link spreadshet ke template penawaran dan akses kalkulator Anda dari Sale "
 "Order."
 
 #. module: base
@@ -42754,7 +42754,7 @@ msgstr "Manajemen Kualitas dengan Perbaikan"
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_quality_iot
 msgid "Quality Steps with IoT"
-msgstr "Langkah-Langkah Kualitas dengan IoT"
+msgstr "Langkah Kualitas dengan IoT"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_quality_mrp_workorder_worksheet
@@ -46200,7 +46200,7 @@ msgstr "Mulai konfigurasi"
 #: model_terms:ir.ui.view,arch_db:base.view_partner_form
 #: model_terms:ir.ui.view,arch_db:base.view_res_bank_form
 msgid "State"
-msgstr "Status"
+msgstr "Negara Bagian/Provinsi"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_country_state__code
@@ -46225,7 +46225,7 @@ msgstr "Negara Bagian Palestina"
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_country__state_ids
 msgid "States"
-msgstr "Status"
+msgstr "Negara Bagian/Provinsi"
 
 #. module: base
 #: model:ir.model.fields,field_description:base.field_res_partner__application_statistics
@@ -50892,7 +50892,7 @@ msgstr ""
 #. module: base
 #: model:res.partner.category,name:base.res_partner_category_0
 msgid "Vendor"
-msgstr "Pemasok"
+msgstr "Vendor"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_account_3way_match
@@ -50902,7 +50902,7 @@ msgstr "Tagihan Vendor: Lepaskan untuk Membayar"
 #. module: base
 #: model:ir.actions.act_window,name:base.action_partner_supplier_form
 msgid "Vendors"
-msgstr "Pemasok"
+msgstr "Vendor"
 
 #. module: base
 #: model:res.country,name:base.ve

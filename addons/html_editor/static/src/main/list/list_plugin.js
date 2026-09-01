@@ -336,6 +336,18 @@ export class ListPlugin extends Plugin {
                 }
             }
         }
+        // Help CSS to not use :has(> ...) by setting a class on parent nodes
+        for (const floatClass of ["float-start", "float-end"]) {
+            const parentClass = `o-${floatClass}-parent`;
+            for (const el of selectElements(root, `.${parentClass}`)) {
+                if (![...el.children].some((el) => el.classList.contains(floatClass))) {
+                    el.classList.remove(parentClass);
+                }
+            }
+            for (const el of selectElements(root, `:not(.${parentClass}) > .${floatClass}`)) {
+                el.parentElement.classList.add(parentClass);
+            }
+        }
     }
 
     // --------------------------------------------------------------------------
@@ -913,12 +925,13 @@ export class ListPlugin extends Plugin {
 
     handleSplitBlock(params) {
         const closestLI = closestElement(params.targetNode, "LI");
-        const isBlockUnsplittable =
+        // Do not split the LI if the cursor is inside an unsplittable element.
+        const isTargetInUnsplittable =
             closestLI &&
-            Array.from(closestLI.childNodes).some(
-                (node) => isBlock(node) && this.dependencies.split.isUnsplittable(node)
+            ancestors(params.targetNode, closestLI).find((node) =>
+                this.dependencies.split.isUnsplittable(node)
             );
-        if (!closestLI || isBlockUnsplittable) {
+        if (!closestLI || isTargetInUnsplittable) {
             return;
         }
         if (isEmptyBlock(closestLI)) {
@@ -1116,7 +1129,7 @@ export class ListPlugin extends Plugin {
         const listItems = new Set(
             targetedNodes.map((n) => closestElement(n, "li")).filter(Boolean)
         );
-        if (!listItems.size || mode !== "color" || isColorGradient(color)) {
+        if (!listItems.size || (mode !== "color" && color) || isColorGradient(color)) {
             return;
         }
         const cursors = this.dependencies.selection.preserveSelection();
@@ -1139,6 +1152,9 @@ export class ListPlugin extends Plugin {
 
                     if (node.style.color) {
                         removeStyle(node, "color");
+                    }
+                    if (node.style.backgroundColor) {
+                        removeStyle(node, "background-color");
                     }
                 }
 

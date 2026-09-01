@@ -9,6 +9,7 @@ import email.policy
 import encodings
 import hashlib
 import hmac
+from itertools import chain
 import json
 import lxml
 import logging
@@ -1240,12 +1241,12 @@ class MailThread(models.AbstractModel):
             user_id = self._mail_find_user_for_gateway(email_from, alias=dest_aliases).id or self.env.uid
             route = self._routing_check_route(
                 message, message_dict,
-                (reply_model, reply_thread_id, custom_values, user_id, dest_aliases),
+                (reply_model, reply_thread_id, None, user_id, dest_aliases),
                 raise_exception=False)
             if route:
                 _logger.info(
                     'Routing mail from %s to %s with Message-Id %s: direct reply to msg: model: %s, thread_id: %s, custom_values: %s, uid: %s',
-                    email_from, message_dict['to'], message_id, reply_model, reply_thread_id, custom_values, self.env.uid)
+                    email_from, message_dict['to'], message_id, reply_model, reply_thread_id, None, self.env.uid)
                 return [route]
             if route is False:
                 return []
@@ -1356,7 +1357,11 @@ class MailThread(models.AbstractModel):
 
             # disabled subscriptions during message_new/update to avoid having the system user running the
             # email gateway become a follower of all inbound messages
-            ModelCtx = Model.with_user(related_user).sudo()
+            ModelCtx = Model
+            if alias:
+                if self.env.is_system():
+                    ModelCtx = Model.with_user(related_user)
+                ModelCtx = ModelCtx.sudo()
             if thread_id and hasattr(ModelCtx, 'message_update'):
                 thread = ModelCtx.browse(thread_id)
                 thread.message_update(message_dict)
@@ -2073,6 +2078,8 @@ class MailThread(models.AbstractModel):
         alias_emails = self.env['mail.alias.domain'].sudo()._find_aliases(emails_key_all) if avoid_alias else []
         ban_emails = (ban_emails or []) + alias_emails
 
+        emails_set = set(chain.from_iterable(records_emails.values()))
+
         # inspired notably from odoo/odoo@80a0b45df806ffecfb068b5ef05ae1931d655810; final
         # ordering is search order defined in '_find_or_create_from_emails', which is id ASC
         def sort_key(p):
@@ -2084,6 +2091,7 @@ class MailThread(models.AbstractModel):
                 p.company_id.id == emails_key_company_id.get(
                     p.email_normalized, False
                 ),                                                  # then partner associated w/ record's company
+                p.email_formatted in emails_set,                    # prioritize exact mail match
                 not p.company_id,                                   # then company-agnostic to avoid issues
             )
 
@@ -4415,12 +4423,18 @@ class MailThread(models.AbstractModel):
             return ooo_messages
 
         # limit number of real author / recipient exchanges to 1 every 4 days
-        sent_su = self.env['mail.message'].sudo().search([
+        base_domain = Domain([
             ('author_id', 'in', ooo_users.partner_id.ids),
             ('message_type', '=', 'out_of_office'),
-            '|', ('partner_ids', 'in', recipient.ids), ('outgoing_email_to', '=', email_to),
             ('date', '>=', '-4d'),
         ])
+
+        partner_domain = Domain('partner_ids', 'in', recipient.ids) if recipient else Domain.FALSE
+        email_domain = Domain('outgoing_email_to', '=', email_to) if email_to else Domain.FALSE
+        recipient_domain = partner_domain | email_domain
+
+        final_domain = base_domain & recipient_domain
+        sent_su = self.env['mail.message'].sudo().search(final_domain)
         already_mailed = sent_su.author_id
 
         # finally send OOO messages
