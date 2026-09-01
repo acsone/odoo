@@ -271,7 +271,7 @@ class TestEwaybillJson(L10nInTestInvoicingCommon):
             "toAddr2": "",
             "toPlace": "Peebles",
             "toPincode": 999999,
-            "actToStateCode": 99,
+            "actToStateCode": 97,
             "toStateCode": 99,
             "itemList": [{
                 "productName": "product_a",
@@ -331,7 +331,7 @@ class TestEwaybillJson(L10nInTestInvoicingCommon):
             "fromPincode": 365220,
             "fromStateCode": 24,
             "actFromStateCode": 24,
-            "toGstin": "36AAAAA1234AAZA",
+            "toGstin": "URP",
             "toTrdName": "SEZ Partner",
             "toAddr1": "Block no. 402",
             "toAddr2": "",

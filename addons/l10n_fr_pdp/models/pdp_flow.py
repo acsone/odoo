@@ -215,7 +215,7 @@ class PdpFlow(models.Model):
                 moves = flow._get_moves()
             valid_moves = moves.filtered(lambda move: move.l10n_fr_pdp_status not in invalid_move_states)
 
-            if not valid_moves:
+            if not flow.initial_flow_id and not valid_moves:
                 flow._message_post_once(self.env._("Payload build failed: no valid invoices."))
                 continue
 
@@ -540,8 +540,11 @@ class PdpFlow(models.Model):
 
     def action_view_moves(self):
         """Open list view of related invoices."""
+        ereporting_view = self.env.ref("l10n_fr_pdp.l10n_fr_pdp_list_view_move_ereporting", raise_if_not_found=False)
+        view = ereporting_view.id if ereporting_view else False
         return self._get_moves()._get_records_action(
             name=self.env._("Related Invoices"),
+            views=[(view, 'list'), (False, 'form')],
             context={'create': False, 'group_by': ['move_type']},
         )
 
