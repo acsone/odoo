@@ -442,11 +442,11 @@ class DeliveryCarrier(models.Model):
         elif conversion == 'pricelist_to_company':
             return pricelist_currency, company_currency
 
-    def _compute_currency(self, order, price, conversion):
+    def _compute_currency(self, order, price, conversion, round=True):
         from_currency, to_currency = self._get_conversion_currencies(order, conversion)
         if from_currency.id == to_currency.id:
             return price
-        return from_currency._convert(price, to_currency, order.company_id, order.date_order or fields.Date.today())
+        return from_currency._convert(price, to_currency, order.company_id, order.date_order or fields.Date.today(), round=round)
 
     def _get_price_available(self, order):
         self.ensure_one()
@@ -467,7 +467,7 @@ class DeliveryCarrier(models.Model):
             quantity += qty
         total = order._compute_amount_total_without_delivery()
 
-        total = self._compute_currency(order, total, 'pricelist_to_company')
+        total = self._compute_currency(order, total, 'pricelist_to_company', round=False)
         # weight is either,
         # 1- weight chosen by user in choose.delivery.carrier wizard passed by context
         # 2- saved weight to use on sale order
