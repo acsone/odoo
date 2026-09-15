@@ -225,9 +225,19 @@ class OdometerReport(models.Model):
             ) t
         """
 
-        self.env.cr.execute(query)
+        # Create a dummy view because report takes too much time to be loaded on EBT
+        dummy_query="""
+            SELECT 
+                0 AS vehicle_id,
+                now() AS recorded_date,
+                0 AS odometer_value,
+                0 AS mileage_delta
+            WHERE FALSE
+        """
+
+        self.env.cr.execute(dummy_query)
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute(
             sql.SQL("CREATE or REPLACE VIEW {} as ({})").format(
                 sql.Identifier(self._table),
-                sql.SQL(query)))
+                sql.SQL(dummy_query)))
