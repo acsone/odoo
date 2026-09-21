@@ -48,26 +48,46 @@ class StockValuationReport(models.AbstractModel):
             + [('lot_valuated', '=', True)]
         )
 
-        lot_model = self.env["stock.lot"].sudo().with_company(company)
+        accounts_by_product = company._get_accounts_by_product(products=valued_products)
+
+        # PERF: the report is built lot per lot, so the lots that cannot weigh on the
+        # valuation are filtered out upfront. Two kinds of lots are kept: the ones still
+        # holding stock, and the ones emptied but whose valuation account is not balanced,
+        # as they still have a closing entry to generate. The latter are usually archived,
+        # hence the `active_test=False`.
+        lot_model = self.env["stock.lot"].sudo().with_company(company).with_context(active_test=False)
         if date:
             lot_model = lot_model.with_context(at_date=date, to_date=date)
-        lot_domain = [("product_id", "in", valued_products.ids), ("virtual_available", "!=", 0)]
-        lots = lot_model.search(lot_domain)
+        lot_ids_with_qty = self._get_lot_ids_with_stock(lot_model, valued_products, date)
+        lot_ids = lot_ids_with_qty | set(
+            company._get_lots_with_stock_accounting_value(accounts_by_product, at_date=date).ids
+        )
+        lots = lot_model.search([
+            ("product_id", "in", valued_products.ids), ("id", "in", sorted(lot_ids)),
+        ])
 
         report_data = {"sections_by_lot": []}
+        # The same few valuation accounts come back on every lot: read them only once.
+        accounts_data_by_id = {}
+        read_account_ids = set()
 
         for lot in lots:
-            accounts_by_product = company._get_accounts_by_product(products=None, lot=lot)
+            lot_accounts_by_product = {lot.product_id: accounts_by_product[lot.product_id]}
             section_vals = {
                 "lot_id": lot.id,
                 "lot_name": lot.display_name,
             }
+            # Only a lot kept for its stock can hold an inventory value: for the others,
+            # walking their moves would just confirm a value of zero.
+            inventory_data = {}
             if not date:
-                inventory_data = company.stock_value(accounts_by_product, lot=lot)
-                accounting_data = company.stock_accounting_value(accounts_by_product, lot=lot)
+                if lot.id in lot_ids_with_qty:
+                    inventory_data = company.stock_value(lot_accounts_by_product, lot=lot)
+                accounting_data = company.stock_accounting_value(lot_accounts_by_product, lot=lot)
             else:
-                inventory_data = company.stock_value(accounts_by_product, at_date=date, lot=lot)
-                accounting_data = company.stock_accounting_value(accounts_by_product, at_date=date, lot=lot)
+                if lot.id in lot_ids_with_qty:
+                    inventory_data = company.stock_value(lot_accounts_by_product, at_date=date, lot=lot)
+                accounting_data = company.stock_accounting_value(lot_accounts_by_product, at_date=date, lot=lot)
 
             accounts = inventory_data.keys() | accounting_data.keys()
             account_ids = {acc.id for acc in accounts}
@@ -104,7 +124,7 @@ class StockValuationReport(models.AbstractModel):
                 date, location_domain=[('usage', '=', 'inventory')], lot=lot
             )
             stock_valuation_account_vals = company.with_context(inventory_data=inventory_data)._get_stock_valuation_account_vals(
-                accounts_by_product, date, company._get_location_valuation_vals(date, lot=lot), lot=lot)
+                lot_accounts_by_product, date, company._get_location_valuation_vals(date, lot=lot), lot=lot)
 
             section_vals.update({
                 'company_id': company.id,
@@ -162,16 +182,52 @@ class StockValuationReport(models.AbstractModel):
             if not stock_variation['lines'] and company.currency_id.is_zero(stock_variation['value']):
                 continue
 
-            accounts_read_data = self.env['account.account'].search_read(
-                [('id', 'in', account_ids)],
-                ['id', 'name', 'code', 'display_name']
-            )
+            unread_account_ids = account_ids - read_account_ids
+            if unread_account_ids:
+                accounts_read_data = self.env['account.account'].search_read(
+                    [('id', 'in', list(unread_account_ids))],
+                    ['id', 'name', 'code', 'display_name']
+                )
+                accounts_data_by_id.update({acc_data['id']: acc_data for acc_data in accounts_read_data})
+                read_account_ids |= unread_account_ids
             section_vals.update(
-                accounts_by_id={acc_data['id']: acc_data for acc_data in accounts_read_data},
+                accounts_by_id={
+                    account_id: accounts_data_by_id[account_id]
+                    for account_id in account_ids
+                    if account_id in accounts_data_by_id
+                },
                 stock_variation=stock_variation,
             )
             report_data["sections_by_lot"].append(section_vals)
         return report_data
+
+    def _get_lot_ids_with_stock(self, lot_model, valued_products, date=False):
+        """ Return the ids of the lots of `valued_products` holding stock at `date`.
+
+        The quantity on hand is read from the quants, which only tell today's stock, so for
+        a past date every lot moved since then is kept as well: it may have been emptied
+        after `date`. The result is a superset in that case.
+        """
+        lot_ids = set(lot_model.search([
+            ("product_id", "in", valued_products.ids), ("product_qty", "!=", 0),
+        ]).ids)
+        if date:
+            # `stock.lot._product_qty` compares `move_id.date` to `to_date` as a datetime:
+            # a plain date would be widened to the end of the day and would drop the moves
+            # of the date itself.
+            lot_ids.update(
+                lot.id
+                for (lot,) in self.env["stock.move.line"].sudo()._read_group(
+                    [
+                        ("product_id", "in", valued_products.ids),
+                        ("lot_id", "!=", False),
+                        ("state", "=", "done"),
+                        ("move_id.date", ">", fields.Datetime.to_datetime(date)),
+                    ],
+                    ["lot_id"],
+                )
+            )
+        return lot_ids
 
     def action_print_as_pdf(self):
         return

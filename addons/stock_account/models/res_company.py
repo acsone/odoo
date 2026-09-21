@@ -103,13 +103,13 @@ class ResCompany(models.Model):
             value_by_account[account] += product_value
         return value_by_account
 
-    def stock_accounting_value(self, accounts_by_product=None, at_date=None, lot=None):
-        self.ensure_one()
+    def _get_stock_valuation_accounts(self, accounts_by_product=None, lot=None):
         if not accounts_by_product:
             accounts_by_product = self._get_accounts_by_product(lot=lot)
-        account_data = defaultdict(float)
         stock_valuation_accounts_ids = {accounts['valuation'].id for accounts in accounts_by_product.values()}
-        stock_valuation_accounts = self.env['account.account'].browse(stock_valuation_accounts_ids)
+        return self.env['account.account'].browse(stock_valuation_accounts_ids)
+
+    def _get_stock_accounting_domain(self, stock_valuation_accounts, at_date=None, lot=None):
         domain = Domain([
             ('account_id', 'in', stock_valuation_accounts.ids),
             ('company_id', '=', self.id),
@@ -119,10 +119,32 @@ class ResCompany(models.Model):
             domain = domain & Domain([('saved_lot_id', '=', lot.id)])
         if at_date:
             domain = domain & Domain([('date', '<=', at_date)])
+        return domain
+
+    def stock_accounting_value(self, accounts_by_product=None, at_date=None, lot=None):
+        self.ensure_one()
+        stock_valuation_accounts = self._get_stock_valuation_accounts(accounts_by_product, lot=lot)
+        account_data = defaultdict(float)
+        domain = self._get_stock_accounting_domain(stock_valuation_accounts, at_date=at_date, lot=lot)
         amls_group = self.env['account.move.line']._read_group(domain, ['account_id'], ['balance:sum'])
         for account, balance in amls_group:
             account_data[account] += balance
         return account_data
+
+    def _get_lots_with_stock_accounting_value(self, accounts_by_product=None, at_date=None):
+        """ Return the lots whose stock valuation accounts are not balanced.
+
+        Those lots weigh on the valuation even when they do not hold stock anymore,
+        so they cannot be filtered out of the valuation report.
+        """
+        self.ensure_one()
+        stock_valuation_accounts = self._get_stock_valuation_accounts(accounts_by_product)
+        domain = self._get_stock_accounting_domain(stock_valuation_accounts, at_date=at_date)
+        domain = domain & Domain([('saved_lot_id', '!=', False)])
+        amls_group = self.env['account.move.line']._read_group(domain, ['saved_lot_id'], ['balance:sum'])
+        return self.env['stock.lot'].browse(
+            lot.id for lot, balance in amls_group if not self.currency_id.is_zero(balance)
+        )
 
     def _action_close_stock_valuation(self, at_date=None, lot=None):
         aml_vals_list = []
