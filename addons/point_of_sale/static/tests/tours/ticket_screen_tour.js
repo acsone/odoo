@@ -376,25 +376,6 @@ registry.category("web_tour.tours").add("test_serial_number_do_not_duplicate_aft
         ].flat(),
 });
 
-registry.category("web_tour.tours").add("test_not_available_pricelist_not_set_on_order", {
-    steps: () =>
-        [
-            Chrome.startPoS(),
-            Dialog.confirm("Open Register"),
-            Chrome.clickMenuOption("Orders"),
-            TicketScreen.selectFilter("Paid"),
-            TicketScreen.clickDiscard(),
-            ProductScreen.isShown(),
-            ProductScreen.addOrderline("Desk Pad", "2", "3"),
-            ProductScreen.clickPartnerButton(),
-            ProductScreen.clickCustomer("AA Customer"),
-            ProductScreen.clickPayButton(),
-            PaymentScreen.clickPaymentMethod("Bank"),
-            PaymentScreen.clickValidate(),
-            ReceiptScreen.isShown(),
-        ].flat(),
-});
-
 registry.category("web_tour.tours").add("test_refund_backend_duplicate", {
     steps: () =>
         [
@@ -404,5 +385,19 @@ registry.category("web_tour.tours").add("test_refund_backend_duplicate", {
             PaymentScreen.clickPaymentMethod("Bank"),
             PaymentScreen.clickValidate(),
             TicketScreen.receiptTotalAmountIs("-10.00"),
+        ].flat(),
+});
+
+registry.category("web_tour.tours").add("test_ticket_screen_keeps_variants_collapsed", {
+    steps: () =>
+        [
+            Chrome.startPoS(),
+            Dialog.confirm("Open Register"),
+            ProductScreen.productCardCountIs("Variant Soup", 1),
+            Chrome.clickMenuOption("Orders"),
+            TicketScreen.selectFilter("Paid"),
+            TicketScreen.contains("Test/0001"),
+            TicketScreen.clickDiscard(),
+            ProductScreen.productCardCountIs("Variant Soup", 1),
         ].flat(),
 });

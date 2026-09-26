@@ -1,4 +1,5 @@
-from odoo import api, models
+from odoo import _, api, models
+from odoo.tools.misc import formatLang
 
 from odoo.addons.account_edi_ubl_cii.models.account_edi_common import FloatFmt
 
@@ -72,9 +73,10 @@ class AccountEdiXmlUbl21Fr(models.AbstractModel):
         invoice = vals['invoice']
         super()._add_invoice_header_nodes(document_node, vals)
 
+        profile_id = self._l10n_fr_pdp_get_profile_id(vals)
         document_node.update({
             'cbc:CustomizationID': {'_text': CPRO_CUSTOMIZATION_ID if b2g else PDP_CUSTOMIZATION_ID},
-            'cbc:ProfileID': {'_text': self._l10n_fr_pdp_get_profile_id(vals)},
+            'cbc:ProfileID': {'_text': profile_id},
         })
 
         # [BR-FR-05] Add mandatory notes with defaults if not already present
@@ -97,6 +99,24 @@ class AccountEdiXmlUbl21Fr(models.AbstractModel):
                 }
             }
 
+        # [BR-FR-CO-09/BT-23] : Si le cadre de facturation (BT-23) est B2, S2 ou M2, alors la date d'échéance (BT-9) doit être renseignée et correspondre à la date de paiement.
+        # For credit notes, this is handled in `_add_invoice_payment_means_nodes` instead, as `cac:PaymentMeans` is
+        # not populated yet at this point.
+        if profile_id in ('B2', 'S2', 'M2') and vals['document_type'] != 'credit_note':
+            document_node['cbc:DueDate'] = {'_text': invoice._pdp_get_payment_date() or invoice.invoice_date}
+
+        # Profile ID X4 - Final invoice with downpayments
+        if profile_id in ('B4', 'S4', 'M4'):
+            downpayment_moves = invoice.invoice_line_ids._get_downpayment_lines().move_id.filtered(lambda m: m != invoice)
+            document_node['cac:BillingReference'] = []
+            for downpayment_move in downpayment_moves:
+                document_node['cac:BillingReference'].append({
+                    'cac:InvoiceDocumentReference': {
+                        'cbc:ID': {'_text': downpayment_move.name},
+                        'cbc:IssueDate': {'_text': downpayment_move.invoice_date},
+                    },
+                })
+
         # B2G
         if not b2g:
             return
@@ -108,6 +128,39 @@ class AccountEdiXmlUbl21Fr(models.AbstractModel):
             document_node['cac:OrderReference'] = {
                 'cbc:ID': {'_text': invoice.purchase_order_reference}
             }
+
+    def _add_invoice_payment_means_nodes(self, document_node, vals):
+        # EXTENDS account.edi.xml.ubl_bis3
+        super()._add_invoice_payment_means_nodes(document_node, vals)
+
+        if vals['document_type'] != 'credit_note':
+            return
+
+        profile_id = self._l10n_fr_pdp_get_profile_id(vals)
+        # [BR-FR-CO-09/BT-23] : Si le cadre de facturation (BT-23) est B2, S2 ou M2, alors la date d'échéance (BT-9) doit être renseignée et correspondre à la date de paiement.
+        if profile_id in ('B2', 'S2', 'M2'):
+            invoice = vals['invoice']
+            payment_due_date = invoice._pdp_get_payment_date() or invoice.invoice_date
+            for node in document_node['cac:PaymentMeans']:
+                node['cbc:PaymentDueDate'] = {'_text': payment_due_date}
+
+    def _ubl_add_invoice_type_code_node(self, vals):
+        # Override account_edi_ubl: [BR-FR-04] Downpayment code for invoice is 386
+        invoice = vals['invoice']
+        vals['document_node']['cbc:InvoiceTypeCode'] = {'_text': None}
+        if self._is_document(vals, 'invoice') and invoice._is_downpayment():
+            vals['document_node']['cbc:InvoiceTypeCode']['_text'] = 386
+        else:
+            super()._ubl_add_invoice_type_code_node(vals)
+
+    def _ubl_add_credit_note_type_code_node(self, vals):
+        # Override account_edi_ubl: [BR-FR-04] Downpayment code for credit note is 503
+        invoice = vals['invoice']
+        vals['document_node']['cbc:CreditNoteTypeCode'] = {'_text': None}
+        if self._is_document(vals, 'credit_note') and invoice._is_downpayment():
+            vals['document_node']['cbc:CreditNoteTypeCode']['_text'] = 503
+        else:
+            super()._ubl_add_credit_note_type_code_node(vals)
 
     def _ubl_add_party_identification_nodes(self, vals):
         super()._ubl_add_party_identification_nodes(vals)
@@ -182,3 +235,46 @@ class AccountEdiXmlUbl21Fr(models.AbstractModel):
                 },
             }
         }
+
+    def _import_ubl_invoice_add_prepaid_amount(self, collected_values):
+        # imported invoice is a final invoice following downpayments.
+        # We assume all billing references are references to downpayments.
+        invoice = collected_values['invoice']
+        currency = collected_values['currency_values']['currency']
+        tree = collected_values['tree']
+        if tree.findtext('./{*}ProfileID') in ('B4', 'S4', 'M4'):
+            prepaid_amount = float(tree.findtext('./{*}LegalMonetaryTotal/{*}PrepaidAmount') or 0)
+            collected_values['prepaid_amount'] = prepaid_amount
+            if not invoice.currency_id.is_zero(prepaid_amount):
+                downpayments_names = tree.findall('./{*}BillingReference/{*}InvoiceDocumentReference/{*}ID')
+                downpayments = self.env['account.move'].search([('payment_reference', 'in', [downpayment.text for downpayment in downpayments_names])])
+
+                downpayment_lines = self.env['account.move.line']
+                for downpayment in downpayments:
+                    downpayment_lines |= downpayment.invoice_line_ids.copy({'quantity': -1 if downpayment.move_type == 'in_invoice' else 1})
+                collected_values['downpayment_lines'] = downpayment_lines
+
+                # logging
+                formatted_amount = formatLang(self.env, prepaid_amount, currency_obj=currency)
+                collected_values['logs'].append(_("A downpayment of %s was detected.", formatted_amount))
+                for downpayment_name in downpayments_names:
+                    if downpayment_name.text not in downpayments.mapped('payment_reference'):
+                        collected_values['logs'].append(_("Downpayment %s not found. Imported amounts will probably be incorrect.", downpayment_name.text))
+        super()._import_ubl_invoice_add_prepaid_amount(collected_values)
+
+    def _import_ubl_invoice_fix_untaxed_amount(self, collected_values):
+        # Downpayments may be reported as a prepaid amount.
+        # In this case, the final invoice untaxed amount, tax amount and total amount
+        # correspond to the amounts without any downpayments made.
+        # We need to add the downpayment lines as negative lines in the final invoice
+        # because we already imported and accounted for the downpayments.
+        super()._import_ubl_invoice_fix_untaxed_amount(collected_values)
+        invoice = collected_values['invoice']
+        if downpayment_lines := collected_values.get('downpayment_lines'):
+            container = {'records': invoice}
+            with (
+                invoice._check_balanced(container),
+                invoice._disable_discount_precision(),
+                invoice._sync_dynamic_lines(container),
+            ):
+                downpayment_lines.move_id = invoice.id

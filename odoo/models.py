@@ -1254,7 +1254,7 @@ class BaseModel(metaclass=MetaModel):
                 for record, xid in self.env[model].browse(ids).__ensure_xml_id():
                     for i, j in xidmap.pop((record._name, record.id)):
                         lines[i][j] = xid
-            assert not xidmap, "failed to export xids for %s" % ', '.join('{}:{}' % it for it in xidmap.items())
+            assert not xidmap, "failed to export xids for %s" % ', '.join('%s:%s' % it for it in xidmap.items())
 
         if _is_toplevel_call:
             self.env.cr.cache.pop('export_properties_cache', None)
@@ -7489,9 +7489,8 @@ class TransientModel(Model):
     """ Model super-class for transient records, meant to be temporarily
     persistent, and regularly vacuum-cleaned.
 
-    A TransientModel has a simplified access rights management, all users can
-    create new records, and may only access the records they created. The
-    superuser has unrestricted access to all TransientModel records.
+    A TransientModel uses the same access rights mechanisms as a regular
+    :class:`Model`, through access control lists and record rules.
     """
     _auto = True                # automatically create database backend
     _register = False           # not visible in ORM registry, meant to be python-inherited only
