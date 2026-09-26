@@ -154,10 +154,10 @@ class ResPartner(models.Model):
                 try:
                     return self._run_vat_checks(self.env['res.country'].search([('code', '=', country_code)], limit=1), vat_prefix + vat_number, partner_name, validation)
                 except ValidationError:
-                    msg = self._build_vat_error_message(code_to_check, vat, partner_label)
+                    msg = self._build_vat_error_message(code_to_check, vat_to_return, partner_label)
                     raise ValidationError(msg + "\n\n" + _('If you are trying to input a European number, this is the expected format: ') + _ref_vat[country_code.lower()])
             if validation == 'error':
-                msg = self._build_vat_error_message(code_to_check, vat, partner_label)
+                msg = self._build_vat_error_message(code_to_check, vat_to_return, partner_label)
                 raise ValidationError(msg)
             else:
                 return '', code_to_check
@@ -172,11 +172,15 @@ class ResPartner(models.Model):
 
     @api.model
     def _get_country_specific_vat_variants(self, normalized_vat, country_prefix):
+        """
+        Return additional formatted VAT values to consider during EDI partner matching.
+        Should stay consistent with `_check_customer_vat_match` to ensure
+        correct partner matching when importing EDI documents.
+        """
         vat_variants = super()._get_country_specific_vat_variants(normalized_vat, country_prefix)
         if country_prefix.upper() == 'CH':
             normalized_vat = normalized_vat.replace('-', '')
-            if len(normalized_vat) >= 12:
-                vat_formatted = self._run_vat_checks(self.env.ref('base.ch'), normalized_vat, validation=False)[0]
+            if (vat_formatted := self._run_vat_checks(self.env.ref('base.ch'), normalized_vat, validation='setnull')[0]):
                 vat_base = re.sub(r"\s*(TVA|IVA|MWST)?$", "", vat_formatted.upper())
                 vat_variants.extend([f'{vat_base} {suffix}' for suffix in ('TVA', 'IVA', 'MWST')])
         return vat_variants
@@ -425,10 +429,12 @@ class ResPartner(models.Model):
 
     def check_vat_gr(self, vat):
         """ Allows some custom test VAT number to be valid to allow testing Greece EDI. """
+        gr_vat = stdnum.util.get_cc_module('gr', 'vat')
+        vat = gr_vat.compact(vat)
         greece_test_vats = ('047747270', '047747210', '047747220', '117747270', '127747270')
         if vat in greece_test_vats:
             return True
-        return stdnum.util.get_cc_module('gr', 'vat').is_valid(vat)
+        return gr_vat.is_valid(vat)
 
     # Our EDI provider Infile has designated this range of testing VATs for our customers.
     __check_vat_gt_testing_infile = re.compile(r'98[0-9]{10}K')

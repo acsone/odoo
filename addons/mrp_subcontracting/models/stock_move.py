@@ -208,11 +208,11 @@ class StockMove(models.Model):
 
     def _should_count_for_quantity_received(self):
         res = super()._should_count_for_quantity_received()
-        return res or self.is_subcontract
+        return res or self.is_subcontract or self.location_id.is_subcontract()
 
     def _check_access_if_subcontractor(self, vals):
         if self.env.user._is_portal() and not self.env.su:
-            if vals.get('state') == 'done':
+            if vals.get('state') == 'done' or self.env.context.get('default_state') == 'done':
                 raise AccessError(_("Portal users cannot create a stock move with a state 'Done' or change the current state to 'Done'."))
 
     def _is_subcontract_return(self):

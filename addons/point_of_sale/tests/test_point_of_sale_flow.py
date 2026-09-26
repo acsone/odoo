@@ -197,6 +197,29 @@ class TestPointOfSaleFlow(CommonPosTest):
         current_session.action_pos_session_closing_control()
         self.assertEqual(current_session.state, 'closed')
 
+    def test_backend_order_refund_flow(self):
+        """ The purpose of this test is to test the basic flow of
+        refunding orders from the backend. More precisely making sure:
+        - We do not refund more than the initial order's quantity"""
+        self.pos_config_usd.open_ui()
+
+        order, _ = self.create_backend_pos_order({
+            'line_data': [
+                {'product_id': self.ten_dollars_with_10_incl.product_variant_id.id},
+            ],
+            'payment_data': [
+                {'payment_method_id': self.cash_payment_method.id, 'amount': 10},
+            ]
+        })
+
+        refund_action = order.refund()
+        refund = self.env['pos.order'].browse(refund_action['res_id'])
+
+        with Form(refund) as refund_form:
+            with refund_form.lines.edit(0) as line:
+                with self.assertRaises(ValidationError, msg="You cannot refund more than the original order."):
+                    line.qty = -3
+
     def test_order_to_picking(self):
         """
             In order to test the Point of Sale in module, I will do three orders
@@ -1920,6 +1943,56 @@ class TestPointOfSaleFlow(CommonPosTest):
         self.assertEqual(order_no_invoice.reversed_move_ids, reversal_moves,
                         "Reversal move should be set for the order invoiced after the session is closed.")
 
+    def test_order_invoiced_in_foreign_currency_after_session_closed(self):
+        """The reversal move of an order invoiced after its session is closed must stay
+        balanced in company currency when the order is in a foreign currency, even when
+        the individually converted and rounded product/tax balances do not sum up to the
+        converted payment total."""
+        eur = self.env.ref('base.EUR')
+        (eur.rate_ids | self.company.currency_id.rate_ids).unlink()
+        self.env['res.currency.rate'].create({
+            'name': fields.Date.today(),
+            'currency_id': eur.id,
+            'company_id': self.company.id,
+            # 20.0 * 0.4007 -> 8.01 and 3.0 * 0.4007 -> 1.20, while 23.0 * 0.4007 -> 9.22:
+            # per-line conversions drift by 0.01 from the converted payment total.
+            'inverse_company_rate': 0.4007,
+        })
+
+        # 20.0 EUR + 15% excluded tax = 23.0 EUR, paid by bank: 8.01 + 1.20 vs 9.22 -> -0.01
+        order, _ = self.create_backend_pos_order({
+            'pos_config': self.pos_config_eur,
+            'line_data': [
+                {'product_id': self.twenty_dollars_with_15_excl.product_variant_id.id},
+            ],
+            'payment_data': [
+                {'payment_method_id': self.bank_payment_method.id},
+            ],
+        })
+        # 1.14 EUR + 15% excluded tax = 1.31 EUR: 0.46 + 0.07 vs 0.52 -> +0.01, so the two
+        # drifts cancel each other out and the session closing entry itself stays balanced.
+        self.create_backend_pos_order({
+            'pos_config': self.pos_config_eur,
+            'line_data': [
+                {'product_id': self.twenty_dollars_with_15_excl.product_variant_id.id, 'price_unit': 1.14},
+            ],
+            'payment_data': [
+                {'payment_method_id': self.bank_payment_method.id},
+            ],
+        })
+
+        current_session = self.pos_config_eur.current_session_id
+        current_session.close_session_from_ui()
+        self.assertEqual(current_session.state, 'closed')
+
+        order.partner_id = self.partner
+        order.action_pos_order_invoice()
+
+        reversal_move = order.reversed_move_ids
+        self.assertEqual(reversal_move.state, 'posted')
+        self.assertAlmostEqual(sum(reversal_move.line_ids.mapped('balance')), 0.0)
+        self.assertAlmostEqual(sum(reversal_move.line_ids.mapped('amount_currency')), 0.0)
+
     def test_payment_difference_accounting_items(self):
         """Verify that the amount of the accounting items are correct when closing a session with a payment difference."""
         self.product1 = self.env['product.product'].create({
@@ -2946,3 +3019,92 @@ class TestPointOfSaleFlow(CommonPosTest):
         used_accounts = current_session.move_id.line_ids.mapped('account_id')
         self.assertIn(mapped_expense, used_accounts)
         self.assertNotIn(default_expense, used_accounts)
+
+    def test_pos_return_valuation_avco(self):
+        """
+        Test that a PoS return correctly values the incoming stock move at the
+        historical cost of the original sale, even if the product's AVCO
+        standard_price has changed in the meantime.
+        """
+        self.pos_config_usd.open_ui()
+        current_session = self.pos_config_usd.current_session_id
+
+        categ_avco = self.env['product.category'].create({
+            'name': 'AVCO Category',
+            'property_cost_method': 'average',
+            'property_valuation': 'real_time',
+        })
+
+        product_avco = self.env['product.product'].create({
+            'name': 'AVCO Product',
+            'is_storable': True,
+            'categ_id': categ_avco.id,
+            'standard_price': 10.0,
+            'lst_price': 30.0,
+            'available_in_pos': True,
+        })
+
+        stock_location = self.company_data['default_warehouse'].lot_stock_id
+        self.env['stock.quant'].with_context(inventory_mode=True).create({
+            'product_id': product_avco.id,
+            'inventory_quantity': 10,
+            'location_id': stock_location.id,
+        }).action_apply_inventory()
+        order = self.env['pos.order'].create({
+            'company_id': self.env.company.id,
+            'session_id': current_session.id,
+            'partner_id': self.partner.id,
+            'pricelist_id': self.pos_config_usd.pricelist_id.id,
+            'lines': [Command.create({
+                'name': "OL/0001",
+                'product_id': product_avco.id,
+                'price_unit': 30.0,
+                'discount': 0.0,
+                'qty': 1.0,
+                'tax_ids': [],
+                'price_subtotal': 30.0,
+                'price_subtotal_incl': 30.0,
+            })],
+            'amount_tax': 0.0,
+            'amount_total': 30.0,
+            'amount_paid': 0.0,
+            'amount_return': 0.0,
+            'last_order_preparation_change': '{}'
+        })
+
+        payment_context = {"active_ids": order.ids, "active_id": order.id}
+        order_payment = self.env['pos.make.payment'].with_context(**payment_context).create({
+            'amount': order.amount_total,
+            'payment_method_id': self.cash_payment_method.id
+        })
+        order_payment.with_context(**payment_context).check()
+
+        out_move = order.picking_ids.move_ids
+        self.assertEqual(abs(out_move.value), 10.0, "Outgoing move should be valued at $10.")
+
+        # simulate an AVCO cost increase (e.g., new purchase of 10 units at $30)
+        product_avco.sudo().write({'standard_price': 20.0})
+
+        refund_action = order.refund()
+        refund = self.env['pos.order'].browse(refund_action['res_id'])
+
+        payment_context = {"active_ids": refund.ids, "active_id": refund.id}
+        refund_payment = self.env['pos.make.payment'].with_context(**payment_context).create({
+            'amount': refund.amount_total,
+            'payment_method_id': self.cash_payment_method.id,
+        })
+        refund_payment.with_context(**payment_context).check()
+
+        in_move = refund.picking_ids.move_ids
+
+        self.assertEqual(
+            in_move.origin_returned_move_id.id,
+            out_move.id,
+            "The return move must be linked to the original outgoing move via origin_returned_move_id."
+        )
+
+        self.assertEqual(
+            abs(in_move.value),
+            10.0,
+            "The return move should be valued at the historical cost of the original sale ($10), not the current standard price ($20)."
+        )

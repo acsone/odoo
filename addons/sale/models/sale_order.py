@@ -134,7 +134,7 @@ class SaleOrder(models.Model):
 
     validity_date = fields.Date(
         string="Expiration",
-        help="Validity of the order, after that you will not able to sign & pay the quotation.",
+        help="Validity of the quotation. After this date, you will no longer be able to sign and pay it.",
         compute='_compute_validity_date',
         store=True, readonly=False, copy=False, precompute=True)
     journal_id = fields.Many2one(
@@ -2142,7 +2142,7 @@ class SaleOrder(models.Model):
             downpayment_wizard = order.env['sale.advance.payment.inv'].create({
                 'sale_order_ids': order,
                 'advance_payment_method': 'fixed',
-                'fixed_amount': order.amount_paid,
+                'fixed_amount': self.env.context.get('downpayment_fixed_amount', order.amount_paid),
             })
             generated_invoices |= downpayment_wizard._create_invoices(order)
 

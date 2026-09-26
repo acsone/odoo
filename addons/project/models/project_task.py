@@ -434,6 +434,9 @@ class ProjectTask(models.Model):
             self.project_id = self.parent_id.project_id.id
             self.display_in_project = False
 
+        if not self._origin and not self.parent_id and self.project_id.partner_id:
+            self.partner_id = self.project_id.partner_id
+
     def is_blocked_by_dependences(self):
         return any(blocking_task.state not in CLOSED_STATES for blocking_task in self.depend_on_ids)
 
@@ -896,8 +899,9 @@ class ProjectTask(models.Model):
 
     def _create_task_mapping(self, copied_tasks):
         """
-        Thanks to the way create and command.create is handled, when a task with 2 children is copied, we have the guarantee that the children of the
-        copied task will have the same index in the child_ids recordset. We can use this behavior to create a mapping containing all the original tasks and their copy.
+        Thanks to the way create and command.create is handled, the children of a copied task are created in the order in which the original
+        child_ids were iterated, so sorting them by id gives back the index correspondence with the original children. We can use this behavior
+        to create a mapping containing all the original tasks and their copy.
         :return:
             task_mapping: a dict containing the mapping of the original task ids and their copied task (k: original_task.id, v: new_task)
             task_dependencies: a dict containing the ids of the dependencies of the original task when they have one.
@@ -910,7 +914,7 @@ class ProjectTask(models.Model):
                 task_dependencies[original_task.id] = [original_task.depend_on_ids.ids, original_task.dependent_ids.ids]
             if original_task.child_ids:
                 # If the task has children, we have to call the method create_task_mapping to get their ids and dependencies mapping too.
-                children_mapping, children_dependencies = original_task.child_ids._create_task_mapping(copied_task.child_ids)
+                children_mapping, children_dependencies = original_task.child_ids._create_task_mapping(copied_task.child_ids.sorted('id'))
                 task_mapping.update(children_mapping)
                 task_dependencies.update(children_dependencies)
         return task_mapping, task_dependencies
@@ -1145,7 +1149,7 @@ class ProjectTask(models.Model):
             if not vals.get('name') and vals.get('display_name'):
                 vals['name'] = vals['display_name']
 
-            if is_portal_user or not self.env.su:
+            if is_portal_user and not self.env.su:
                 self_with_restrict_context._ensure_fields_write(vals, defaults=True)
 
             if project_id and not "company_id" in vals:
@@ -1400,7 +1404,9 @@ class ProjectTask(models.Model):
         last_task_id_per_recurrence_id = self.recurrence_id._get_last_task_id_per_recurrence_id()
         for task in self:
             if task.id == last_task_id_per_recurrence_id.get(task.recurrence_id.id):
+                remaining_tasks = task.recurrence_id.task_ids - self
                 task.recurrence_id.unlink()
+                remaining_tasks.recurring_task = False
         return super().unlink()
 
     def update_date_end(self, stage_id):
