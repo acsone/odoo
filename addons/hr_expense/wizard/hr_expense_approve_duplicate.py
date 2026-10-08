@@ -20,11 +20,16 @@ class HrExpenseApproveDuplicate(models.TransientModel):
         if 'duplicate_expense_ids' in fields:
             res['expense_ids'] = [Command.set(self.env.context.get('default_expense_ids', []))]
         return res
+    
+    def _get_expenses(self):
+        return self.expense_ids.filtered(lambda expense: expense.state == 'submitted')
 
     def action_approve(self):
-        self.expense_ids.filtered(lambda expense: expense.state == 'submitted')._do_approve()
+        expenses = self._get_expenses()
+        expenses._do_approve()
         return {'type': 'ir.actions.act_window_close'}
 
     def action_refuse(self):
-        self.expense_ids.filtered(lambda expense: expense.state == 'submitted')._do_refuse(_('Duplicate Expense'))
+        expenses = self._get_expenses()
+        expenses._do_refuse(_('Duplicate Expense'))
         return {'type': 'ir.actions.act_window_close'}
