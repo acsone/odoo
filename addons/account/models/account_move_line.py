@@ -961,6 +961,12 @@ class AccountMoveLine(models.Model):
             if line.product_id or (line.display_type != 'discount' and (account_taxes or not line.tax_ids)):
                 line.tax_ids = line._get_computed_taxes()
 
+    def _hook_get_computed_taxes(self,tax_ids):
+        """
+            Custom hook to set tax before applying fiscal position
+        """
+        return tax_ids
+
     def _get_computed_taxes(self):
         self.ensure_one()
 
@@ -983,6 +989,8 @@ class AccountMoveLine(models.Model):
 
         else:
             tax_ids = False if self.env.context.get('skip_computed_taxes') or self.move_id.is_entry() else all_account_taxes
+
+        tax_ids = self._hook_get_computed_taxes(tax_ids)
 
         if self.company_id and tax_ids:
             tax_ids = tax_ids._filter_taxes_by_company(self.company_id)
