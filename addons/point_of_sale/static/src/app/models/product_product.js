@@ -218,17 +218,29 @@ export class ProductProduct extends Base {
         if (!applicableRules) {
             return undefined;
         }
+        return this.getSpecificPriceListRule(applicableRules) || applicableRules[0];
+    }
+    getSpecificPriceListRule(applicableRules) {
         const productIdRule = applicableRules?.find(
             (rule) => rule.product_id && rule.product_id.id === this.id
         );
+        if(!!productIdRule) {
+            return productIdRule;
+        }
         const productTmplIdRule = applicableRules?.find(
             (rule) => rule.product_tmpl_id && rule.product_tmpl_id.id === this.raw.product_tmpl_id
         );
+        if(!!productTmplIdRule) {
+            return productTmplIdRule;
+        }
         const categoryRule = applicableRules?.find(
             (rule) => rule.categ_id && this.parentCategories.includes(rule.categ_id.id)
         );
-        return productIdRule || productTmplIdRule || categoryRule || applicableRules[0];
-    }
+        if(!!categoryRule) {
+            return categoryRule;
+        }
+        return undefined;
+    };
     getImageUrl() {
         return (
             (this.image_128 &&
