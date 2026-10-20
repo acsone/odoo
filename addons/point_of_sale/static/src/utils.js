@@ -206,31 +206,7 @@ export function computeProductPricelistCache(service, data = []) {
         }
         const pricelistId = item.pricelist_id.id;
 
-        if (!pricelistRules[pricelistId]) {
-            pricelistRules[pricelistId] = {
-                productItems: {},
-                productTmlpItems: {},
-                categoryItems: {},
-                globalItems: [],
-            };
-        }
-
-        const productId = item.raw.product_id;
-        if (productId) {
-            pushItem(pricelistRules[pricelistId].productItems, productId, item);
-            continue;
-        }
-        const productTmplId = item.raw.product_tmpl_id;
-        if (productTmplId) {
-            pushItem(pricelistRules[pricelistId].productTmlpItems, productTmplId, item);
-            continue;
-        }
-        const categId = item.raw.categ_id;
-        if (categId) {
-            pushItem(pricelistRules[pricelistId].categoryItems, categId, item);
-        } else {
-            pricelistRules[pricelistId].globalItems.push(item);
-        }
+        initPriceListRulesCache(pricelistRules, item);
     }
 
     for (const product of products) {
@@ -290,33 +266,8 @@ export function computeProductPricelistCacheOfProductAndPricelist(service, data 
         ) {
             continue;
         }
-        const pricelistId = item.pricelist_id.id;
 
-        if (!pricelistRules[pricelistId]) {
-            pricelistRules[pricelistId] = {
-                productItems: {},
-                productTmlpItems: {},
-                categoryItems: {},
-                globalItems: [],
-            };
-        }
-
-        const productId = item.raw.product_id;
-        if (productId) {
-            pushItem(pricelistRules[pricelistId].productItems, productId, item);
-            continue;
-        }
-        const productTmplId = item.raw.product_tmpl_id;
-        if (productTmplId) {
-            pushItem(pricelistRules[pricelistId].productTmlpItems, productTmplId, item);
-            continue;
-        }
-        const categId = item.raw.categ_id;
-        if (categId) {
-            pushItem(pricelistRules[pricelistId].categoryItems, categId, item);
-        } else {
-            pricelistRules[pricelistId].globalItems.push(item);
-        }
+        initPriceListRulesCache(pricelistRules, item);
     }
 
     const applicableRules = product.getApplicablePricelistRules(pricelistRules);
@@ -335,5 +286,58 @@ export function computeProductPricelistCacheOfProductAndPricelist(service, data 
         } else {
             product.cachedPricelistRules[pricelistId] = applicableRules[pricelistId];
         }
+    }
+}
+
+export function getPriceListRulesCacheObject() {
+    return {
+        productItems: {},
+        productTmlpItems: {},
+        productBrandItems: {},
+        categoryItems: {},
+        globalItems: [],
+    }
+}
+
+export function isPricelistRuleGlobal(item) {
+    return !item.raw.productId && !item.raw.product_tmpl_id && !item.raw.product_brand_id && !item.raw.categ_id;
+}
+
+export function initPriceListRulesCache(pricelistRules, item) {
+    const pricelistId = item.pricelist_id.id;
+
+    const pushItem = (targetArray, key, item) => {
+        if (!targetArray[key]) {
+            targetArray[key] = [];
+        }
+        targetArray[key].push(item);
+    };
+
+    if (!pricelistRules[pricelistId]) {
+        pricelistRules[pricelistId] = getPriceListRulesCacheObject();
+    }
+
+    const productId = item.raw.product_id;
+    if (productId) {
+        pushItem(pricelistRules[pricelistId].productItems, productId, item);
+        return;
+    }
+    const productTmplId = item.raw.product_tmpl_id;
+    if (productTmplId) {
+        pushItem(pricelistRules[pricelistId].productTmlpItems, productTmplId, item);
+        return;
+    }
+    const brandId = item.raw.product_brand_id;
+    if (brandId) {
+        pushItem(pricelistRules[pricelistId].productBrandItems, brandId, item);
+        return;
+    }
+    const categId = item.raw.categ_id;
+    if (categId) {
+        pushItem(pricelistRules[pricelistId].categoryItems, categId, item);
+        return;
+    }
+    if (isPricelistRuleGlobal(item)) {
+        pricelistRules[pricelistId].globalItems.push(item);
     }
 }
