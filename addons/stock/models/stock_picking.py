@@ -804,10 +804,6 @@ class Picking(models.Model):
         pickings._autoconfirm_picking()
 
         for picking, vals in zip(pickings, vals_list):
-            # set partner as follower
-            if vals.get('partner_id'):
-                if picking.location_id.usage == 'supplier' or picking.location_dest_id.usage == 'customer':
-                    picking.message_subscribe([vals.get('partner_id')])
             if vals.get('picking_type_id'):
                 for move in picking.move_ids:
                     if not move.description_picking:
@@ -817,13 +813,6 @@ class Picking(models.Model):
     def write(self, vals):
         if vals.get('picking_type_id') and any(picking.state != 'draft' for picking in self):
             raise UserError(_("Changing the operation type of this record is forbidden at this point."))
-        # set partner as a follower and unfollow old partner
-        if vals.get('partner_id'):
-            for picking in self:
-                if picking.location_id.usage == 'supplier' or picking.location_dest_id.usage == 'customer':
-                    if picking.partner_id:
-                        picking.message_unsubscribe(picking.partner_id.ids)
-                    picking.message_subscribe([vals.get('partner_id')])
         res = super(Picking, self).write(vals)
         if vals.get('signature'):
             for picking in self:
