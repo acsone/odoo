@@ -218,17 +218,40 @@ export class ProductProduct extends Base {
         if (!applicableRules) {
             return undefined;
         }
-        const productIdRule = applicableRules?.find(
+        return this.getSpecificPriceListRule(applicableRules) || applicableRules[0];
+    }
+    getSpecificPriceListRule(applicableRules) {
+        const productIdRule = this.getProductPriceListRule(applicableRules);
+        if(!!productIdRule) {
+            return productIdRule;
+        }
+        const productTmplIdRule = this.getProductTemplatePriceListRule(applicableRules);
+        if(!!productTmplIdRule) {
+            return productTmplIdRule;
+        }
+        const categoryRule = this.getProductCategoryPriceListRule(applicableRules);
+        if(!!categoryRule) {
+            return categoryRule;
+        }
+        return undefined;
+    }
+
+    getProductPriceListRule(applicableRules) {
+        return applicableRules?.find(
             (rule) => rule.product_id && rule.product_id.id === this.id
         );
-        const productTmplIdRule = applicableRules?.find(
+    }
+    getProductTemplatePriceListRule(applicableRules) {
+        return applicableRules?.find(
             (rule) => rule.product_tmpl_id && rule.product_tmpl_id.id === this.raw.product_tmpl_id
         );
-        const categoryRule = applicableRules?.find(
+    }
+    getProductCategoryPriceListRule(applicableRules) {
+        return applicableRules?.find(
             (rule) => rule.categ_id && this.parentCategories.includes(rule.categ_id.id)
         );
-        return productIdRule || productTmplIdRule || categoryRule || applicableRules[0];
     }
+
     getImageUrl() {
         return (
             (this.image_128 &&
