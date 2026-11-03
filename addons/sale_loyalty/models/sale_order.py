@@ -157,7 +157,7 @@ class SaleOrder(models.Model):
         )._get_point_changes().items():
             coupon.points -= changes
         # Remove any rewards
-        self.order_line.filtered(lambda l: l.is_reward_line).unlink()
+        self.order_line._unlink_reward_lines()
         self.coupon_point_ids.coupon_id.sudo().filtered(
             lambda c: not c.program_id.is_nominative and c.order_id in self and not c.use_count)\
             .unlink()

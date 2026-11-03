@@ -139,3 +139,6 @@ class SaleOrderLine(models.Model):
 
     def _sellable_lines_domain(self):
         return super()._sellable_lines_domain() + [('reward_id', '=', False)]
+
+    def _unlink_reward_lines(self):
+        self.filtered(lambda l: l.is_reward_line).unlink()
