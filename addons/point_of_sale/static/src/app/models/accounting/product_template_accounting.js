@@ -131,13 +131,7 @@ export class ProductTemplateAccounting extends Base {
             return price;
         }
 
-        if (rule.base === "pricelist") {
-            if (rule.base_pricelist_id) {
-                price = this.getPrice(rule.base_pricelist_id, quantity, price_extra, true, variant);
-            }
-        } else if (rule.base === "standard_price") {
-            price = standardPrice;
-        }
+        price = this.getPricelistBasePrice(rule, variant, price);
 
         const posCurrency = this.models["pos.config"].getFirst().currency_id;
         const pricelistCurrency = pricelist.currency_id;
@@ -177,6 +171,19 @@ export class ProductTemplateAccounting extends Base {
         // being used further. Note that this cannot happen here,
         // because it would cause inconsistencies with the backend for
         // pricelist that have base == 'pricelist'.
+        return price;
+    }
+
+    getPricelistBasePrice(rule, variant, base_price) {
+        const standardPrice = variant ? variant.standard_price : this.standard_price;
+        let price = base_price;
+        if (rule.base === "pricelist") {
+            if (rule.base_pricelist_id) {
+                price = this.getPrice(rule.base_pricelist_id, quantity, 0, true, variant);
+            }
+        } else if (rule.base === "standard_price") {
+            price = standardPrice;
+        }
         return price;
     }
 
