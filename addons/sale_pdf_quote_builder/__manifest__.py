@@ -13,6 +13,7 @@
         'security/ir.model.access.csv',
         'security/ir_rules.xml',
 
+        'views/ir_actions_report.xml',
         'views/product_document_views.xml',
         'views/quotation_document_views.xml',
         'views/sale_order_template_views.xml',
