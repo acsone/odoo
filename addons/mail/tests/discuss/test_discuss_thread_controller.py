@@ -35,7 +35,7 @@ class TestDiscussThreadController(MailControllerThreadCommon):
         self._execute_message_post_subtests(
             channel,
             (
-                test_access(self.user_public, True),
+                test_access(self.user_public, False),
                 test_access(self.guest, True),
                 test_access(self.user_portal, True),
                 test_access(self.user_employee, True),
@@ -62,7 +62,7 @@ class TestDiscussThreadController(MailControllerThreadCommon):
         self._execute_message_post_subtests(
             channel,
             (
-                test_partners(self.user_public, True, self.env["res.partner"]),
+                test_partners(self.user_public, False, self.env["res.partner"]),
                 test_partners(self.guest, True, self.env["res.partner"]),
                 test_partners(self.user_portal, True, self.env["res.partner"]),
                 test_partners(self.user_employee, True, partners),
@@ -93,7 +93,7 @@ class TestDiscussThreadController(MailControllerThreadCommon):
         self._execute_message_post_subtests(
             channel,
             (
-                test_emails(self.user_public, True, no_emails),
+                test_emails(self.user_public, False, no_emails),
                 test_emails(self.guest, True, no_emails),
                 test_emails(self.user_portal, True, no_emails),
                 # restricted because not base.group_partner_manager: find existing only
@@ -102,3 +102,19 @@ class TestDiscussThreadController(MailControllerThreadCommon):
                 test_emails(self.user_admin, True, partner_emails),
             ),
         )
+
+    def test_channel_auto_join_on_message_post(self):
+        """Test that non-member employees and guests become members when posting a message."""
+        channel = self.env["discuss.channel"].create(
+            {"name": "Public Channel", "group_public_id": None}
+        )
+
+        for pseudo_user, member_field, member in [
+            (self.user_employee, "partner_id", self.user_employee.partner_id),
+            (self.guest, "guest_id", self.guest),
+        ]:
+            self.assertNotIn(member, channel.channel_member_ids[member_field])
+            self._authenticate_pseudo_user(pseudo_user)
+            self._message_post(channel, {"body": "hello"}, {})
+            channel.invalidate_recordset(["channel_member_ids"])
+            self.assertIn(member, channel.channel_member_ids[member_field])

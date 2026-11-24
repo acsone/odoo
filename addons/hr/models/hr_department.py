@@ -175,12 +175,12 @@ class HrDepartment(models.Model):
             ])
         else:
             action['domain'] = domain
-        if self.plans_count == 0:
+        if self.plans_count == 0 and self.env['mail.activity.plan'].has_access('create'):
             action['views'] = [(False, 'form')]
         return action
 
     def action_employee_from_department(self):
-        if self.env['hr.employee'].has_access('read'):
+        if self.env['hr.employee'].has_access('read') and self.env.user.has_group('hr.group_hr_user'):
             res_model = "hr.employee"
             search_view_id = self.env.ref('hr.view_employee_filter').id
         else:

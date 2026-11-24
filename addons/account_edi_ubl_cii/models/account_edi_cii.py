@@ -528,10 +528,10 @@ class AccountEdiCii(models.AbstractModel):
         if (vat := partner_values.get('partner_tax_registration', '')) and not self._cii_is_vat_void(vat):
             tax_registrations.insert(0, {'scheme': 'VA', 'value': vat})
         return {
-            'ram:GlobalID': {
+            'ram:GlobalID': [{
                 'schemeID': '0088',
                 '_text': partner_values['gln'],
-            } if partner_values['gln'] else None,
+            }] if partner_values['gln'] else [],
             'ram:Name': {'_text': partner_values['name']},
             'ram:SpecifiedLegalOrganization': {
                 'ram:ID': {
@@ -582,7 +582,7 @@ class AccountEdiCii(models.AbstractModel):
     def _cii_get_buyer_trade_party_node(self, vals):
         customer = vals['customer']
         commercial_partner = customer.commercial_partner_id
-        name = customer.display_name if customer.name else commercial_partner.display_name
+        name = commercial_partner.name
         scheme_id = None
         legal_organization_val = commercial_partner.company_registry
         if siret.is_valid(legal_organization_val):
@@ -595,7 +595,7 @@ class AccountEdiCii(models.AbstractModel):
             'partner_specified_legal_organization': legal_organization_val,
             'partner_specified_legal_organization_scheme': scheme_id,
             'contact_values': {
-                'name': name,
+                'name': customer.name or name,
                 'phone': customer.phone,
                 'email': customer.email,
             },

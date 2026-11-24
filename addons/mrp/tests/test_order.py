@@ -2357,6 +2357,36 @@ class TestMrpOrder(TestMrpCommon):
         self.assertEqual(mo.workorder_ids[1].date_start, tuesday.replace(hour=1))
         self.assertEqual(mo.workorder_ids[1].date_finished, tuesday.replace(hour=2))
 
+    def test_update_duration_expected_ignores_other_workorders(self):
+        """ Changing the expected duration of a planned workorder should not
+        take the other workorders of the same workcenter into account. """
+        workcenter = self.workcenter_1
+        workcenter.resource_calendar_id.tz = 'UTC'
+        (workcenter.resource_calendar_id.global_leave_ids | workcenter.resource_calendar_id.leave_ids).unlink()
+        # Next Monday at 8:00 am UTC
+        date_start = (fields.Datetime.now() + timedelta(days=7 - fields.Datetime.now().weekday())).replace(hour=8, minute=0, second=0)
+        mo = self.env['mrp.production'].create({
+            'product_id': self.product_1.id,
+            'date_start': date_start,
+            'workorder_ids': [
+                Command.create({
+                    'name': f'Operation {i}',
+                    'workcenter_id': workcenter.id,
+                    'product_uom_id': self.product_1.uom_id.id,
+                    'duration_expected': 60,
+                })
+                for i in range(3)
+            ],
+        })
+        mo.action_confirm()
+        mo.button_plan()
+        self.assertEqual(mo.workorder_ids[0].date_finished, date_start + timedelta(hours=1))
+
+        with Form(mo.workorder_ids[0]) as wo_form:
+            wo_form.duration_expected = 65
+        self.assertEqual(mo.workorder_ids[0].duration_expected, 65)
+        self.assertEqual(mo.workorder_ids[0].date_finished, date_start + timedelta(minutes=65))
+
     def test_backorder_with_overconsumption(self):
         """ Check that the components of the backorder have the correct quantities
         when there is overconsumption in the initial MO
@@ -3840,6 +3870,24 @@ class TestMrpOrder(TestMrpCommon):
         mo_form.picking_type_id = warehouse02.manu_type_id
         mo_form.bom_id = bom_wh02
         self.assertEqual(mo_form.picking_type_id, warehouse01.manu_type_id, 'Should be adapted because of the default value')
+
+    def test_change_bom_with_other_operation_type(self):
+        """Check that switching a saved draft MO to a BoM of another operation type
+        replaces its components."""
+        picking_type_manu_2 = self.picking_type_manu.copy()
+        bom_2 = self.bom_1.copy()
+        bom_2.picking_type_id = picking_type_manu_2
+        mo = self.env['mrp.production'].with_user(self.user_mrp_user).create({
+            'product_id': self.product_4.id,
+            'bom_id': self.bom_1.id,
+        })
+        self.assertEqual(mo.picking_type_id, self.picking_type_manu)
+
+        with Form(mo) as mo_form:
+            mo_form.bom_id = bom_2
+
+        self.assertEqual(mo.picking_type_id, picking_type_manu_2)
+        self.assertRecordValues(mo.move_raw_ids, [{'picking_type_id': picking_type_manu_2.id}, {'picking_type_id': picking_type_manu_2.id}])
 
     def test_workcenter_specific_capacities(self):
         """ Test that the duraction expected is correctly computed when specific capacities are defined on the workcenter.

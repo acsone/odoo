@@ -218,6 +218,24 @@ class TestExpenses(TestExpenseCommon):
         # Only possible if no expense linked to the account
         self.analytic_account_1.unlink()
 
+    def test_expense_no_cost_product_zero_quantity(self):
+        """ A zero quantity on a product without cost must not zero the receipt line """
+        expense = self.create_expenses({
+            'product_id': self.product_c.id,
+            'quantity': 0,
+            'total_amount_currency': 100.0,
+            'tax_ids': [Command.clear()],
+        })
+        self.assertEqual(expense.price_unit, 100.0)
+
+        expense.action_submit()
+        expense.action_approve()
+        self.post_expenses_with_wizard(expense)
+        self.assertRecordValues(expense.account_move_id.invoice_line_ids, [
+            {'quantity': 1.0, 'price_unit': 100.0, 'price_total': 100.0},
+        ])
+        self.assertEqual(expense.account_move_id.amount_total, 100.0)
+
     def test_expense_split_flow(self):
         """ Check Split Expense flow. """
         # Grant Analytic Accounting rights, to be able to modify analytic_distribution from the wizard
@@ -1284,3 +1302,18 @@ class TestExpenses(TestExpenseCommon):
         expense.unlink()
         self.assertFalse(expense.exists())
         self.assertFalse(attachment.exists())
+
+    def test_post_wizard_submitted_twice(self):
+        """ Submitting the same post wizard twice must not create a second receipt and orphan the first one """
+        expenses = self.create_expenses([{'name': 'Expense 1'}, {'name': 'Expense 2'}])
+        expenses.action_submit()
+        expenses._do_approve()  # Skip duplicate wizard
+        action = expenses.action_post()
+        wizard = self.env['hr.expense.post.wizard'].with_context(action['context']).browse(action['res_id'])
+        wizard.action_post_entry()
+        move = expenses.account_move_id
+
+        with self.assertRaises(UserError):
+            wizard.action_post_entry()
+        self.assertEqual(expenses.account_move_id, move)
+        self.assertEqual(move.expense_ids, expenses)

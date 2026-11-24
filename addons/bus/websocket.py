@@ -216,12 +216,15 @@ _command_uid = count(0)
 
 class ControlCommand(IntEnum):
     CLOSE = 0
-    DISPATCH = 1
+    SEND = 1
+    DISPATCH = 2
 
 
 DATA_OP = {Opcode.TEXT, Opcode.BINARY}
 CTRL_OP = {Opcode.CLOSE, Opcode.PING, Opcode.PONG}
 HEARTBEAT_OP = {Opcode.PING, Opcode.PONG}
+# Application-level ping/pong payload (browsers don't expose websocket ping/pong).
+PING_PONG_MESSAGE = b'\x00'
 
 VALID_CLOSE_CODES = {
     code for code in CloseCode if code is not CloseCode.ABNORMAL_CLOSURE
@@ -746,6 +749,8 @@ class Websocket:
         match command:
             case ControlCommand.DISPATCH:
                 self._dispatch_bus_notifications()
+            case ControlCommand.SEND:
+                self._send(data)
             case ControlCommand.CLOSE:
                 self._disconnect(data['code'], data.get('reason'))
 
@@ -768,7 +773,7 @@ class Websocket:
             env = self.new_env(cr, session)
             if session.uid is not None and not check_session(session, env):
                 raise SessionExpiredException()
-            notifications = env["bus.bus"]._poll(
+            notifications, has_more_notifications = env["bus.bus"]._poll_batch(
                 self._channels, self._last_notif_sent_id, [n[0] for n in self._notif_history]
             )
         if not notifications:
@@ -796,6 +801,8 @@ class Websocket:
             self._last_notif_sent_id = self._notif_history[last_index][0]
             self._notif_history = self._notif_history[last_index + 1 :]
         self._send(notifications)
+        if has_more_notifications:
+            self.trigger_notification_dispatching()
 
     def new_env(self, cr, session, *, set_lang=False):
         """
@@ -985,7 +992,7 @@ class WebsocketConnectionHandler:
     # Latest version of the websocket worker. This version should be incremented
     # every time `websocket_worker.js` is modified to force the browser to fetch
     # the new worker bundle.
-    _VERSION = "19.0-2"
+    _VERSION = "19.0-3"
 
     @classmethod
     def websocket_allowed(cls, request):
@@ -1129,8 +1136,8 @@ class WebsocketConnectionHandler:
             # worker version.
             websocket.close(CloseCode.CLEAN, "OUTDATED_VERSION")
         for message in websocket.get_messages():
-            if message == b'\x00':
-                # Ignore internal sentinel message used to detect dead/idle connections.
+            if message == PING_PONG_MESSAGE:
+                websocket._send_control_command(ControlCommand.SEND, PING_PONG_MESSAGE)
                 continue
             with WebsocketRequest(db, httprequest, websocket) as req:
                 try:

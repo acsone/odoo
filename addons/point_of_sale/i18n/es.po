@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 17:37+0000\n"
-"PO-Revision-Date: 2026-10-30 14:33+0000\n"
+"POT-Creation-Date: 2026-11-20 17:35+0000\n"
+"PO-Revision-Date: 2026-11-19 16:59+0000\n"
 "Last-Translator: \"Noemi Pla Garcia (nopl)\" <nopl@odoo.com>\n"
 "Language-Team: Spanish <https://translate.odoo.com/projects/odoo-19/"
 "point_of_sale/es/>\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n != 0 && n % 1000000 == "
 "0) ? 1 : 2);\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.11.2\n"
 
 #. module: point_of_sale
 #. odoo-python
@@ -279,17 +279,18 @@ msgstr ""
 "                        <t t-else=\"\">Hola:</t>\n"
 "                    </div>\n"
 "                    <br/>\n"
-"                    <div>Gracias por comprar en <t t-"
-"out=\"store_name\">Nombre de la tienda</t>.</div>\n"
-"                    <div>Adjunto encontrará el ticket de la compra realizada "
-"el <span><t t-out=\"format_datetime(dt=object.date_order, tz=tz, "
-"dt_format=&quot;EEEE d MMMM&quot;,                          lang_code=lg) or "
-"''\">fecha</t> <t t-out=\"format_time(time=object.date_order, tz=tz, "
+"                    <div>Gracias por realizar tu compra en <t t-"
+"out=\"store_name\">nombre de la tienda</t>.</div>\n"
+"                    <div>Adjunta encontrarás la factura simplificada de la "
+"compra realizada el <span><t t-out=\"format_datetime(dt=object.date_order, "
+"tz=tz, dt_format=&quot;EEEE d MMMM&quot;,                          "
+"lang_code=lg) or ''\">fecha</t> <t t-"
+"out=\"format_time(time=object.date_order, tz=tz, "
 "time_format='short',                          lang_code=lg)\">a las (hora)</"
 "t>.</span>\n"
 "                    </div>\n"
 "                    <br/>\n"
-"                    <div>Saludos cordiales,</div>\n"
+"                    <div>Saludos,</div>\n"
 "                    <br/>\n"
 "                    <t t-out=\"store_name\">Nombre de la tienda</t>\n"
 "                </div>\n"
@@ -474,6 +475,8 @@ msgstr "? Si hace clic en \"confirmar\" validará el pago."
 msgid ""
 "A QR code payment already covers the amount due. Send it or remove it first."
 msgstr ""
+"Un pago mediante código QR ya cubre el importe adeudado. Envíalo o elimínalo "
+"primero."
 
 #. module: point_of_sale
 #: model:ir.model.fields,help:point_of_sale.field_pos_config__uuid
@@ -599,6 +602,8 @@ msgstr "Token de acceso"
 msgid ""
 "Access printer configuration panel by putting this URL in your search bar:"
 msgstr ""
+"Accede al panel de configuración de la impresora introduciendo esta URL en "
+"la barra de búsqueda:"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -607,6 +612,8 @@ msgid ""
 "Access the below URL but replace [printer_ip] with your current Printer IP "
 "address"
 msgstr ""
+"Accede a la siguiente URL, pero reemplaza [printer_ip] con la IP actual de "
+"tu impresora"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_order__access_warning
@@ -3657,6 +3664,7 @@ msgstr "Exportar datos del TPV"
 
 #. module: point_of_sale
 #. odoo-javascript
+#: code:addons/point_of_sale/static/src/app/services/pos_store.js:0
 #: code:addons/point_of_sale/static/src/app/utils/debug/debug_widget.xml:0
 msgid "Export data"
 msgstr "Exportar datos"
@@ -4317,6 +4325,8 @@ msgid ""
 "If this endpoint does not return a 404 error and displays a blank page, "
 "everything is ready."
 msgstr ""
+"Si este endpoint no devuelve un error 404 y muestra una página en blanco, "
+"significa que todo está listo."
 
 #. module: point_of_sale
 #: model:ir.model.fields,help:point_of_sale.field_pos_order_line__refunded_orderline_id
@@ -5342,6 +5352,8 @@ msgid ""
 "Message: %(messages)s\n"
 "Please update the %(invalid_fields)s"
 msgstr ""
+"Mensaje: %(messages)s\n"
+"Por favor, actualiza los siguientes campos %(invalid_fields)s"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_order__message_ids
@@ -5913,7 +5925,7 @@ msgstr "Deportivas de Odoo"
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/app/components/navbar/proxy_status/proxy_status.js:0
 msgid "Offline"
-msgstr ""
+msgstr "Desconectado"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -5958,6 +5970,8 @@ msgstr "Reserva en línea para el punto de venta"
 #: code:addons/point_of_sale/models/pos_config.py:0
 msgid "Only Point of Sale managers can modify a Point of Sale configuration."
 msgstr ""
+"Solo los responsables del punto de venta pueden modificar la configuración "
+"de un TPV."
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -6030,7 +6044,7 @@ msgstr "Abrir caja"
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/app/customer_display/customer_display_qr_code_popup.xml:0
 msgid "Open Customer Display"
-msgstr "Abrir pantalla del cliente"
+msgstr "Abrir pantalla de cliente"
 
 #. module: point_of_sale
 #: model:ir.model.fields,help:point_of_sale.field_pos_payment_method__open_session_ids
@@ -7226,7 +7240,7 @@ msgstr "Publicado"
 #: code:addons/point_of_sale/static/src/app/screens/receipt_screen/receipt/order_receipt.xml:0
 #: code:addons/point_of_sale/static/src/customer_display/customer_display.xml:0
 msgid "Powered by"
-msgstr "Con tecnología de"
+msgstr "Con la tecnología de"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
@@ -7508,7 +7522,7 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/backend/lna_checklist/lna_checklist.xml:0
 msgid "Printer's local IP address is printed"
-msgstr ""
+msgstr "Se ha impreso la dirección IP local de la impresora"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
@@ -8396,7 +8410,7 @@ msgstr "Escanear vía Proxy"
 #: code:addons/point_of_sale/static/src/app/components/navbar/proxy_status/proxy_status.js:0
 #: model_terms:ir.ui.view,arch_db:point_of_sale.pos_config_view_form
 msgid "Scanner"
-msgstr "Escáner"
+msgstr "Lector"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.view_pos_preset_form
@@ -8453,7 +8467,7 @@ msgstr "Impresión segura"
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/backend/lna_checklist/lna_checklist.xml:0
 msgid "Secure printing enabled"
-msgstr ""
+msgstr "Impresión segura habilitada"
 
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_bus_mixin__access_token
@@ -8716,7 +8730,7 @@ msgstr "Define varios precios por producto, descuentos automáticos, etc."
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.res_config_settings_view_form
 msgid "Set the background image of your customer display"
-msgstr "Establezca la imagen de fondo de la pantalla del cliente"
+msgstr "Establece la imagen de fondo de tu pantalla de cliente"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -9185,7 +9199,7 @@ msgstr "Visualización de impuestos"
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_order_line__price_subtotal
 msgid "Tax Excl."
-msgstr "Impuestos no incluidos"
+msgstr "Impuestos excl."
 
 #. module: point_of_sale
 #: model:ir.model,name:point_of_sale.model_account_tax_group
@@ -9201,7 +9215,7 @@ msgstr "NIF: %(vatId)s"
 #. module: point_of_sale
 #: model:ir.model.fields,field_description:point_of_sale.field_pos_order_line__price_subtotal_incl
 msgid "Tax Incl."
-msgstr "Impuestos incluidos"
+msgstr "Impuestos incl."
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.pos_session_sales_details
@@ -9296,7 +9310,7 @@ msgstr "Gracias."
 #. odoo-python
 #: code:addons/point_of_sale/controllers/main.py:0
 msgid "The %s must be filled in your details."
-msgstr "Debe completar %s en sus detalles."
+msgstr "Debes rellenar el campo %s en tus datos."
 
 #. module: point_of_sale
 #. odoo-python
@@ -9800,6 +9814,8 @@ msgstr "El recibo se imprimirá automáticamente al final de cada pedido."
 #: code:addons/point_of_sale/static/src/app/components/popups/opening_control_popup/opening_control_popup.js:0
 msgid "The register cannot be opened while offline. Please try again."
 msgstr ""
+"La caja registradora no se puede abrir sin conexión. Por favor, inténtalo de "
+"nuevo."
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -10109,6 +10125,8 @@ msgstr "Estos métodos de pago estarán disponibles para pagos rápidos"
 msgid ""
 "This action will delete all unsaved orders and other locally stored data"
 msgstr ""
+"Esta acción eliminará todos los pedidos sin guardar y el resto de datos "
+"almacenados localmente"
 
 #. module: point_of_sale
 #. odoo-javascript
@@ -10838,7 +10856,7 @@ msgstr "Valor"
 #. odoo-javascript
 #: code:addons/point_of_sale/static/src/app/services/pos_store.js:0
 msgid "Variant does not exist"
-msgstr ""
+msgstr "La variante no existe"
 
 #. module: point_of_sale
 #: model:product.template,description_sale:point_of_sale.product_green_hood_product_template
@@ -11243,6 +11261,7 @@ msgstr "No puede editar el pago de un pedido publicado."
 #: code:addons/point_of_sale/models/pos_order.py:0
 msgid "You cannot refund more than the outstanding quantity for this product."
 msgstr ""
+"No puedes reembolsar una cantidad superior a la pendiente de este producto."
 
 #. module: point_of_sale
 #. odoo-python
@@ -11666,13 +11685,13 @@ msgstr "pedidos pendientes planificados para más adelante."
 #. odoo-python
 #: code:addons/point_of_sale/models/pos_config.py:0
 msgid "order"
-msgstr ""
+msgstr "pedido"
 
 #. module: point_of_sale
 #. odoo-python
 #: code:addons/point_of_sale/models/pos_config.py:0
 msgid "orders"
-msgstr ""
+msgstr "pedidos"
 
 #. module: point_of_sale
 #: model_terms:ir.ui.view,arch_db:point_of_sale.view_pos_preset_form

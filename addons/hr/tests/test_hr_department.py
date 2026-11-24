@@ -1,4 +1,5 @@
 from odoo.addons.hr.tests.test_multi_company import TestMultiCompany
+from odoo.tests import HttpCase, new_test_user, tagged
 
 
 class TestHrDepartment(TestMultiCompany):
@@ -60,3 +61,64 @@ class TestHrDepartment(TestMultiCompany):
         self.parents_parent_department.company_id = self.company_a.id
         self.assertTrue(self.parent_department.company_id == self.company_a)
         self.assertTrue(self.department.company_id == self.company_a)
+
+    def test_admin_user_without_group_hr_user_falls_back_to_public_employee_action(self):
+        """
+        Ensure users lacking 'hr.group_hr_user' are routed to 'hr.employee.public',
+        even if they possess 'base.group_system'.
+        """
+        office_manager = self.env['res.users'].create({
+            'name': 'Office Manager',
+            'login': 'office_manager',
+            'email': 'office_manager@example.com',
+            'group_ids': [(6, 0, [self.env.ref('hr.group_hr_user').id])],
+        })
+
+        admin = self.env['res.users'].browse(self.ref('base.user_admin'))
+
+        admin.write({
+            'group_ids': [(6, 0, [self.env.ref('base.group_system').id])],
+        })
+
+        office_manager_result = self.department.with_user(office_manager).action_employee_from_department()
+
+        admin_result = self.department.with_user(admin).action_employee_from_department()
+
+        self.assertEqual(
+            office_manager_result['res_model'],
+            'hr.employee',
+            'Expected action target to be "hr.employee" for users belonging to "hr.group_hr_user".'
+        )
+        self.assertEqual(
+            admin_result['res_model'],
+            'hr.employee.public',
+            'Expected action target to fall back to "hr.employee.public" when the user lacks "hr.group_hr_user", regardless of administration rights.'
+        )
+
+
+@tagged('-at_install', 'post_install', 'is_tour')
+class TestHrDepartmentUi(HttpCase):
+    def test_department_plans_smart_button_no_plans(self):
+        """
+        A manager opening the department of one of their employees (through the
+        employee's page) must see 0 plans on the smart button, and clicking it
+        must not display any plan nor raise an error.
+        """
+        # Plans without department (e.g. Onboarding/Offboarding) count for every department
+        self.env['mail.activity.plan'].search([]).action_archive()
+
+        manager_user = new_test_user(self.env, login='plan_manager', groups='base.group_user')
+        manager = self.env['hr.employee'].create({
+            'name': 'Plan Manager',
+            'user_id': manager_user.id,
+        })
+        department = self.env['hr.department'].create({
+            'name': 'Department Without Plans',
+            'manager_id': manager.id,
+        })
+        self.env['hr.employee'].create({
+            'name': 'Employee Without Plans',
+            'department_id': department.id,
+            'parent_id': manager.id,
+        })
+        self.start_tour('/odoo', 'hr_department_no_plans_tour', login='plan_manager')

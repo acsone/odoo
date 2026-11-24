@@ -381,7 +381,12 @@ body {
             filter: $btn-close-white-filter;
         }
     }
-    @include o-add-gradient('menu-gradient');
+    // The menu gradient is designed for the full-width header only. Other
+    // navbar-light bars (blog, eLearning, recruitment, portal) keep the
+    // menu colors but not the gradient.
+    #wrapwrap > header & {
+        @include o-add-gradient('menu-gradient');
+    }
 
     a.nav-link {
         color: var(--#{$variable-prefix}nav-link-color);
@@ -391,7 +396,7 @@ body {
     }
 }
 
-.navbar-light .o_navbar_mobile {
+#wrapwrap > header .navbar-light .o_navbar_mobile {
     @include o-add-gradient('menu-gradient');
 }
 
@@ -2456,6 +2461,13 @@ input[value*="data-oe-translation-source-sha"] {
         transform: none !important;
     }
 }
+// Measure untransformed highlights while preserving Safari's containing block.
+.o_wanim_no_transform .o_animate {
+    &.o_animating, &.o_animate_in_dropdown {
+        transform: none !important;
+        will-change: transform !important;
+    }
+}
 .o_animate_preview {
     visibility: visible;
 }
@@ -3277,5 +3289,16 @@ input[value*="data-oe-translation-source-sha"] {
 
     div.media_iframe_video {
       width: 100%;
+    }
+}
+
+.s_social_media, .s_share {
+    // Draw the focus ring on the icon instead of the link so that it follows
+    // the icon layout.
+    a:focus-visible:has(.fa) {
+        outline: none;
+        .fa {
+            outline: $focus-ring-width solid $focus-ring-color;
+        }
     }
 }

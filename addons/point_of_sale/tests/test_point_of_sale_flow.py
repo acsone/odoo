@@ -1928,6 +1928,16 @@ class TestPointOfSaleFlow(CommonPosTest):
             "Invoice should not have a partner bank when out payment is not allowed."
         )
 
+    def test_invoiced_order_keeps_preset_slot(self):
+        preset = self.env['pos.preset'].create({'name': 'Delivery'})
+        self.pos_config_usd.open_ui()
+        self.pos_config_usd.current_session_id.set_opening_control(0, None)
+        slot = '2026-01-01 12:00:00'
+        order = self._create_and_invoice_order().pos_order_ids
+        order.write({'preset_id': preset.id, 'preset_time': slot})
+        usage = preset.get_available_slots()['usage_utc']
+        self.assertEqual(usage[slot], [order.id])
+
     def test_sum_only_pos_locations(self):
         """Test that quantities are summed only from POS source locations"""
 
@@ -2982,6 +2992,32 @@ class TestPointOfSaleFlow(CommonPosTest):
         # A full load still returns them.
         data = session.load_data([])
         self.assertTrue(set(ptavs.ids) <= {v['id'] for v in data['product.template.attribute.value']})
+
+    def test_load_product_from_pos_skips_archived_attribute_values(self):
+        """A product loaded on demand (search, barcode) must not bring the
+        archived values of its attribute lines, as the initial load does not."""
+        self.pos_config_usd.open_ui()
+        attribute = self.env['product.attribute'].create({
+            'name': 'Grape',
+            'create_variant': 'no_variant',
+            'value_ids': [Command.create({'name': 'Chardonnay'}), Command.create({'name': 'Merlot'})],
+        })
+        template = self.env['product.template'].create({
+            'name': 'Cuvee Wine',
+            'available_in_pos': True,
+            'attribute_line_ids': [Command.create({
+                'attribute_id': attribute.id,
+                'value_ids': [Command.set(attribute.value_ids.ids)],
+            })],
+        })
+        chardonnay, merlot = template.attribute_line_ids.product_template_value_ids
+        # Kept archived instead of deleted when the value is still referenced (e.g. on an order)
+        chardonnay.ptav_active = False
+
+        data = self.env['product.template'].load_product_from_pos(
+            self.pos_config_usd.id, [('id', '=', template.id)],
+        )
+        self.assertEqual([v['id'] for v in data['product.template.attribute.value']], [merlot.id])
 
     def test_sequence_dynamic_prefix_suffix(self):
         """Test that sequence_number is correctly extracted when sequence has dynamic prefix/suffix."""

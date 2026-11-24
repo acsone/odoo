@@ -332,6 +332,10 @@ class HrAttendance(models.Model):
         all_attendances = (self | self.env['hr.attendance'].search(attendance_domain)).filtered_domain([('check_out', '!=', False)])
         if not all_attendances:
             return
+        # An attendance crossing midnight shares a day with attendances outside
+        # the domain, they are needed to compute that day but keep their overtimes
+        recomputed_attendances = {(att.employee_id.id, att.check_in) for att in all_attendances}
+        all_attendances |= self.env['hr.attendance'].search(all_attendances._get_overtimes_to_update_domain())
 
         start_check_in = min(all_attendances.mapped('check_in')).date() - relativedelta(days=1)  # for timezone
         min_check_in = utc.localize(datetime.combine(start_check_in, datetime.min.time()))
@@ -359,6 +363,7 @@ class HrAttendance(models.Model):
                     'status': 'to_approve'
                 } if (val['employee_id'], val['date']) in manual_overtimes else val
                 for val in ruleset_sudo.rule_ids._generate_overtime_vals_v2(min(attendances_dates), max(attendances_dates), ruleset_attendances, schedules_intervals_by_employee)
+                if (val['employee_id'], val['time_start']) in recomputed_attendances
             ])
         self.env['hr.attendance.overtime.line'].create(overtime_vals_list)
         all_attendances.invalidate_recordset(['linked_overtime_ids'])
@@ -381,6 +386,10 @@ class HrAttendance(models.Model):
             raise AccessError(_("Do not have access, user cannot edit the attendances that are not their own or if they are not the attendance manager of the employee."))
         domain_pre = self._get_overtimes_to_update_domain()
         result = super().write(vals)
+        if vals.get('check_out'):
+            self.filtered(lambda x: x.out_mode == 'technical').out_mode = 'manual'
+        if vals.get('check_in'):
+            self.filtered(lambda x: x.in_mode == 'technical').in_mode = 'manual'
         if any(field in vals for field in ['employee_id', 'check_in', 'check_out']):
             # Merge attendance dates before and after write to recompute the
             # overtime if the attendances have been moved to another day

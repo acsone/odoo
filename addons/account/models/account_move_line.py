@@ -85,6 +85,7 @@ class AccountMoveLine(models.Model):
     is_storno = fields.Boolean(
         string="Company Storno Accounting",
         compute='_compute_is_storno', store=True, readonly=False, precompute=True,
+        copy=False,
         help="Utility field to express whether the journal item is subject to storno accounting",
     )
     sequence = fields.Integer(compute='_compute_sequence', store=True, readonly=False, precompute=True)
@@ -712,7 +713,7 @@ class AccountMoveLine(models.Model):
 
         return [('account_id', operator, value)]
 
-    @api.depends('move_id.is_storno', 'price_unit', 'quantity')
+    @api.depends('move_id.is_storno', 'display_type', 'price_unit', 'quantity')
     def _compute_is_storno(self):
         for line in self:
             if not line.company_id.account_storno:
@@ -721,7 +722,7 @@ class AccountMoveLine(models.Model):
 
             # For invoice lines, we want to set is_storno based on the sign of the line if the entire move is not storno (not refund)
             # This allows setting is_storno to true or false depending on quantity and price_unit
-            if not line.move_id.is_storno and line in line.move_id.invoice_line_ids and line.quantity * line.price_unit:
+            if not line.move_id.is_storno and line.move_id.is_invoice(True) and line.display_type == 'product' and line.quantity * line.price_unit:
                 line.is_storno = line.quantity * line.price_unit < 0
 
     @api.depends('move_id')
@@ -914,7 +915,7 @@ class AccountMoveLine(models.Model):
         for line in self:
             line.sequence = seq_map.get(line.display_type, 100)
 
-    @api.depends('quantity', 'discount', 'price_unit', 'tax_ids', 'currency_id', 'amount_currency')
+    @api.depends('quantity', 'discount', 'price_unit', 'tax_ids', 'currency_id', 'amount_currency', 'extra_tax_data')
     def _compute_totals(self):
         """ Compute 'price_subtotal' / 'price_total' outside of `_sync_tax_lines` because those values must be visible for the
         user on the UI with draft moves and the dynamic lines are synchronized only when saving the record.
@@ -3580,7 +3581,7 @@ class AccountMoveLine(models.Model):
         Intended to be overriden in localization.
         """
         self.ensure_one()
-        return self.move_id.state == 'posted'
+        return self.move_id.state == 'posted' or self.move_id.payment_state == 'invoicing_legacy'
 
     def _get_aml_vals(self, hide_taxes):
         self.ensure_one()

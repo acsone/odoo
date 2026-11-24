@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-30 17:39+0000\n"
-"PO-Revision-Date: 2026-09-07 12:34+0000\n"
+"PO-Revision-Date: 2026-11-19 14:18+0000\n"
 "Last-Translator: \"Noemi Pla Garcia (nopl)\" <nopl@odoo.com>\n"
 "Language-Team: Spanish <https://translate.odoo.com/projects/odoo-19/payment/"
 "es/>\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=3; plural=(n == 1) ? 0 : ((n != 0 && n % 1000000 == "
 "0) ? 1 : 2);\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.11.2\n"
 
 #. module: payment
 #: model_terms:ir.ui.view,arch_db:payment.availability_report_records
@@ -1123,7 +1123,7 @@ msgstr "Completo y parcial"
 #: model:ir.model.fields.selection,name:payment.selection__payment_provider__support_manual_capture__full_only
 #: model:ir.model.fields.selection,name:payment.selection__payment_provider__support_refund__full_only
 msgid "Full Only"
-msgstr "Completos solamente"
+msgstr "Solo íntegro"
 
 #. module: payment
 #: model:payment.method,name:payment.payment_method_gcash
@@ -1253,9 +1253,9 @@ msgid ""
 "In test mode, a fake payment is processed through a test payment interface.\n"
 "This mode is advised when setting up the provider."
 msgstr ""
-"En el modo de prueba, se procesa un pago falso a través de una interfaz de "
-"pago de prueba.\n"
-"Este modo se recomienda al configurar el método de pago."
+"En el modo de prueba, se procesa un pago simulado a través de una interfaz "
+"de pago de prueba.\n"
+"Se recomienda este modo al configurar el proveedor."
 
 #. module: payment
 #: model:ir.model.fields,field_description:payment.field_payment_provider__inline_form_view_id
@@ -2109,7 +2109,7 @@ msgstr "Posprocesamiento"
 #. module: payment
 #: model:payment.method,name:payment.payment_method_post_finance
 msgid "PostFinance Pay"
-msgstr "Pago con PostFinance"
+msgstr "PostFinance Pay"
 
 #. module: payment
 #: model:payment.method,name:payment.payment_method_poste_pay

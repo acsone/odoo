@@ -439,15 +439,21 @@ patch(PosOrder.prototype, {
      * @returns {number}
      */
     _getPointsCorrection(program) {
-        const rewardLines = this.lines.filter((line) => line.is_reward_line);
-        if (!this._canGenerateRewards(program, this.priceIncl, this.priceExcl)) {
-            return 0;
-        }
+        return this._getPointsCorrectionForLines(
+            program,
+            this.lines.filter((line) => line.is_reward_line)
+        );
+    },
+    _getPointsCorrectionForLines(program, rewardLines) {
         let res = 0;
         const ProductPrice = this.models["decimal.precision"].find(
             (dp) => dp.name === "Product Price"
         );
         for (const rule of program.rule_ids) {
+            // Points are earned per rule: only correct the rules that gave some
+            if (!this._canRuleGenerateRewards(rule, this.priceIncl, this.priceExcl)) {
+                continue;
+            }
             for (const line of rewardLines) {
                 const reward = line.reward_id;
                 if (this._validForPointsCorrection(reward, line, rule)) {
@@ -783,26 +789,26 @@ patch(PosOrder.prototype, {
      * @param {*} couponProgram
      */
     _canGenerateRewards(couponProgram, orderTotalWithTax, orderTotalWithoutTax) {
-        for (const rule of couponProgram.rule_ids) {
-            const amountToCompare =
-                rule.minimum_amount_tax_mode == "incl" ? orderTotalWithTax : orderTotalWithoutTax;
-            if (rule.minimum_amount > amountToCompare) {
-                return false;
-            }
-            const nItems = this._computeNItems(rule);
-            if (rule.minimum_qty > nItems) {
-                return false;
-            }
-            if (
-                !rule.any_product &&
-                !this._get_regular_order_lines().some((line) =>
-                    rule.validProductIds.has(line.product_id.id)
-                )
-            ) {
-                return false;
-            }
+        return couponProgram.rule_ids.every((rule) =>
+            this._canRuleGenerateRewards(rule, orderTotalWithTax, orderTotalWithoutTax)
+        );
+    },
+    _canRuleGenerateRewards(rule, orderTotalWithTax, orderTotalWithoutTax) {
+        const amountToCompare =
+            rule.minimum_amount_tax_mode == "incl" ? orderTotalWithTax : orderTotalWithoutTax;
+        if (rule.minimum_amount > amountToCompare) {
+            return false;
         }
-        return true;
+        const nItems = this._computeNItems(rule);
+        if (rule.minimum_qty > nItems) {
+            return false;
+        }
+        return (
+            rule.any_product ||
+            this._get_regular_order_lines().some((line) =>
+                rule.validProductIds.has(line.product_id.id)
+            )
+        );
     },
     /**
      * @param {Integer} coupon_id (optional) Coupon id
@@ -1363,7 +1369,6 @@ patch(PosOrder.prototype, {
         );
         let claimed = 0;
         let available = 0;
-        let shouldCorrectRemainingPoints = false;
         for (const line of this.getOrderlines()) {
             if (
                 reward.reward_product_ids.map((reward) => reward.id).includes(product.id) &&
@@ -1384,8 +1389,6 @@ patch(PosOrder.prototype, {
                 if (line.reward_id.id == reward.id) {
                     remainingPoints += line.points_cost;
                     claimed += line.getQuantity();
-                } else {
-                    shouldCorrectRemainingPoints = true;
                 }
             }
         }
@@ -1424,9 +1427,10 @@ patch(PosOrder.prototype, {
                         (remainingPoints / reward.required_points) * reward.reward_product_qty
                     );
                 } else {
-                    const correction = shouldCorrectRemainingPoints
-                        ? this._getPointsCorrection(reward.program_id)
-                        : 0;
+                    const correction = this._getPointsCorrectionForLines(
+                        reward.program_id,
+                        this._get_reward_lines().filter((line) => line.reward_id.id !== reward.id)
+                    );
                     freeQty = computeFreeQuantity(
                         (remainingPoints - correction - orderPoints) / factor,
                         reward.required_points / factor,

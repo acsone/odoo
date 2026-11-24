@@ -186,6 +186,37 @@ class TestUblExportBis3BE(TestUblBis3Common, TestUblCiiBECommon):
         self._generate_invoice_ubl_file(invoice)
         self._assert_invoice_ubl_file(invoice, 'test_invoice_PEPPOL_EN16931_R120_line_extension_amount_huge_number_of_decimals')
 
+    def test_invoice_PEPPOL_EN16931_R040_allowance_amount_base_amount_percentage(self):
+        """ [PEPPOL-EN16931-R040] Allowance/charge amount must equal base amount * percentage/100 if base amount and percentage exist. """
+        self.env.company.tax_calculation_rounding_method = 'round_globally'
+        tax_6 = self.percent_tax(6.0, price_include_override='tax_included')
+        tax_21 = self.percent_tax(21.0, price_include_override='tax_included')
+        lines_data = [
+            (10.0, 17.95, tax_6), (10.0, 9.95, tax_6), (10.0, 9.95, tax_6), (10.0, 9.95, tax_6), (10.0, 9.95, tax_6),
+            (10.0, 9.95, tax_6), (10.0, 18.95, tax_21), (10.0, 19.95, tax_6), (10.0, 15.95, tax_6), (10.0, 15.95, tax_6),
+            (10.0, 12.50, tax_6), (10.0, 12.50, tax_6), (10.0, 15.95, tax_6), (1.0, 15.95, tax_6), (10.0, 15.95, tax_6),
+            (10.0, 15.95, tax_6), (6.0, 14.95, tax_6), (10.0, 15.95, tax_6), (10.0, 19.95, tax_6), (6.0, 15.95, tax_6),
+            (10.0, 7.95, tax_6), (10.0, 7.95, tax_6), (10.0, 7.95, tax_6), (10.0, 6.95, tax_6), (10.0, 6.95, tax_6),
+            (10.0, 15.95, tax_6), (10.0, 8.95, tax_6),
+        ]
+        invoice = self._create_invoice(
+            partner_id=self.partner_be,
+            invoice_line_ids=[
+                self._prepare_invoice_line(product_id=self.product_a, quantity=quantity, price_unit=price_unit, discount=52.3, tax_ids=tax)
+                for quantity, price_unit, tax in lines_data
+            ],
+            post=True,
+        )
+
+        self._generate_invoice_ubl_file(invoice)
+        xml_tree = etree.fromstring(invoice.ubl_cii_xml_id.raw)
+        for line_node in xml_tree.findall('./{*}InvoiceLine'):
+            allowance_node = line_node.find('./{*}AllowanceCharge')
+            base_amount = float(allowance_node.findtext('./{*}BaseAmount'))
+            percentage = float(allowance_node.findtext('./{*}MultiplierFactorNumeric'))
+            amount = float(allowance_node.findtext('./{*}Amount'))
+            self.assertLessEqual(abs(base_amount * percentage / 100.0 - amount), 0.02, f"R040 failed on line {line_node.findtext('./{*}ID')}")
+
     def test_invoice_price_amount_rounding_precision_with_price_included_taxes(self):
         tax_21 = self.percent_tax(21.0, price_include_override='tax_included')
         product = self._create_product(lst_price=1039.99, taxes_id=tax_21)
@@ -668,6 +699,17 @@ class TestUblExportBis3BE(TestUblBis3Common, TestUblCiiBECommon):
 
         self._generate_invoice_ubl_file(invoice)
         self._assert_invoice_ubl_file(invoice, 'test_invoice_cash_rounding_biggest_tax')
+
+    def test_pint_cash_rounding_line_without_tax_category(self):
+        # testing PINT itself, not on an exported file: BIS3 also inherits the EN 16931
+        # since another format could be exluding the line by itself.
+        vals = {'customer': self.partner_be, 'supplier': self.env.company.partner_id}
+        currency = self.env.company.currency_id
+        cash_rounding_line = {'special_type': 'cash_rounding'}
+        product_line = {'special_type': False}
+
+        self.assertTrue(self.env['account.edi.ubl_pint']._ubl_default_tax_category_grouping_key(product_line, None, vals, currency))
+        self.assertFalse(self.env['account.edi.ubl_pint']._ubl_default_tax_category_grouping_key(cash_rounding_line, None, vals, currency))
 
     def test_invoice_tax_currency_code_tax_totals_foreign_currency(self):
         tax_21 = self.percent_tax(21.0)

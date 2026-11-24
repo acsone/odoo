@@ -693,6 +693,35 @@ class TestProductAttributeValueConfig(TestProductAttributeValueCommon):
         # higher value. Before the fix it would take hours.
         self.assertLess(elapsed, 0.5)
 
+    def test_complete_inverse_exclusions(self):
+        """Every exclusion holds in both directions, whatever the order of the keys."""
+        exclusions = {
+            1: [6, 8],      # 50 kW excludes 84 kWh and Extension
+            2: [4],         # 100 kW excludes 28 kWh
+            3: [4, 5, 6],   # 150 kW excludes 28, 50.4 and 84 kWh
+            4: [],
+            5: [8],         # 50.4 kWh excludes Extension
+            6: [],
+            7: [],
+            8: [],
+        }
+        result = self.env['product.template']._complete_inverse_exclusions(exclusions)
+        self.assertEqual({key: sorted(value) for key, value in result.items()}, {
+            1: [6, 8],
+            2: [4],
+            3: [4, 5, 6],
+            4: [2, 3],
+            5: [3, 8],
+            6: [1, 3],
+            7: [],
+            8: [1, 5],
+        })
+        self.assertEqual(exclusions[5], [8], "The given exclusions must not be modified")
+
+        # exclusions defined from both sides
+        result = self.env['product.template']._complete_inverse_exclusions({1: [2], 2: [1, 3], 3: []})
+        self.assertEqual({key: sorted(value) for key, value in result.items()}, {1: [2], 2: [1, 3], 3: [2]})
+
     @mute_logger('odoo.models.unlink')
     def test_clear_caches(self):
         """The goal of this test is to make sure the cache is invalidated when
@@ -792,6 +821,41 @@ class TestProductAttributeValueConfig(TestProductAttributeValueCommon):
         product.action_unarchive()
         self.assertTrue(product.active, 'The product should be unarchived.')
         self.assertEqual(product_attribut.number_related_products, 0, 'The product attribute must not have an associated product')
+
+    @mute_logger('odoo.models.unlink')
+    def test_unlink_line_with_unused_archived_value_keeps_template_and_variant(self):
+        attribute = self.env['product.attribute'].create({
+            'name': 'PA',
+            'create_variant': 'always',
+            'value_ids': [Command.create({'name': 'old'}), Command.create({'name': 'new'})],
+        })
+        value_old, value_new = attribute.value_ids
+        template = self.env['product.template'].create({
+            'name': 'P1',
+            'attribute_line_ids': [Command.create({
+                'attribute_id': attribute.id,
+                'value_ids': [Command.set((value_old + value_new).ids)],
+            })],
+        })
+        line = template.attribute_line_ids
+        ptav_old = line.product_template_value_ids.filtered(
+            lambda ptav: ptav.product_attribute_value_id == value_old
+        )
+        # A reference on the value makes it archived instead of deleted.
+        custom_value = self.env['product.attribute.custom.value'].create({
+            'custom_product_template_attribute_value_id': ptav_old.id,
+        })
+        line.value_ids = [Command.unlink(value_old.id)]
+        custom_value.unlink()
+        self.assertFalse(ptav_old.ptav_active)
+        self.assertFalse(ptav_old.with_context(active_test=False).ptav_product_variant_ids)
+        variant = template.product_variant_id
+
+        template.attribute_line_ids = [Command.delete(line.id)]
+
+        self.assertFalse(line.exists())
+        self.assertEqual(template.product_variant_id, variant)
+        self.assertFalse(variant.product_template_attribute_value_ids)
 
     def test_copy_extra_prices_of_product_attribute_values(self):
         """

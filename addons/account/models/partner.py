@@ -777,6 +777,15 @@ class ResPartner(models.Model):
                 # Update the commercial partner on account.move that were *entirely* dedicated to that partner (exclude moves shared between partners, e.g misc entries or batch bank payments)
                 move_lines.move_id.filtered(lambda m: m.partner_id == partner).with_context(bypass_lock_check=BYPASS_LOCK_CHECK).commercial_partner_id = partner.commercial_partner_id
                 partner._message_log(body=_("The commercial partner has been updated for all related accounting entries."))
+
+        if 'lang' in vals:
+            Move = self.env['account.move']
+            draft_invoices = Move.sudo().search([
+                ('partner_id', 'in', self.ids),
+                ('state', '=', 'draft'),
+                ('move_type', 'in', Move.get_sale_types(include_receipts=True)),
+            ])
+            self.env.add_to_compute(Move._fields['narration'], draft_invoices)
         return res
 
     @api.model_create_multi
@@ -906,7 +915,10 @@ class ResPartner(models.Model):
         normalized_vat = vat.replace(' ', '').replace('.', '')
         country_prefix = re.match('^[a-zA-Z]{2}|^', vat).group()
 
-        criteria = [{'domain': [('vat', 'in', (normalized_vat, vat))]}]
+        criteria = []
+        if country_code := customer_values.get('country_code'):
+            criteria.append({'domain': [('vat', 'in', (normalized_vat, vat)), ('country_id.code', '=', country_code.upper())]})
+        criteria.append({'domain': [('vat', 'in', (normalized_vat, vat))]})
         extra_vat_values = self._get_country_specific_vat_variants(normalized_vat, country_prefix)
         if extra_vat_values:
             criteria.append({'domain': [('vat', 'in', extra_vat_values)]})

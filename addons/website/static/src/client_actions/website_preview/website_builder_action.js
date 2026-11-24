@@ -80,6 +80,9 @@ export class WebsiteBuilderClientAction extends Component {
         this.builderSidebarRef = useRef("builder_sidebar");
         this.cleanups = [];
 
+        this.isRestored = this.props.action.jsId === this.websiteService.actionJsId;
+        this.websiteService.actionJsId = this.props.action.jsId;
+
         this.snippetsTemplate = "website.snippets";
         // Track iframe navigation state
         this.isNavigatingToAnotherPage = null;
@@ -424,6 +427,7 @@ export class WebsiteBuilderClientAction extends Component {
         this.addWelcomeMessage();
         this.websiteService.hideLoader();
         this.lastPageURL = iframe.contentWindow.location.href;
+        this.websiteService.lastUrl = this.lastPageURL;
 
         if (this.isNavigatingToAnotherPage) {
             this.isNavigatingToAnotherPage.resolve();
@@ -492,7 +496,9 @@ export class WebsiteBuilderClientAction extends Component {
     }
 
     get path() {
-        let path = this.props.path || router.current.path;
+        let path = this.isRestored
+            ? this.websiteService.lastUrl
+            : this.props.path || router.current.path;
         if (path) {
             const url = new URL(path, window.location.origin);
             if (isTopWindowURL(url)) {
@@ -552,6 +558,18 @@ export class WebsiteBuilderClientAction extends Component {
         this.state.isEditing = isEditing;
         this.addSystrayItems();
         await this.reloadIframe(isEditing);
+        // Pop the builder's guard entry only once the iframe has reloaded:
+        // Firefox keeps a stale entry if it is popped during the reload.
+        if (history.state?.skipRouteChange) {
+            router.skipLoad = true;
+            const popped = new Promise((resolve) =>
+                window.addEventListener("popstate", resolve, { once: true })
+            );
+            history.back();
+            await popped;
+            // The reloaded iframe URL was written on the guard entry.
+            this.replaceBrowserUrl();
+        }
     }
 
     async reloadIframe(isEditing = true, url) {
@@ -565,8 +583,8 @@ export class WebsiteBuilderClientAction extends Component {
             const pathSegments = urlObj.pathname.split("/").map(encodeURIComponent);
             const encodedPath = pathSegments.join("/");
             const newUrl = new URL(encodedPath, baseUrl);
-            if(newUrl.origin !== baseUrl.origin) {
-                console.error("Tried to change the iframe's origin. Reloading instead")
+            if (newUrl.origin !== baseUrl.origin) {
+                console.error("Tried to change the iframe's origin. Reloading instead");
                 this.websiteContent.el.contentWindow.location.reload();
             } else {
                 if (history.state?.skipRouteChange) {

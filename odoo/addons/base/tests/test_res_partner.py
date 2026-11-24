@@ -1162,6 +1162,27 @@ class TestPartnerAddressCompany(TransactionCase):
             "Formatted display name should show parent name and type when child contact has no name",
         )
 
+    def test_display_name_formatted_parent_not_readable(self):
+        """ A contact the user can read must get its formatted display name
+        even when a record rule hides its parent. """
+        hidden_parent = self.env['res.partner'].create({'name': 'Hidden Company', 'is_company': True})
+        child = self.env['res.partner'].create({'parent_id': hidden_parent.id, 'type': 'delivery'})
+        self.env['ir.rule'].create({
+            'name': 'Hide the parent company',
+            'model_id': self.env['ir.model']._get_id('res.partner'),
+            'domain_force': [('id', '!=', hidden_parent.id)],
+            'groups': [Command.link(self.env.ref('base.group_user').id)],
+        })
+        child_as_user = child.with_user(self.test_user)
+        with self.assertRaises(AccessError):
+            hidden_parent.with_user(self.test_user).check_access('read')
+
+        self.assertEqual(child_as_user.display_name, "Hidden Company, Delivery")
+        self.assertEqual(
+            child_as_user.with_context(formatted_display_name=True).display_name,
+            "Hidden Company \t --Delivery--",
+        )
+
     def test_accessibility_of_company_partner_from_branch(self):
         """ Check accessibility of company partner from branch. """
         company = self.env['res.company'].create({'name': 'company'})
@@ -1352,3 +1373,50 @@ class TestPartnerCategory(TransactionCase):
         result = self.env['res.partner.category'].name_search('buggy_test')
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [(category.id, category.display_name)])
+
+
+@tagged('res_partner')
+class TestPartnerBankHolderNameSync(TransactionCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # a user that may rename partners but only read their bank accounts e.g salespeople
+        cls.partner_writer_group = cls.env['res.groups'].create({
+            'name': 'Can Edit Partners ',
+        })
+        cls.env['ir.model.access'].create({
+            'name': 'res_partner ACL test',
+            'model_id': cls.env['ir.model']._get_id('res.partner'),
+            'group_id': cls.partner_writer_group.id,
+            'perm_read': True,
+            'perm_write': True,
+            'perm_create': True,
+            'perm_unlink': True,
+        })
+        # test user
+        cls.test_user = new_test_user(
+            cls.env,
+            email='emp@test.mycompany.com',
+            groups='base.group_user',
+            login='partner_writer',
+        )
+        cls.test_user.group_ids = [Command.link(cls.partner_writer_group.id)]
+        cls.partner = cls.env['res.partner'].create({'name': 'Alice'})
+        cls.bank = cls.env['res.partner.bank'].create({
+            'acc_number': 'BE71096123456769',
+            'partner_id': cls.partner.id,
+        })
+
+    def test_holder_name_synced_without_bank_write_access(self):
+        self.assertEqual(self.bank.acc_holder_name, 'Alice')
+        # the user indeed has no write access on the bank account
+        with self.assertRaises(AccessError):
+            self.bank.with_user(self.test_user).acc_holder_name = 'Mallory'
+        # renaming the partner works and propagates to the holder name
+        self.partner.with_user(self.test_user).name = 'Alice Cooper'
+        self.assertEqual(self.bank.acc_holder_name, 'Alice Cooper')
+
+    def test_holder_name_not_synced_when_it_differs(self):
+        self.bank.acc_holder_name = 'Alice (personal)'
+        self.partner.with_user(self.test_user).name = 'Alice Cooper'
+        self.assertEqual(self.bank.acc_holder_name, 'Alice (personal)')

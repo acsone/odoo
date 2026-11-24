@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-30 17:37+0000\n"
-"PO-Revision-Date: 2026-10-26 21:33+0000\n"
+"POT-Creation-Date: 2026-11-13 17:36+0000\n"
+"PO-Revision-Date: 2026-11-18 21:39+0000\n"
 "Last-Translator: \"Fernanda Alvarez (mfar)\" <mfar@odoo.com>\n"
 "Language-Team: Spanish (Latin America) <https://translate.odoo.com/projects/"
 "odoo-19/website/es_419/>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.11.2\n"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_quotes_carousel_compact
@@ -3597,7 +3597,7 @@ msgstr "Aventura"
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.cookie_policy
 msgid "Advertising &amp; Marketing<br/>(optional)"
-msgstr "Anuncios y marketing<br/>(opcional)"
+msgstr "Publicidad y marketing<br/>(opcional)"
 
 #. module: website
 #: model:ir.model.fields.selection,name:website.selection__theme_ir_asset__directive__after
@@ -3834,12 +3834,6 @@ msgstr "Siempre"
 #: code:addons/website/static/src/builder/plugins/theme/theme_tab.xml:0
 msgid "Always Underline"
 msgstr "Siempre subrayado"
-
-#. module: website
-#. odoo-javascript
-#: code:addons/website/static/src/builder/plugins/form/form_option.xml:0
-msgid "Always Visible"
-msgstr "Siempre visible"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.new_page_template_landing_3_s_three_columns
@@ -7373,7 +7367,7 @@ msgstr "Use Plausible para rastrear a sus visitantes con facilidad"
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_attributes_horizontal
 msgid "Easy returns"
-msgstr "Regresar de forma fácil"
+msgstr "Devoluciones sencillas"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_attributes_vertical
@@ -9161,11 +9155,11 @@ msgid ""
 "quirks like word choices or phrases. Write from your point of view, not from "
 "someone else's experience."
 msgstr ""
-"Las grandes historias tienen <b>personalidad</b>. Considere contar una gran "
+"Las grandes historias tienen <b>personalidad</b>. Considera contar una gran "
 "historia llena de personalidad. Escribir una historia con personalidad para "
-"clientes potenciales le ayudará a mantener relaciones y conexiones. Esto "
-"aparece en pequeñas peculiaridades como la elección de palabras o frases. "
-"Escriba desde su punto de vista, no desde la experiencia de alguien más."
+"tus clientes potenciales te ayudará a crear un vínculo. Esto se nota en los "
+"pequeños detalles que elijas, como las palabras o expresiones. Escribe desde "
+"tu punto de vista, no desde la experiencia de alguien más."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_masonry_block_default_template
@@ -14327,7 +14321,7 @@ msgstr "Propósito"
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_text_highlight
 msgid "Put the focus on what you have to say!"
-msgstr "Enfóquese en lo que tiene que decir"
+msgstr "¡Destaca lo que quieres comunicar!"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.snippets
@@ -15167,7 +15161,7 @@ msgstr "Zona de desplazamiento"
 #. odoo-javascript
 #: code:addons/website/static/src/builder/plugins/options/scroll_button_option_plugin.js:0
 msgid "Scroll down to next section"
-msgstr "Desplazarse hacia abajo a la siguiente sección"
+msgstr "Desplázate hacia abajo para ver la siguiente sección"
 
 #. module: website
 #. odoo-javascript
@@ -16756,7 +16750,7 @@ msgstr "Gracias"
 #. odoo-javascript
 #: code:addons/website/static/src/xml/website_form_editor.xml:0
 msgid "Thank you for your feedback!"
-msgstr "Agradecemos su retroalimentación"
+msgstr "¡Gracias por tus comentarios!"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_mockup_image
@@ -17171,10 +17165,8 @@ msgstr ""
 #: code:addons/website/static/src/builder/plugins/form/form_option_plugin.js:0
 msgid ""
 "This field is mandatory for this action. You cannot remove it. Try hiding it "
-"with the 'Visibility' option instead and add it a default value."
+"with the 'Visibility Rule' option instead and add it a default value."
 msgstr ""
-"Este campo es obligatorio para realizar esta acción y no se puede eliminar. "
-"Ocúltelo con la opción \"Visibilidad\" y agregue un valor predeterminado."
 
 #. module: website
 #: model:ir.model.fields,help:website.field_website_controller_page__arch_base
@@ -17547,7 +17539,7 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_tabs
 msgid "To be successful your content needs to be useful to your readers."
-msgstr "Para tener éxito, su contenido debe ser útil para sus lectores."
+msgstr "Para que tu contenido tenga éxito, debe ser útil para tus lectores."
 
 #. module: website
 #: model_terms:digest.tip,tip_description:website.digest_tip_website_2
@@ -18049,7 +18041,7 @@ msgstr "Mostrar"
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_features_wall
 msgid "Unveil Our Exclusive Collections"
-msgstr "Descubra nuestras colecciones exclusivas"
+msgstr "Descubre nuestras colecciones exclusivas"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_unveil
@@ -18185,9 +18177,9 @@ msgid ""
 "or right-aligned image alongside textual content. Duplicate the element to "
 "create a list that fits your needs."
 msgstr ""
-"Utilice este snippet para crear varios tipos de componentes que incluyan una "
-"imagen alineada a la izquierda o a la derecha y texto. Duplique los "
-"elementos para crear una lista que se adapte a sus necesidades."
+"Usa este bloque para crear distintos tipos de componentes con una imagen "
+"alineada a la izquierda o a la derecha del texto. Duplica el elemento para "
+"crear una lista que se adapte a tus necesidades."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_carousel
@@ -18249,10 +18241,10 @@ msgid ""
 "                                                and any specific marketing "
 "campaign that brought you to the website."
 msgstr ""
-"Se utiliza para recopilar información sobre sus interacciones con el sitio "
-"web, las páginas que ha visto\n"
-"                                                y la campaña de marketing "
-"que le haya traído al sitio web."
+"Se utilizan para recopilar información sobre tus interacciones con el sitio "
+"web, las páginas que has visitado\n"
+"                                                 y las campañas de marketing "
+"específicas que te llevaron al sitio web."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.cookie_policy
@@ -18263,11 +18255,12 @@ msgid ""
 "relevant ads when you visit other websites that display ads or to improve "
 "reporting on ad campaign performance."
 msgstr ""
-"Se utiliza para que la publicidad sea más atractiva para los usuarios y más "
-"valiosa para los editores y anunciantes,\n"
-"                                                tales como proporcionar "
-"publicidad más relevante cuando visita otros sitios web que muestren "
-"publicidad o mejorar los reportes de rendimiento de campañas."
+"Se utilizan para que la publicidad sea más llamativa para los usuarios y más "
+"valiosa para los editores y anunciantes. \n"
+"                                                Por ejemplo, permiten "
+"mostrar anuncios más relevantes cuando visitas otros sitios web que incluyen "
+"publicidad o mejorar los reportes sobre el rendimiento de las campañas "
+"publicitarias."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.footer_custom
@@ -18449,6 +18442,12 @@ msgstr "Visibilidad de la contraseña"
 #: model:ir.model.fields,field_description:website.field_website_page_properties__visibility_password_display
 msgid "Visibility Password Display"
 msgstr "Pantalla de visibilidad de contraseña"
+
+#. module: website
+#. odoo-javascript
+#: code:addons/website/static/src/builder/plugins/form/form_option.xml:0
+msgid "Visibility Rule"
+msgstr ""
 
 #. module: website
 #: model:ir.model.fields,field_description:website.field_website_menu__group_ids
@@ -18783,8 +18782,8 @@ msgid ""
 "We do not currently support Do Not Track signals, as there is no industry "
 "standard for compliance."
 msgstr ""
-"Actualmente no somos compatibles con señales de Do Not Track, ya que no "
-"existe un estándar en el sector para el cumplimiento."
+"Actualmente no admitimos las señales \"No rastrear\" (DNT o Do Not Track), "
+"pues no existe un estándar de la industria para su cumplimiento."
 
 #. module: website
 #. odoo-javascript
@@ -18805,8 +18804,8 @@ msgid ""
 "We may not be able to provide the best service to you if you reject those "
 "cookies, but the website will work."
 msgstr ""
-"El sitio web funcionará si rechaza las cookies, pero es probable que no "
-"podamos proporcionarle el mejor servicio."
+"Si rechazas estas cookies, es posible que no podamos ofrecerte el mejor "
+"servicio, pero el sitio web seguirá funcionando."
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.new_page_template_landing_2_s_three_columns
@@ -19867,7 +19866,7 @@ msgstr ""
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.s_cover
 msgid "Your journey starts here"
-msgstr "Su recorrido inicia aquí"
+msgstr "Tu aventura comienza aquí"
 
 #. module: website
 #: model_terms:ir.ui.view,arch_db:website.contactus_thanks_ir_ui_view
@@ -21342,6 +21341,17 @@ msgstr "✽  Pizzas"
 #: model_terms:ir.ui.view,arch_db:website.s_key_benefits
 msgid "✽  What We Offer"
 msgstr "✽  Qué ofrecemos"
+
+#~ msgid "Always Visible"
+#~ msgstr "Siempre visible"
+
+#~ msgid ""
+#~ "This field is mandatory for this action. You cannot remove it. Try hiding "
+#~ "it with the 'Visibility' option instead and add it a default value."
+#~ msgstr ""
+#~ "Este campo es obligatorio para realizar esta acción y no se puede "
+#~ "eliminar. Ocúltelo con la opción \"Visibilidad\" y agregue un valor "
+#~ "predeterminado."
 
 #~ msgid "%(error)s (website: %(website_id)s)"
 #~ msgstr "%(error)s (sitio web: %(website_id)s)"

@@ -4,7 +4,7 @@ import { computeComboItems } from "@point_of_sale/app/models/utils/compute_combo
 
 export function computeTotalComboPrice(selfOrder, productTemplate, comboValues, qty) {
     if (!comboValues || !comboValues.length) {
-        return selfOrder.getProductDisplayPrice(productTemplate);
+        return selfOrder.getProductDisplayPrice(productTemplate) * qty;
     }
 
     const baseLineValues = getOrderLineValues(
@@ -36,6 +36,23 @@ export function computeTotalComboPrice(selfOrder, productTemplate, comboValues, 
 
 export function getProductVariantByAttributes(models, productTemplate, selectedAttributes) {
     return productTemplate.getVariantForCombination(getAttributeValues(selectedAttributes, models));
+}
+
+export function getBestMatchingVariant(models, productTemplate, selectedAttributes) {
+    const productVariant = getProductVariantByAttributes(
+        models,
+        productTemplate,
+        selectedAttributes
+    );
+    if (productVariant) {
+        return productVariant;
+    }
+    const hasSingleCombination = productTemplate.attribute_line_ids.every(
+        (line) =>
+            line.attribute_id.create_variant === "no_variant" ||
+            line.product_template_value_ids.length === 1
+    );
+    return hasSingleCombination && productTemplate.product_variant_ids[0];
 }
 
 export function getAttributeValues(selectedValues, models) {
@@ -70,14 +87,16 @@ export function getOrderLineValues(
     customValues = {},
     comboValues = {}
 ) {
-    const product = productTemplate.product_variant_ids[0];
-    const productPrice = selfOrder.getProductPriceInfo(productTemplate, product);
     const { models, currentOrder } = selfOrder;
+    const product =
+        getBestMatchingVariant(models, productTemplate, selectedValues) ||
+        productTemplate.product_variant_ids[0];
+    const productPrice = selfOrder.getProductPriceInfo(productTemplate, product);
 
     const values = {
         order_id: currentOrder,
         product_id: product,
-        tax_ids: [...productTemplate.taxes_id],
+        tax_ids: [...product.taxes_id],
         qty: qty,
         note: customer_note || "",
         price_unit: productPrice.pricelist_price,
@@ -86,23 +105,7 @@ export function getOrderLineValues(
     };
 
     if (Object.entries(selectedValues).length > 0) {
-        const attributeValues = getAttributeValues(selectedValues, models);
-        const productVariant = productTemplate.getVariantForCombination(attributeValues);
-
-        if (productVariant) {
-            const productVariantPrice = selfOrder.getProductPriceInfo(
-                productTemplate,
-                productVariant
-            );
-
-            Object.assign(values, {
-                product_id: productVariant,
-                price_unit: productVariantPrice.pricelist_price,
-                tax_ids: [...productVariant.taxes_id],
-            });
-        }
-
-        values.attribute_value_ids = attributeValues;
+        values.attribute_value_ids = getAttributeValues(selectedValues, models);
         values.price_extra += getAttributeValuesExtraPrice(values.attribute_value_ids);
 
         if (Object.values(customValues).length > 0) {

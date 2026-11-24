@@ -929,6 +929,7 @@ Please change the quantity done or the rounding precision in your settings.""",
         orderpoints = self._get_orderpoints_to_update()
         orderpoints.invalidate_recordset(['qty_to_order', 'qty_forecast'])
         self.env.add_to_compute(self.env['stock.warehouse.orderpoint']._fields['qty_to_order_computed'], orderpoints)
+        self.env.add_to_compute(self.env['stock.warehouse.orderpoint']._fields['deadline_date'], orderpoints)
 
     def _get_orderpoints_to_update(self):
         domains = []
@@ -2363,6 +2364,7 @@ Please change the quantity done or the rounding precision in your settings.""",
         orderpoints = self._get_orderpoints_to_update()
         res = super().unlink()
         self.env.add_to_compute(self.env['stock.warehouse.orderpoint']._fields['qty_to_order_computed'], orderpoints)
+        self.env.add_to_compute(self.env['stock.warehouse.orderpoint']._fields['deadline_date'], orderpoints)
         return res
 
     def _prepare_move_split_vals(self, qty):
@@ -2609,9 +2611,15 @@ Please change the quantity done or the rounding precision in your settings.""",
                     ('location_dest_id', '=', move.location_dest_id.id),
                     ('action', '!=', 'push')
                 ]
+                warehouse = move.warehouse_id or move.picking_type_id.warehouse_id
+                rule = self.env['stock.rule']
                 if picking_type_code:
                     domain.append(('picking_type_id.code', '=', picking_type_code))
-                rule = self.env['stock.rule']._search_rule(False, move.packaging_uom_id, product_id, move.warehouse_id or move.picking_type_id.warehouse_id, domain)
+                elif move.picking_type_id:
+                    # Several rules can match, prefer one of the same operation type as the move.
+                    rule = self.env['stock.rule']._search_rule(False, move.packaging_uom_id, product_id, warehouse, domain + [('picking_type_id.code', '=', move.picking_type_id.code)])
+                if not rule:
+                    rule = self.env['stock.rule']._search_rule(False, move.packaging_uom_id, product_id, warehouse, domain)
                 if rule:
                     break
                 location = location.location_id
@@ -2722,7 +2730,12 @@ Please change the quantity done or the rounding precision in your settings.""",
         :rtype: defaultdict
         """
         wh_location_query = self.env['stock.location']._search([('id', 'child_of', warehouse.view_location_id.id)])
-        forecast_lines = self.env['stock.forecasted_product_product']._get_report_lines(False, self.product_id.ids, wh_location_query, location_id or warehouse.lot_stock_id, read=False)
+        # Only the lines of the moves in `self` are read back below, so let the
+        # report skip building the lines of the other outgoing moves.
+        report = self.env['stock.forecasted_product_product'].with_context(
+            forecast_availability_move_ids=frozenset(self._ids),
+        )
+        forecast_lines = report._get_report_lines(False, self.product_id.ids, wh_location_query, location_id or warehouse.lot_stock_id, read=False)
         result = defaultdict(lambda: (0.0, False))
         for line in forecast_lines:
             move_out = line.get('move_out')
@@ -2838,6 +2851,16 @@ Please change the quantity done or the rounding precision in your settings.""",
     def _visible_quantity(self):
         self.ensure_one()
         return self.quantity
+
+    def _is_return(self):
+        """ A return of a return is a new shipment, so only odd positions in a return chain are returns """
+        self.ensure_one()
+        seen = set()
+        move = self
+        while move.origin_returned_move_id and move.id not in seen:
+            seen.add(move.id)
+            move = move.origin_returned_move_id
+        return len(seen) % 2 == 1
 
     def _is_incoming(self):
         self.ensure_one()

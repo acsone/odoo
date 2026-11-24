@@ -157,8 +157,8 @@ class ProductProduct(models.Model):
         self.outgoing_qty = 0.0
         self.virtual_available = 0.0
         self.free_qty = 0.0
-        for product in products:
-            product.with_context(skip_qty_available_update=True).update({key: val for key, val in res[product.id].items() if val})
+        for product in products.with_context(skip_qty_available_update=True):
+            product.update({key: val for key, val in res[product.id].items() if val})
 
     def _compute_quantities_dict(self, lot_id, owner_id, package_id, from_date=False, to_date=False):
         domain_quant_loc, domain_move_in_loc, domain_move_out_loc = self._get_domain_locations()
@@ -193,8 +193,23 @@ class ProductProduct(models.Model):
         if package_id is not None:
             domain_quant += [('package_id', '=', package_id)]
         if dates_in_the_past:
-            domain_move_in_done = list(domain_move_in)
-            domain_move_out_done = list(domain_move_out)
+            _, domain_move_in_done, domain_move_out_done = self.with_context(
+                skip_in_progress=True,
+            )._get_domain_locations()
+            if lot_id is not None:
+                domain_move_in_done += [('lot_id', '=', lot_id)]
+                domain_move_out_done += [('lot_id', '=', lot_id)]
+            if owner_id is not None:
+                domain_move_in_done += [('owner_id', '=', owner_id)]
+                domain_move_out_done += [('owner_id', '=', owner_id)]
+            if 'owners' in self.env.context:
+                owners = self.env.context['owners']
+                if owners:
+                    domain_move_in_done += [('owner_id', 'in', owners)]
+                    domain_move_out_done += [('owner_id', 'in', owners)]
+                else:
+                    domain_move_in_done += [('owner_id', '=', False)]
+                    domain_move_out_done += [('owner_id', '=', False)]
         if from_date:
             date_date_expected_domain_from = [('date', '>=', from_date)]
             domain_move_in += date_date_expected_domain_from
@@ -219,14 +234,16 @@ class ProductProduct(models.Model):
         moves_out_res_past = defaultdict(float)
         if dates_in_the_past:
             # Calculate the moves that were done before now to calculate back in time (as most questions will be recent ones)
-            domain_move_in_done = [('state', '=', 'done'), ('date', '>', to_date)] + domain_move_in_done
-            domain_move_out_done = [('state', '=', 'done'), ('date', '>', to_date)] + domain_move_out_done
-            groupby = ['product_id', 'product_uom']
-            for product, uom, quantity in Move._read_group(domain_move_in_done, groupby, ['quantity:sum']):
-                moves_in_res_past[product.id] += uom._compute_quantity(quantity, product.uom_id)
+            domain_move_in_done = [('state', '=', 'done'), ('move_id.date', '>', to_date)] + domain_move_in_done
+            domain_move_out_done = [('state', '=', 'done'), ('move_id.date', '>', to_date)] + domain_move_out_done
+            MoveLine = self.env['stock.move.line'].with_context(active_test=False)
+            moves_in_res_past = defaultdict(float)
+            for product, quantity in MoveLine._read_group(domain_move_in_done, ['product_id'], ['quantity_product_uom:sum']):
+                moves_in_res_past[product.id] += quantity
 
-            for product, uom, quantity in Move._read_group(domain_move_out_done, groupby, ['quantity:sum']):
-                moves_out_res_past[product.id] += uom._compute_quantity(quantity, product.uom_id)
+            moves_out_res_past = defaultdict(float)
+            for product, quantity in MoveLine._read_group(domain_move_out_done, ['product_id'], ['quantity_product_uom:sum']):
+                moves_out_res_past[product.id] += quantity
 
         res = dict()
         for product in self.with_context(prefetch_fields=False):
@@ -735,7 +752,14 @@ class ProductProduct(models.Model):
 
     def _get_dates_info(self, date, location, route_ids=False):
         rules = self._get_rules_from_location(location, route_ids=route_ids)
-        delays, _ = rules.with_context(bypass_delay_description=True)._get_lead_days(self)
+        values = {}
+        supplier_id = self.env.context.get('orderpoint_supplier_id')
+        qty_to_order = self.env.context.get('orderpoint_qty_to_order')
+        if supplier_id:
+            values['supplierinfo'] = self.env['product.supplierinfo'].browse(supplier_id)
+        elif qty_to_order and self:
+            values['supplierinfo'] = self._select_seller(quantity=qty_to_order)
+        delays, _ = rules.with_context(bypass_delay_description=True)._get_lead_days(self, **values)
         return {
             'date_planned': date,
             'date_order': date - relativedelta(days=delays['purchase_delay']),
