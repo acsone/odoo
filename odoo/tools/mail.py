@@ -182,7 +182,7 @@ def html_sanitize(src, silent=True, sanitize_tags=True, sanitize_attributes=Fals
         return src
     src = ustr(src, errors='replace')
     # html: remove encoding attribute inside tags
-    doctype = re.compile(r'(<[^>]*\s)(encoding=(["\'][^"\']*?["\']|[^\s\n\r>]+)(\s[^>]*|/)?>)', re.IGNORECASE | re.DOTALL)
+    doctype = re.compile(r'(<(?=[^<>]*>)[^<>]*\s)(encoding=(["\'][^"\'<>]*?["\']|[^\s\n\r<>]+)(\s[^<>]*|/)?>)', re.IGNORECASE | re.DOTALL)
     src = doctype.sub(u"", src)
 
     logger = logging.getLogger(__name__ + '.html_sanitize')
