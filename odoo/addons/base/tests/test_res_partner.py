@@ -1082,6 +1082,7 @@ class TestPartnerCategory(TransactionCase):
 
 @tagged('res_partner')
 class TestPartnerBankHolderNameSync(TransactionCase):
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -1106,6 +1107,7 @@ class TestPartnerBankHolderNameSync(TransactionCase):
             login='partner_writer',
         )
         cls.test_user.groups_id = [Command.link(cls.partner_writer_group.id)]
+
         cls.partner = cls.env['res.partner'].create({'name': 'Alice'})
         cls.bank = cls.env['res.partner.bank'].create({
             'acc_number': 'BE71096123456769',
