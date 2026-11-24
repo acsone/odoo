@@ -1017,6 +1017,10 @@ class SurveySurvey(models.Model):
 
         return leaderboard
 
+
+    def _get_mail_template_user_input_invite(self):
+        return self.env.ref('survey.mail_template_user_input_invite', raise_if_not_found=False)
+
     # ------------------------------------------------------------
     # ACTIONS
     # ------------------------------------------------------------
@@ -1045,8 +1049,8 @@ class SurveySurvey(models.Model):
         """ Open a window to compose an email, pre-filled with the survey message """
         self.check_validity()
 
-        template = self.env.ref('survey.mail_template_user_input_invite', raise_if_not_found=False)
-
+        template = self._get_mail_template_user_input_invite()
+        
         local_context = dict(
             self.env.context,
             default_survey_id=self.id,
