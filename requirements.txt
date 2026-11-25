@@ -23,7 +23,8 @@ libsass==0.17.0
 lxml==3.7.1 ; sys_platform != 'win32' and python_version < '3.7'
 lxml==4.3.2 ; sys_platform != 'win32' and python_version == '3.7'
 # lxml 4.6.1 has incompatibility issues with python 3.10
-lxml==4.6.5 ; sys_platform != 'win32' and python_version > '3.7'  # min version = 4.5.0 (Focal - with security backports)
+# CVE-2026-130029: lxml >= 4.9.3 wheels bundle libxml2 >= 2.10 (HTML sanitizer XSS mitigation)
+lxml==4.9.4 ; sys_platform != 'win32' and python_version > '3.7'
 lxml ; sys_platform == 'win32'
 Mako==1.0.7
 MarkupSafe==1.1.0
