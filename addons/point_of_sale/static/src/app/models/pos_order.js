@@ -1014,7 +1014,7 @@ export class PosOrder extends Base {
                   )
                 : defaultFiscalPosition;
             newPartnerPricelist =
-                this.config.available_pricelist_ids.find(
+                this.models["product.pricelist"].find(
                     (pricelist) => pricelist.id === newPartner.property_product_pricelist?.id
                 ) || this.config.pricelist_id;
         } else {
