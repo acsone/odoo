@@ -93,30 +93,45 @@ export class ProductProduct extends Base {
         for (const pricelistId in pricelistRules) {
             applicableRules[pricelistId] = [];
             const rules = pricelistRules[pricelistId];
-            if (rules.productItems[this.id]) {
-                applicableRules[pricelistId].push(...rules.productItems[this.id]);
-                if (!rules.productItems[this.id][0].min_quantity) {
-                    continue;
-                }
+            if (!this.isSpecificPriceListRuleApplicable(pricelistRules, applicableRules, pricelistId)) {
+                applicableRules[pricelistId].push(...rules.globalItems);
             }
-            const productTmplId = this.raw.product_tmpl_id;
-            if (rules.productTmlpItems[productTmplId]) {
-                applicableRules[pricelistId].push(...rules.productTmlpItems[productTmplId]);
-                if (!rules.productTmlpItems[productTmplId][0].min_quantity) {
-                    continue;
-                }
-            }
-            for (const category of this.parentCategories) {
-                if (rules.categoryItems[category]) {
-                    applicableRules[pricelistId].push(...rules.categoryItems[category]);
-                    if (!rules.categoryItems[category][0].min_quantity) {
-                        break;
-                    }
-                }
-            }
-            applicableRules[pricelistId].push(...rules.globalItems);
+
         }
         return applicableRules;
+    }
+
+    isSpecificPriceListRuleApplicable(pricelistRules, applicableRules, pricelistId) {
+        console.log("isSpecificPriceListRuleApplicable")
+        const rules = pricelistRules[pricelistId];
+        if (rules.productItems[this.id]) {
+            applicableRules[pricelistId].push(...rules.productItems[this.id]);
+            if (!rules.productItems[this.id][0].min_quantity) {
+                return true;
+            }
+        }
+        const productTmplId = this.raw.product_tmpl_id;
+        if (rules.productTmlpItems[productTmplId]) {
+            applicableRules[pricelistId].push(...rules.productTmlpItems[productTmplId]);
+            if (!rules.productTmlpItems[productTmplId][0].min_quantity) {
+                return true;
+            }
+        }
+        if (this.isSpecificPriceListRuleApplicableCategory(applicableRules, rules, pricelistId)) {
+            return true;
+        }
+        return false;
+    }
+
+    isSpecificPriceListRuleApplicableCategory(applicableRules, rules, pricelistId) {
+        for (const category of this.parentCategories) {
+            if (rules.categoryItems[category]) {
+                applicableRules[pricelistId].push(...rules.categoryItems[category]);
+                if (!rules.categoryItems[category][0].min_quantity) {
+                    return true;
+                }
+            }
+        }
     }
 
     // Port of _get_product_price on product.pricelist.
